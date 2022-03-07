@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+   <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="author" content="Gustavo Rodrigues Fabiano & Lucas Polli">
+      <meta name="description" content="Crie e guarde seu mundo!">
+      <link rel="stylesheet" type="text/css" href="../style/style.css">
+      <link rel="stylesheet" type="text/css" href="../src/components/home/home.css">
+      <link rel="stylesheet" type="text/css" href="../src/components/header/responsive.css">
+      <link rel="stylesheet" type="text/css" href="../src/components/home/responsive.css">
+      <link rel="shortcut icon" href="../images/logo_gn.png" type="image/x-icon">
+      <script src="https://cdn.lordicon.com/libs/mssddfmo/lord-icon-2.1.0.js"></script>
+      <title>Good Notes</title>
+   </head>
+
+   <body>
+
+      <div class="container-loading show center-flex">
+         <div></div>
+      </div>
+
+      <header></header>
+
+      <main class="container-sticky">
+         
+         <section class="apresentation-flex center-flex">
+            <div class="container-texts">
+               <h1>Crie suas primeiras anotações grátis e super rápido!</h1>
+               <h2>Todas anotações são confidencializadas e salvadas para uma melhor experiência.</h2>
+               <div class="container-buttons-apresentation">
+                  <a href="layout/user/login/login.html" tabindex="-1">
+                     <button class="btn-startNow btn-default btn-default-hover">
+                        Começar agora
+                     </button>
+                  </a>
+                  <a href="#" tabindex="-1">
+                     <button class="btn-showAllNotes btn-default">
+                        Ver suas anotações
+                     </button>
+                  </a>
+               </div>
+            </div>
+            <div class="container-devices">
+               <div>
+                  <div class="screen-notebook">
+
+                  </div>
+                  <div class="base-notebook"></div>
+               </div>
+               <div class="container-phone-home">
+                  <div class="phone">
+                     <div class="header-phone">
+
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </section>
+
+         <section class="container-about-product">
+            <div class="about-product container-limiter">
+               <div class="about-creative center-flex">
+                  <div class="about-icon">
+                     <lord-icon src="https://cdn.lordicon.com/tfosrbcn.json" trigger="loop" speed="0.8" delay="3000"
+                        colors="primary:#000,secondary:#000" style="width:100px;height:100px"></lord-icon>
+                  </div>
+                  <div class="about-text">
+                     <div class="item-title">
+                        <h1>Criatividade</h1>
+                     </div>
+                     <div class="item-text">
+                        <p>Organize seu mundo com a sua criatividade.</p>
+                     </div>
+                  </div>
+               </div>
+               <div class="about-unlimited center-flex">
+                  <div class="about-icon">
+                     <lord-icon src="https://cdn.lordicon.com/puvaffet.json" trigger="loop" speed="0.8" delay="3000"
+                        colors="primary:#000,secondary:#000" style="width:100px;height:100px"></lord-icon>
+                  </div>
+                  <div class="about-text">
+                     <div class="item-title">
+                        <h1>Notas ilimitadas</h1>
+                     </div>
+                     <div class="item-text">
+                        <p>Você pode criar notas sem se preocupar com a quantidade.</p>
+                     </div>
+                  </div>
+               </div>
+               <div class="about-free center-flex">
+                  <div class="about-icon">
+                     <lord-icon src="https://cdn.lordicon.com/cmrzxpzz.json" trigger="loop" speed="0.8" delay="3000"
+                        colors="primary:#000,secondary:#000" style="width:100px;height:100px"></lord-icon>
+                  </div>
+                  <div class="about-text">
+                     <div class="item-title">
+                        <h1>Grátis</h1>
+                     </div>
+                     <div class="item-text">
+                        <p>Nosso serviço é <em>100%</em> gratuito.</p>
+                     </div>
+                  </div>
+               </div>
+               <div class="about-security center-flex">
+                  <div class="about-icon">
+                     <lord-icon src="https://cdn.lordicon.com/yyecauzv.json" trigger="loop" speed="0.8" delay="3000"
+                        colors="primary:#000,secondary:#000" style="width:100px;height:100px"></lord-icon>
+                  </div>
+                  <div class="about-text">
+                     <div class="item-title">
+                        <h1>Segurança</h1>
+                     </div>
+                     <div class="item-text">
+                        <p>Suas informações ficam seguras com a nossa tecnologia.</p>
+                     </div>
+                  </div>
+               </div>
+               <div class="about-clouds center-flex">
+                  <div class="about-icon">
+                     <lord-icon src="https://cdn.lordicon.com/wcjauznf.json" trigger="loop" speed="0.8" delay="3000"
+                        colors="primary:#000,secondary:#000" style="width:100px;height:100px"></lord-icon>
+                  </div>
+                  <div class="about-text">
+                     <div class="item-title">
+                        <h1>Nuvem</h1>
+                     </div>
+                     <div class="item-text">
+                        <p>Você pode acessar suas notas à qualquer hora e lugar.</p>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </section>
+         
+         <section class="container-about-notes"></section>
+
+         <footer>
+            <span>Desenvolvido por Gustavo Rodrigues & Lucas Polli</span>
+         </footer>
+
+      </main>
+
+      <div class="popup-wrapper-auth popup-wrapper" tabindex="0"></div>
+      <div class="popup-wrapper-profile popup-wrapper" tabindex="0"></div>
+      <div class="popup-wrapper-cookie popup-wrapper"></div>
+
+      <script type="module" src="../src/auth/auth.js"></script>
+   </body>
+   
+</html>

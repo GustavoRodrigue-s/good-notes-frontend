@@ -1,0 +1,69 @@
+.popup-cookie {
+   max-width: 400px !important;
+   padding: 30px !important;
+   display: flex;
+   flex-direction: column;
+   gap: 10px;
+}
+
+.header {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+}
+
+.title {
+   font-size: 2rem;
+   display: flex;
+   align-items: center;
+   gap: 10px;
+}
+
+.title > img, .close img {
+   width: 30px;
+}
+
+.main-content {
+   padding: 0 5px;
+}
+
+.main-content p {
+   font-size: 1.6rem;
+   color: var(--colorGray);
+}
+
+.more-information {
+   margin-top: 15px;
+   text-align: center;
+}
+
+.more-information p {
+   font-size: 1.5rem;
+}
+
+.more-information a.contrast {
+   color: #000;
+   font-weight: 500;
+   text-decoration: underline;
+}
+
+.container-btn {
+   margin-top: 20px;
+}
+
+.container-btn > button {
+   width: 100%;
+   height: 45px;
+   font-size: 1.7rem;
+}
+
+@media (max-width: 320px) {
+   .title {
+      font-size: 1.5rem;
+   }
+
+   .main-content p {
+      font-size: 1.4rem;
+      color: var(--colorGray);
+   }
+}

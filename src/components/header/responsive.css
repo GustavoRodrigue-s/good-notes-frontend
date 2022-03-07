@@ -1,0 +1,141 @@
+@media (max-width: 765px) {
+   .button-hamburguer {
+      display: flex;
+      padding: 5px;
+      background: none;
+      box-shadow: none;
+   }
+
+   .span-hamburguer {
+      border-top: 2px solid;
+      width: 20px;
+      color: #000;
+   }
+
+   .span-hamburguer::before, .span-hamburguer::after {
+      content: "";
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: currentColor;
+      margin-top: 5px;
+      transition: 0.3s;
+      position: relative;
+   }
+
+   .button-hamburguer.active .span-hamburguer {
+      border-top-color: transparent;
+   }
+
+   .button-hamburguer.active .span-hamburguer::before {
+      transform: rotate(135deg);
+   }
+
+   .button-hamburguer.active .span-hamburguer::after {
+      transform: rotate(-135deg);
+      top: -7px;
+   }
+
+   .popup-hamburguer {
+      position: absolute;
+      width: 200px;
+      background: rgb(255, 255, 255);
+      border: 1px solid rgb(226, 226, 226);
+      right: 5%;
+      top: 80%;
+      height: auto;
+      text-align: center;
+      padding: 10px;
+      border-radius: 10px;
+      display: block;
+      visibility: hidden;
+      opacity: 0;
+      transition: 0.3s cubic-bezier(.6,.4,0,1);
+      transform: scale(0.5);
+   }
+
+   .popup-hamburguer::before {
+      right: 5%;
+   }
+
+   .hamburguer-wrapper {
+      position: fixed;
+      background: rgba(0, 0, 0, 0.055);
+      width: 100%;
+      height: 100%;
+      inset: 0;
+      visibility: hidden;
+      transition: 0.3s ease-in-out;
+      opacity: 0;
+   }
+
+   .hamburguer-wrapper.active, .hamburguer-wrapper.active ~ .popup-hamburguer {
+      visibility: visible;
+      opacity: 1;
+   }
+
+   .hamburguer-wrapper.active ~ .popup-hamburguer {
+      transform: scale(1);
+   }
+
+   .nav-hamburguer {
+      margin-bottom: 10px;
+   }
+
+   .popup-hamburguer > div {
+      margin-top: 10px;
+   }
+
+   .popup-hamburguer > div a {
+      margin: 0;
+   }
+
+   .container-navigation {
+      display: none;
+   }
+
+   .line-hamburguer {
+      display: block;
+   }
+
+   .line-hamburguer {
+      background-color: rgb(226, 226, 226);
+      height: 1px;
+      border: none;
+   }
+
+   .popup-hamburguer > div, .nav-hamburguer {
+      display: flex;
+      flex-direction: column;
+   }
+
+   .popup-hamburguer button {
+      background: none;
+      box-shadow: none;
+      color: var(--colorGray);
+      margin: 0;
+      padding: 7px 10px;
+      width: 100%;
+      height: 33px;
+      transition: 0;
+   }
+
+   .nav-hamburguer a {
+      border-radius: 0;
+   }
+
+   .popup-hamburguer button:hover, .nav-hamburguer a:hover {
+      background-color: rgb(245, 245, 245);
+      color: #000;
+   }
+
+   /* USER LOGGED IN */
+
+   .user-information  {
+      display: none;
+   }
+
+   .user-information-hamburguer {
+      display: block;
+   }
+} 

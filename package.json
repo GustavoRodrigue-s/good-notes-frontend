@@ -1,0 +1,11 @@
+{
+   "name": "good-notes",
+   "version": "1.0.0",
+   "description": "Notes Project",
+   "scripts": {
+      "start": "serve"
+   },
+   "dependencies": {
+      "serve": "^10.1.2"
+   }
+}

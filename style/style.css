@@ -1,0 +1,380 @@
+@charset "UTF-8";
+
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+@import url('../src/components/header/header.css');
+@import url('../src/components/cookie/cookie.css');
+@import url('../src/components/popupForms/popup.css');
+@import url('../src/components/userLoggedIn/popupEditProfile.css');
+
+* {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+}
+
+:root {
+   --accentColor: #0066FF;
+   --cardsColor: #D9D9D9;
+   --colorGray: #646369;
+   --fontDefault: 'Inter', sans-serif;
+}
+
+html {
+   font-size: 62.5%;
+   overflow-x: hidden;
+}
+
+html, body {
+   height: 100%;
+}
+
+body {
+   font: 1.6em 'Inter', sans-serif;
+   overflow-x: hidden;
+   font-family: var(--fontDefault);
+}
+
+ul, ol {
+   list-style: none;
+}
+
+a {
+   text-decoration: none;
+   color: var(--colorGray);
+   cursor: pointer;
+}
+
+/* STYLES DEFAULTS --------------- */
+
+.container-limiter {
+   width: 90%;
+   max-width: 1200px;
+   margin: auto;
+}
+
+.center-flex {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+}
+
+/* BUTTON DEFAULT */
+
+.btn-default {
+   border: none;
+   cursor: pointer;
+   transition: 0.3s;
+   font-weight: 400;
+   font-family: var(--fontDefault);
+   background-color: var(--accentColor);
+   color: #fff;
+   border-radius: 8px;
+}
+
+.btn-default-hover:hover {
+   background: #0058dd;
+}
+
+/* CLOSE BUTTON DEFAULT */
+
+.close {
+   position: absolute;
+   right: 15px;
+   top: 15px;
+}
+
+.close-popup {
+   cursor: pointer;
+   background-color: transparent;
+   border: none;
+   transition: background-color 0.3s;
+   border-radius: 5px;
+}
+
+.close-popup:hover {
+   background-color: rgb(235, 235, 235);
+}
+
+/* INPUT DEFAULT */
+
+.input-default {
+   outline: none;
+   border: 1px solid #00000028;
+   background: transparent;
+   color: var(--colorGray);
+   width: 100%;
+   height: 40px;
+   border-radius: 8px;
+   padding: 0 20px;
+   font-size: 1.7rem;
+   transition: 0.3s;
+}
+
+.input-default:hover {
+   border-color: #646369d3;
+}
+
+.input-default:focus {
+   border-color: var(--accentColor);
+}
+
+/* LOADING */
+
+.container-loading {
+   position: absolute;
+   inset: 0;
+   z-index: 9999;
+   width: 100vw;
+   height: 100vh;
+   background: #fff;
+   visibility: hidden;
+   opacity: 0;
+   z-index: 9999999;
+}
+
+@keyframes spinLoading {
+   from { transform: rotateZ(0) }
+   to { transform: rotateZ(360deg) }
+}
+
+.container-loading > div {
+   height: 45px;
+   width: 45px;
+   border-radius: 50%;
+   border: 2.5px solid rgb(209, 209, 209);
+   border-top-color: rgba(0, 0, 0, 0.767);
+   animation: spinLoading 0.6s linear infinite;
+}
+
+.container-loading.show {
+   visibility: visible;
+   opacity: 1;
+}
+
+/* POPUPS & WRAPPERS */
+
+.popup-wrapper {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background: rgba(0, 0, 0, 0.482);
+   z-index: 99999;
+   visibility: hidden;
+   opacity: 0;
+   transition: 0.3s;
+   overflow: hidden;
+}
+
+.popup-wrapper.show {
+   visibility: visible;
+   opacity: 1;
+}
+
+@keyframes overflowDelay {
+   from { overflow: hidden; }
+   to { overflow-y: auto; }
+}
+
+.overlay-signIn.show,
+.overlay-signUp.show,
+.popup-wrapper-profile.show .overlay-profile  {
+   animation: overflowDelay 1ms 270ms forwards;
+}
+
+.popup-overlay {
+   position: absolute;
+   width: 100%;
+   height: 100%;
+   display: grid !important;
+   align-items: center;
+   justify-items: center;
+   overflow: auto !important;
+}
+
+.popup {
+   position: relative;
+   width: 90%;
+   height: auto;
+   background: #fff;
+   border-radius: 20px;
+   padding: 40px;
+   transform: scale(0.9);  
+   visibility: hidden; 
+   opacity: 0;
+   transition: 0.3s;
+}
+
+.popup > .container-loading {
+   border-radius: 20px !important;
+}
+
+.popup-wrapper.show > .overlay-signIn.show > .popup-signIn,
+.popup-wrapper.show > .overlay-signUp.show > .popup-signUp,
+.popup-wrapper-profile.show .popup,
+.popup-wrapper-cookie.show .popup {
+   transform: scale(1);
+   visibility: visible;
+   opacity: 1;
+   z-index: 99;
+}
+
+.popup-close {
+   position: absolute;
+   top: 3%;
+   right: 3%;
+   z-index: 9999;
+   padding: 3px;
+   cursor: pointer;
+}
+
+.popup-close > svg {
+   width: 30px;
+}
+
+.popup-close path {
+   transition: 0.4s;
+}
+
+/* CHECKBOX DEFAULT */
+
+.checkbox-default {
+   appearance: none;
+   display: inline-flex !important;
+   position: relative;
+   width: 20px;
+   height: 20px;
+   border-radius: 3px;
+   border: 1px solid #00000028;
+   background: #F6F6F6;
+   transition: 120ms transform ease-in-out;
+   cursor: pointer;
+}
+
+.checkbox-default::before {
+   content: "";
+   width: 0.9em;
+   height: 0.9em;
+   transform: scale(0);
+   transition: 120ms transform ease-in-out;
+   background-color: #fff;
+   transform-origin: center center;
+   clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+.checkbox-default:checked {
+   background-color: var(--accentColor);
+}
+
+.checkbox-default:checked::before {
+   transform: scale(1);
+}
+
+/* INPUT DEFAULT */
+
+.label-input-default {
+   color: var(--colorGray);
+   position: absolute;
+   z-index: -1;
+   top: 50%;
+   left: 20px;
+   transform: translateY(-50%);
+   transition: 0.2s;
+   font-size: 1.6rem;
+   cursor: text;
+   background-color: #fff;
+}
+
+.input-default:focus + label, .container-inputs label:focus,
+.input-default:not(:placeholder-shown, :focus) ~ label {
+   top: -2%;
+   left: 10px;
+   font-size: 1.2rem;
+   padding: 0 5px;
+   color: var(--accentColor);
+   z-index: 10;
+}
+
+.input-default:not(:focus) + label, .input-default:not(:focus) {
+   color: var(--colorGray);
+   border-color: #00000028;
+} 
+
+/* Animation Error */
+
+@keyframes opacityError {
+   from { opacity: 0; }
+   to { opacity: 1; }
+}
+
+/* FOOTER */
+
+footer {
+   position: relative;
+   z-index: 999;
+   padding: 20px;
+   width: 100%;
+   background: var(--footerGray);
+   text-align: center;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 550px) {
+   .popup {
+      width: 100% !important;
+      max-width: 100% !important;
+      border-radius: 20px 20px 0 0;
+      padding: 30px 20px !important;
+      transform: scale(1) translateY(100%);
+      opacity: 1;
+   }
+
+   .popup-overlay {
+      align-items: flex-end !important;
+   }
+
+   .popup-wrapper {
+      transition-delay: 0.3s !important;
+   }
+
+   .popup-wrapper.show {
+      transition: 0.2s !important;
+   }
+}
+
+/* 
+   
+   To do list
+
+   separar as regras de negócio usando o then e catch. --- feito
+   Responsive popup edit account (IU). --- feito
+   add jwt token validation. --- feito
+   add container error in the popup edit profile. --- feito
+   isolar as features com o jwt na pasta services backend. --- feito
+   add padding main home responsivo. --- feito
+   reduzir as request do edit profile quando já fez uma request --- feito
+   para logar auto, validar se o token está correto --- feito
+   reduzir argumentos classe User backend. --- feito
+   erro token registro --- feito
+   melhorar código auth. --- feito
+   refatorar backend regras de negócio usando try catch. --- fetio
+   criar a rota /refresh (token). --- feito
+   resolver todos problemas com o access token e refresh token --- feito
+   adicionar a feature de manter conectado. --- feito
+   implementar a api key. --- feito
+   melhorar o delete session token. --- feito
+   popup política de cookies. --- feito
+   deploy no heroku. --- feito
+   mudar as regras de negócio do front para o backend. --- feito
+   
+   utilizar o base64 para encode e decode do bd. (Bem depois)
+   
+   não depender de serviços externos (lordicon).
+   criar a IU da criação de notas.
+   
+   
+*/

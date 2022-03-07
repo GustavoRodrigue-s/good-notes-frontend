@@ -1,0 +1,253 @@
+.popup-signIn.popup {
+   max-width: 450px;
+}
+.popup-signUp.popup {
+   max-width: 600px;
+}
+
+.popup-signIn > div, .popup-signUp > div {
+   text-align: center;
+}
+
+.popup-forms form {
+   margin-top: 20px;
+   display: flex;
+   flex-direction: column;
+   gap: 15px;
+}
+
+/* TITLE AND SUBTITLE FORMS */
+
+.container-form-title > h1 {
+   font: 800 4rem var(--fontDefault);
+   line-height: 45px;
+}
+
+.container-form-title > h2 {
+   font: 400 1.8rem var(--fontDefault);
+   color: var(--colorGray);
+}
+
+.container-inputs-password {
+   display: grid;
+   grid-template-columns: 1fr 1fr;
+   column-gap: 10px;
+}
+
+.container-inputs-password > .container-error {
+   grid-column: 1 / 3;
+}
+
+/* EYE INPUT PASSWORD */
+
+.popup .input-password {
+   padding: 0 40px 0 20px;
+}
+
+.eye-password {
+   background: url('../../../images/eye_show.svg') no-repeat center;
+   cursor: pointer;
+   width: 25px;
+   height: 40px;
+   position: absolute;
+   top: 50%;
+   right: 3%;
+   transform: translateY(-50%);
+   z-index: 999;
+}
+
+.eye-password.show {
+   background-image: url('../../../images/eye_hide.svg');
+}
+
+/* CONTAINER BUTTON */
+
+.container-buttonSubmit {
+   width: 100%;
+}
+
+.popup-signUp .container-buttonSubmit {
+   margin-top: 10px;
+}
+
+.container-buttonSubmit > button {
+   width: 100%;
+   height: 40px;
+   font-size: 1.7rem;
+}
+
+/* CONTAINER ORTHER FORM OPTIONS */
+
+.orthers-form-options {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   flex-wrap: wrap;
+   font-size: 1.5rem;
+}
+
+.container-info-terms {
+   margin-top: 10px;
+   color: var(--colorGray);
+   font-size: 1.4rem;
+}
+
+.container-inputs {
+   width: 100%;
+   position: relative;
+   margin-top: 5px;
+}
+
+/* CHECKBOX REMEMBER ME */
+
+.container-inputCheckbox {
+   margin: 5px 0;
+   color: var(--colorGray);
+}
+
+.container-inputCheckbox > input {
+   margin-right: 5px;
+}
+
+/* ------ */
+
+.prominent-span {
+   color: var(--accentColor);
+   cursor: pointer;
+}
+
+.container-forgot-password > span, .container-info-terms span {
+   padding: 5px;
+   color: var(--colorGray);
+}
+
+.container-info-terms span {
+   color: #000;
+   font-weight: 500;
+}
+
+.prominent-span:hover {
+   text-decoration: underline;
+}
+
+.container-hasAccount {
+   margin-top: 20px;
+   padding-top: 15px;
+   border-top: 1px solid #00000028;
+   font-size: 1.6rem;
+}
+
+/* STATE MESSAGE */  
+
+.container-errorAndInput.error .input-default {
+   border-color: #D9000C;
+}
+
+.container-errorAndInput.error .input-default:focus + label,
+.container-errorAndInput.error label:focus,
+.container-errorAndInput.error .input-default:not(:placeholder-shown, :focus) ~ label {
+   color: #D9000C;
+}
+
+.container-error {
+   margin-top: 5px;
+   color: #D9000C;
+   display: none;
+   align-items: center;
+   gap: 5px;
+   animation: opacityError 0.3s forwards;
+}
+
+.container-errorAndInput.error .container-error {
+   display: flex;
+}
+
+.container-error.last {
+   margin-bottom: 5px;
+}
+
+.container-error.generic-error {
+   margin: 0;
+}
+
+.container-errorAndInput.generic-container {
+   display: none;
+}
+
+.container-errorAndInput.generic-container.error {
+   display: block;
+}
+
+.popup-signUp .container-errorAndInput.error ~ div {
+   margin-top: 0;
+}
+
+/* LOADING */
+
+.popup-content {
+   transition: 0.4s;
+}
+
+.popup .container-loading > div {
+   height: 40px;
+   width: 40px;
+}
+
+.popup .container-loading {
+   width: 100%;
+   height: 100%;
+}
+
+/* ANIMATIONS */
+
+.popup-content.hideToLoading {
+   opacity: 0;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 550px) {
+   .popup-wrapper-auth.show > .overlay-signIn.show > .popup-signIn,
+   .popup-wrapper-auth.show > .overlay-signUp.show > .popup-signUp {
+      transform: translateY(0) !important;
+   }
+}
+
+@media (max-width: 500px) {
+   .container-inputs-password {
+      grid-template-columns: 1fr;
+      gap: 0;
+   }
+
+   .container-inputs-password > .container-inputs:first-child {
+      margin-bottom: 15px;
+   }
+
+   .container-inputs-password > .container-error {
+      grid-column: 1 / 2;
+   }
+}
+
+@media (max-width: 360px) {
+   .orthers-form-options, .container-info-terms {
+      font-size: 1.2rem;
+   }
+
+   .popup-signUp .container-info-terms {
+      margin: 5px 0 !important;
+   }
+
+   .popup-signUp {
+      padding: 40px 20px 30px 20px !important;
+   }
+
+   .container-form-title > h1 {
+      font-size: 3.5rem;
+   }
+}
+
+@media (max-width: 300px) {
+   .orthers-form-options, .container-info-terms {
+      font-size: 1.1rem;
+   }
+}
