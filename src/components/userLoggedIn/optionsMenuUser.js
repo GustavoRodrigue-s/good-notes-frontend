@@ -100,7 +100,7 @@ const optionsMenuUser = () => {
             }
          }
 
-         const response = await fetch(`${api.url}/profiled?key=${apiKey}`, requestOptions);
+         const response = await fetch(`${api.url}/profile?key=${apiKey}`, requestOptions);
 
          if(!response.ok) throw `HTTP error, status: ${response.status}`;
 
