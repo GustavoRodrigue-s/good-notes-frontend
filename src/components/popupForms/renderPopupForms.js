@@ -30,7 +30,7 @@ const renderPopupForms = () => {
                   
                   <div class="container-errorAndInput">
                      <div class="container-inputPassword container-inputs">
-                        <input type="password" name="inputPassword" id="inputPassword" placeholder=" " class="input-password input-form input-default" autocomplete="off">
+                        <input type="password" name="inputPassword" id="inputPassword" placeholder=" " class="input-password input-form input-default" autocomplete="off" spellcheck="false">
                         <label for="inputPassword" class="label-input-default">Senha</label>
                         <a class="btn-eyes">
                            <i class="eye-password show"></i>
@@ -48,7 +48,7 @@ const renderPopupForms = () => {
                         </label>
                      </div>
                      <div class="container-forgot-password">
-                        <span class="prominent-span">Esqueceu a senha?</span>
+                        <span class="prominent-span" tabindex="0">Esqueceu a senha?</span>
                      </div>
                   </div>
 
@@ -69,7 +69,7 @@ const renderPopupForms = () => {
                <div class="container-hasAccount">
                   <p>
                      Não tem uma conta? 
-                     <span class="create-account-span prominent-span toggle-form" data-js="1" role="Change Form" arial-label="Trocar para o formulário Cadastrar">Criar Conta</span>
+                     <span class="create-account-span prominent-span toggle-form" data-js="1" role="Change Form" arial-label="Trocar para o formulário Cadastrar" tabindex="0">Criar Conta</span>
                   </p>
                </div>
             </div>
@@ -110,7 +110,7 @@ const renderPopupForms = () => {
 
                   <div class="container-inputs-password container-errorAndInput">
                      <div class="container-inputs">
-                        <input type="password" name="inputPassword" placeholder=" " class="input-password input-form input-default inputs-passwords">
+                        <input type="password" name="inputPassword" placeholder=" " class="input-password input-form input-default inputs-passwords" spellcheck="false">
                         <label for="inputPassword" class="label-input-default">Senha</label>
                         <a class="btn-eyes">
                            <i class="eye-password show"></i>
@@ -118,7 +118,7 @@ const renderPopupForms = () => {
                         </a>
                      </div>
                      <div class="container-inputs">
-                        <input type="password" name="inputConfirmPassword" placeholder=" " class="input-password input-form input-default inputs-passwords">
+                        <input type="password" name="inputConfirmPassword" placeholder=" " class="input-password input-form input-default inputs-passwords" spellcheck="false">
                         <label for="inputPassword" class="label-input-default">Confirmar Senha</label>
                         <a class="btn-eyes">
                            <i class="eye-password show"></i>
@@ -151,7 +151,7 @@ const renderPopupForms = () => {
                <div class="container-hasAccount">
                   <p>
                      Eu já tenho uma conta.
-                     <span class="access-account-span prominent-span toggle-form" data-js="0" role="Change Form" arial-label="Trocar para o formulário Entrar">Entrar</span>
+                     <span class="access-account-span prominent-span toggle-form" data-js="0" role="Change Form" arial-label="Trocar para o formulário Entrar" tabindex="0">Entrar</span>
                   </p>
                </div>
             </div>
