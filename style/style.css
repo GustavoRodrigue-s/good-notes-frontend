@@ -317,8 +317,9 @@ footer {
    z-index: 999;
    padding: 20px;
    width: 100%;
-   background: var(--footerGray);
+   font: var(--footerGray);
    text-align: center;
+   background-color: #fff;
 }
 
 /* RESPONSIVE */
@@ -374,7 +375,7 @@ footer {
    utilizar o base64 para encode e decode do bd. (Bem depois)
    
    não depender de serviços externos (lordicon).
+   adicionar feature de editar e deletar conta.
    criar a IU da criação de notas.
-   
    
 */
