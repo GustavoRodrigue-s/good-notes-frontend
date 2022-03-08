@@ -131,6 +131,7 @@ const popupFormInit = () => {
 
    containerEyes.forEach(container => {
       container.addEventListener('click', togglePasswordEye);
+      container.addEventListener('touchstart', togglePasswordEye);
    })
 
    formInit();
