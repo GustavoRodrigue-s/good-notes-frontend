@@ -30,32 +30,35 @@ const renderPopupForms = () => {
                   
                   <div class="container-errorAndInput">
                      <div class="container-inputPassword container-inputs">
-                           <input type="password" name="inputPassword" id="inputPassword" placeholder=" " class="input-password input-form input-default" autocomplete="off">
-                           <label for="inputPassword" class="label-input-default">Senha</label>
-                           <i class="eye-password"></i>
+                        <input type="password" name="inputPassword" id="inputPassword" placeholder=" " class="input-password input-form input-default" autocomplete="off">
+                        <label for="inputPassword" class="label-input-default">Senha</label>
+                        <a class="btn-eyes">
+                           <i class="eye-password show"></i>
+                           <i class="no-eye-password"></i>
+                        </a>
                      </div>
                      <div class="container-error last"></div>
                   </div>
 
                   <div class="orthers-form-options">
                      <div class="container-inputCheckbox">
-                           <label>
-                              <input type="checkbox" checked class="center-flex checkbox-default" name="inputCheckbox">
-                              Manter conectado
-                           </label>
+                        <label>
+                           <input type="checkbox" checked class="center-flex checkbox-default" name="inputCheckbox">
+                           Manter conectado
+                        </label>
                      </div>
                      <div class="container-forgot-password">
-                           <span class="prominent-span">Esqueceu a senha?</span>
+                        <span class="prominent-span">Esqueceu a senha?</span>
                      </div>
                   </div>
 
                   <div class="container-errorAndInput generic-container">
                      <div class="container-error generic-error">
-                           <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
-                              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z">
-                              </path>
-                           </svg> 
-                           Houve um erro, tente novamente!
+                        <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
+                           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z">
+                           </path>
+                        </svg> 
+                        Houve um erro, tente novamente!
                      </div>
                   </div>
 
@@ -91,30 +94,36 @@ const renderPopupForms = () => {
                <form class="form-signUp">
                   <div class="container-errorAndInput">
                      <div class="container-input-username container-inputs">
-                           <input type="text" name="inputUsername" placeholder=" " class="input-username input-form input-default" autocomplete="off">
-                           <label for="inputUsername" class="label-input-default">Nome do Usuário</label> 
+                        <input type="text" name="inputUsername" placeholder=" " class="input-username input-form input-default" autocomplete="off">
+                        <label for="inputUsername" class="label-input-default">Nome do Usuário</label> 
                      </div>
                      <div class="container-error"></div>
                   </div>
 
                   <div class="container-errorAndInput">
                      <div class="container-inputEmail container-inputs">
-                           <input type="email" name="inputEmail" placeholder=" " class="input-email input-form input-default" autocomplete="off">
-                           <label for="inputEmail" class="label-input-default">E-mail</label>
+                        <input type="email" name="inputEmail" placeholder=" " class="input-email input-form input-default" autocomplete="off">
+                        <label for="inputEmail" class="label-input-default">E-mail</label>
                      </div>
                      <div class="container-error"></div>
                   </div>
 
                   <div class="container-inputs-password container-errorAndInput">
                      <div class="container-inputs">
-                           <input type="password" name="inputPassword" placeholder=" " class="input-password input-form input-default inputs-passwords">
-                           <label for="inputPassword" class="label-input-default">Senha</label>
-                           <i class="eye-password"></i>
+                        <input type="password" name="inputPassword" placeholder=" " class="input-password input-form input-default inputs-passwords">
+                        <label for="inputPassword" class="label-input-default">Senha</label>
+                        <a class="btn-eyes">
+                           <i class="eye-password show"></i>
+                           <i class="no-eye-password"></i>
+                        </a>
                      </div>
                      <div class="container-inputs">
-                           <input type="password" name="inputConfirmPassword" placeholder=" " class="input-password input-form input-default inputs-passwords">
-                           <label for="inputPassword" class="label-input-default">Confirmar Senha</label>
-                           <i class="eye-password"></i>
+                        <input type="password" name="inputConfirmPassword" placeholder=" " class="input-password input-form input-default inputs-passwords">
+                        <label for="inputPassword" class="label-input-default">Confirmar Senha</label>
+                        <a class="btn-eyes">
+                           <i class="eye-password show"></i>
+                           <i class="no-eye-password"></i>
+                        </a>
                      </div>
                      <div class="container-error"></div>
                   </div>

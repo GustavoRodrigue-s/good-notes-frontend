@@ -3,20 +3,27 @@ import formInit from "./submitForms.js";
 const popupFormInit = () => {
    const containerButtons = document.querySelector('.container-buttonsToThePopup');
    const popupWrapper = document.querySelector('.popup-wrapper-auth');
-   const eyePasswords = document.querySelectorAll('.eye-password');
+   const containerEyes = document.querySelectorAll('.btn-eyes');
 
    // Show and hide input value password.
 
    const togglePasswordEye = e => {
+
       if (e.type === "touchstart") e.preventDefault();
 
-      const eyePassword = e.target;
-      const inputPassword = eyePassword.previousElementSibling.previousElementSibling;
+      const currentContainer = e.currentTarget;
 
+      const [eyePassword, noEyePassword, inputPassword] = [
+         currentContainer.firstElementChild,
+         currentContainer.lastElementChild,
+         currentContainer.parentElement.firstElementChild
+      ];
+      
       const typeInput = inputPassword.getAttribute('type') === 'password' ? 'text' : 'password';
 
       inputPassword.setAttribute('type', typeInput);
       eyePassword.classList.toggle('show');
+      noEyePassword.classList.toggle('show');
    }
 
    // Focus on the first input of the form.
@@ -40,7 +47,7 @@ const popupFormInit = () => {
       const addShowClassOfPopup = () => {
          popupsOverlay[dataJsOfTheElementClicked].classList.add('show');
          
-         if (popupsOverlay[0].classList.contains('show')) inputFocus();
+         popupsOverlay[0].classList.contains('show') && inputFocus();
       }
 
       if (dataJsOfTheElementClicked) {
@@ -64,15 +71,18 @@ const popupFormInit = () => {
 
       containerErrorAndInput.forEach(container => container.classList.remove('error'));
 
-      eyePasswords.forEach(eye => {
-         eye.classList.remove('show');
+      containerEyes.forEach(container => {
+         const [eyePassword, noEyePassword, inputPassword] = [
+            container.firstElementChild,
+            container.lastElementChild,
+            container.parentElement.firstElementChild
+         ];
 
-         const inputPassword = eye.previousElementSibling.previousElementSibling;
          inputPassword.setAttribute('type', 'password');
+         eyePassword.classList.add('show');
+         noEyePassword.classList.remove('show');
       });
    }
-
-   // Wait for the click time
 
    const waitForTheClickTime = () => {
       avalibleToOpen = false;
@@ -119,9 +129,8 @@ const popupFormInit = () => {
 
    popupWrapper.addEventListener('mousedown', togglePopUpWrapper);
 
-   eyePasswords.forEach(eye => {
-      eye.addEventListener('click', togglePasswordEye)
-      eye.addEventListener('touchstart', togglePasswordEye);
+   containerEyes.forEach(container => {
+      container.addEventListener('click', togglePasswordEye);
    })
 
    formInit();
