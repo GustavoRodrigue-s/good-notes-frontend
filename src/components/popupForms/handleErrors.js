@@ -74,6 +74,8 @@ export const chooseRequestMessage = (response, index) => {
    }
 
    response.forEach(data => {
-      whatError[data.reason] && whatError[data.reason](data);
+      whatError[data.reason] 
+         ? whatError[data.reason](data)
+         : whatError['request error']();
    })
 }
