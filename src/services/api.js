@@ -1,7 +1,7 @@
 // External Services
 
 const api = {
-   url: 'http://192.168.0.2:5000'
+   url: 'https://good-notes-backend.herokuapp.com'
 }
 
 export default api
