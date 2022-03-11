@@ -64,7 +64,7 @@ const popupFormInit = () => {
 
    const resetPopup = () => {
       const forms = document.querySelectorAll('.popup-wrapper-auth form');
-      const containerErrorAndInput = document.querySelectorAll('.container-errorAndInput');
+      const containerErrorAndInput = document.querySelectorAll('.popup-wrapper-auth .container-input');
 
       forms[0].reset();
       forms[1].reset();

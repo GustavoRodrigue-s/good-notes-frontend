@@ -54,7 +54,7 @@ const verifyTheTokens = async () => {
 
       const requestOptions = {
          headers: {
-            'Content-Type': 'aplication/json',
+            'Content-Type': 'application/json',
             'Authorization': `${accessToken};${refreshToken}`
          }
       }
@@ -67,7 +67,7 @@ const verifyTheTokens = async () => {
 
       const [data, status] = await response.json();
 
-      console.log(data, status)
+      console.log(data,status);
 
       if(status === 401 || status === 403) {
          throw 'The tokens is not valid.';

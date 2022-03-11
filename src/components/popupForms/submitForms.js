@@ -22,7 +22,7 @@ const formInit = () => {
                inputPassword.value.trim(),
                inputConfirmPassword.value.trim()
             ],
-            keepConnected: true
+            keepConnected: false
          }
       }
    }
@@ -40,7 +40,7 @@ const formInit = () => {
          const requestOptions = {
             method: "POST",
             headers: {
-               'Content-Type': 'aplication/json'
+               'Content-Type': 'application/json'
             },
             body: JSON.stringify(requestBody)
          }

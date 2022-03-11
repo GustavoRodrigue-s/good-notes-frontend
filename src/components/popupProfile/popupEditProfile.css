@@ -1,3 +1,10 @@
+.popup-wrapper-profile .popup-overlay.show > .popup {
+   transform: scale(1);
+   visibility: visible;
+   opacity: 1;
+   z-index: 99;
+}
+
 .popup-profile.popup {
    max-width: 550px;
    padding-top: 20px !important;
@@ -92,7 +99,7 @@
    color: var(--colorGray);
 }
 
-.container-buttons > .btn-submit {
+.container-buttons > .btn-update-credentials {
    border: none;
    color: #fff;
    background: var(--accentColor);
@@ -115,18 +122,92 @@
    color: red;
 }
 
-/* Container error */
+/* Container message */
 
-.container-error-profile {
-   color: #D9000C;
+.container-message {
    display: none;
    align-items: center;
    gap: 5px;
-   animation: opacityError 0.3s forwards;
+   animation: opacityMessage 0.3s forwards;
 }
 
-.container-error-profile.show {
+:is(.container-error-profile, .container-success-profile) > svg {
+   flex-shrink: 0;
+}
+
+.container-error-profile {
+   color: #D9000C;
+}
+
+.container-success-profile {
+   color: #4CAF50;
+}
+
+.container-error-profile.show, .container-success-profile.show {
    display: flex;
+}
+
+/* POPUP DELETE ACCOUNT */
+
+.popup-confirm-to-delete-account p > strong {
+   color: var(--accentColor);
+}
+
+.container-input {
+   width: 100%;
+   position: relative;
+}
+
+.popup-confirm-to-delete-account.popup {
+   max-width: 700px;
+   padding: 20px !important;
+}
+
+.popup-confirm-to-delete-account .texts {
+   margin: 15px 0 25px 0;
+   display: flex;
+   flex-direction: column;
+   gap: 15px;
+}
+
+.controls > .buttons {
+   margin-top: 20px;
+   display: flex;
+   justify-content: flex-end;
+   gap: 10px;
+}
+
+.controls > .buttons button {
+   width: 100%;
+   max-width: 110px;
+   height: 35px;
+   background-color: #fff;
+   border: 1px solid #00000028;
+   font-size: 1.5rem;
+}
+
+.btn-cancel-confirm {
+   color: var(--accentColor) !important;
+}
+
+.btn-cancel-confirm:hover {
+   border-color: #000 !important;
+}
+
+.btn-delete-confirm {
+   color: #000 !important;
+   background-color: rgb(235, 235, 235) !important;
+   cursor: not-allowed !important;
+}
+
+.btn-delete-confirm-active {
+   background: #d9000bad !important;
+   color: #fff !important;
+   cursor: pointer !important;
+}
+
+.btn-delete-confirm-active:hover {
+   background-color: #b90009da !important;
 }
 
 

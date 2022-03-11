@@ -1,6 +1,7 @@
 import api from '../../services/api.js';
-import renderPopupEditProfile from "./renderPopupEditProfile.js";
-import { deleteCookies, getCookies } from '../../auth/auth.js';
+import renderPopupEditProfile from "../popupProfile/renderPopupEditProfile.js";
+import initProfileOptions from '../popupProfile/ProfileOptions.js';
+import { deleteCookies, getCookies,  } from '../../auth/auth.js';
 
 const optionsMenuUser = () => {
    renderPopupEditProfile();
@@ -22,7 +23,7 @@ const optionsMenuUser = () => {
 
          const requestOptions = {
             headers: {
-               'Content-Type': 'aplication/json',
+               'Content-Type': 'application/json',
                'Authorization': `${accessToken};${refreshToken}`
             }
          }
@@ -57,22 +58,36 @@ const optionsMenuUser = () => {
 
    const { inputEmail, inputUsername } = document.querySelector('.edit-profile-form');
 
-   const containerError = document.querySelector('.container-error-profile');
+   const containerError = document.querySelector('.popup-profile .container-error-profile');
+   const containerSuccessMessage = document.querySelector('.popup-profile .container-success-profile');
+
 
    const resetPopup = () => {
+      const containerInputMessage = 
+         document.querySelectorAll('.edit-profile-form .input-and-message');
+
+      containerInputMessage.forEach(cont => cont.classList.remove('error'));
+
       inputEmail.setAttribute('value', '');
       inputUsername.setAttribute('value', '');
 
       containerError.classList.remove('show');
+      containerSuccessMessage.classList.remove('show');
+
+      popupWrapper.lastElementChild.classList.remove('show');
+      popupWrapper.firstElementChild.classList.remove('show');
    }
 
    // Credentails Saved
 
    const handleSavedCredentials = () => {
-      const credentials = JSON.parse(sessionStorage.getItem('credentials'));
+      const { email, username } = JSON.parse(sessionStorage.getItem('credentials'));
 
-      inputEmail.setAttribute('value', credentials.email);
-      inputUsername.setAttribute('value', credentials.username);
+      inputEmail.setAttribute('value', email);
+      inputUsername.setAttribute('value', username);
+      
+      inputEmail.value = email;
+      inputUsername.value = username;
    }
 
    const setCredentials = ({ email, username }) => {
@@ -95,7 +110,7 @@ const optionsMenuUser = () => {
 
          const requestOptions = {
             headers: {
-               'Content-Type': 'aplication/json',
+               'Content-Type': 'application/json',
                'Authorization': `${accessToken};${refreshToken}`
             }
          }
@@ -105,7 +120,7 @@ const optionsMenuUser = () => {
          if(!response.ok) throw `HTTP error, status: ${response.status}`;
 
          const [data, status] = await response.json();
-         
+
          if(data.newAccessToken) {
             document.cookie = `accessToken = ${data.newAccessToken} ; path=/`;
             
@@ -165,8 +180,9 @@ const optionsMenuUser = () => {
          accessibilityForUsers();
 
          popupWrapper.classList.toggle('show');
-
+         
          if(!popupWrapper.classList.contains('show')) return
+         else popupWrapper.lastElementChild.classList.toggle('show');
 
          !sessionStorage.getItem('credentials')
             ? getUserCredentials()
@@ -188,6 +204,8 @@ const optionsMenuUser = () => {
 
    containerIsLoggedIn.addEventListener('mousedown', chooseOption);
    popupWrapper.addEventListener('mousedown', togglePopupEditProfile);
+
+   initProfileOptions(api, getCookies, deleteCookies, toggleLoading, containerSuccessMessage);
 }
 
 export default optionsMenuUser;

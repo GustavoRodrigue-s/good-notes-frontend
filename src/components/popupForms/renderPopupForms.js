@@ -20,15 +20,15 @@ const renderPopupForms = () => {
                   <h2>Faça seu login aqui.</h2>
                </div>
                <form class="form-signIn">
-                  <div class="container-errorAndInput">
+                  <div class="input-and-message">
                      <div class="container-inputEmail container-inputs">
-                           <input type="text" name="inputEmail" id="inputEmail" placeholder=" " class="input-email input-form input-default" autocomplete="off" autofocus>
-                           <label for="inputEmail" class="label-input-default">E-mail / Nome</label>
+                        <input type="text" name="inputEmail" id="inputEmail" placeholder=" " class="input-email input-form input-default" autocomplete="off" autofocus>
+                        <label for="inputEmail" class="label-input-default">E-mail / Nome</label>
                      </div>
                      <div class="container-error"></div>
                   </div>
                   
-                  <div class="container-errorAndInput">
+                  <div class="input-and-message">
                      <div class="container-inputPassword container-inputs">
                         <input type="password" name="inputPassword" id="inputPassword" placeholder=" " class="input-password input-form input-default" autocomplete="off" spellcheck="false">
                         <label for="inputPassword" class="label-input-default">Senha</label>
@@ -52,7 +52,7 @@ const renderPopupForms = () => {
                      </div>
                   </div>
 
-                  <div class="container-errorAndInput generic-container">
+                  <div class="container-input generic-container">
                      <div class="container-error generic-error">
                         <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z">
@@ -92,7 +92,7 @@ const renderPopupForms = () => {
                   <h2>Faça seu registro aqui.</h2>
                </div>
                <form class="form-signUp">
-                  <div class="container-errorAndInput">
+                  <div class="input-and-message">
                      <div class="container-input-username container-inputs">
                         <input type="text" name="inputUsername" placeholder=" " class="input-username input-form input-default" autocomplete="off">
                         <label for="inputUsername" class="label-input-default">Nome do Usuário</label> 
@@ -100,7 +100,7 @@ const renderPopupForms = () => {
                      <div class="container-error"></div>
                   </div>
 
-                  <div class="container-errorAndInput">
+                  <div class="input-and-message">
                      <div class="container-inputEmail container-inputs">
                         <input type="email" name="inputEmail" placeholder=" " class="input-email input-form input-default" autocomplete="off">
                         <label for="inputEmail" class="label-input-default">E-mail</label>
@@ -108,7 +108,7 @@ const renderPopupForms = () => {
                      <div class="container-error"></div>
                   </div>
 
-                  <div class="container-inputs-password container-errorAndInput">
+                  <div class="container-inputs-password input-and-message">
                      <div class="container-inputs">
                         <input type="password" name="inputPassword" placeholder=" " class="input-password input-form input-default inputs-passwords" spellcheck="false">
                         <label for="inputPassword" class="label-input-default">Senha</label>
@@ -134,7 +134,7 @@ const renderPopupForms = () => {
                      </p>
                   </div>
 
-                  <div class="container-errorAndInput generic-container">
+                  <div class="input-and-message generic-container">
                      <div class="container-error generic-error">
                         <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z">

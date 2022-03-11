@@ -6,7 +6,7 @@
 @import url('../src/components/header/header.css');
 @import url('../src/components/cookie/cookie.css');
 @import url('../src/components/popupForms/popup.css');
-@import url('../src/components/userLoggedIn/popupEditProfile.css');
+@import url('../src/components/popupProfile/popupEditProfile.css');
 
 * {
    margin: 0;
@@ -120,6 +120,26 @@ a {
    border-color: var(--accentColor);
 }
 
+/* ERROR */
+
+.container-error {
+   margin-top: 5px;
+   color: #D9000C;
+   display: none;
+   align-items: center;
+   gap: 5px;
+   animation: opacityMessage 0.3s forwards;
+}
+
+.input-and-message.error .input-default {
+   border-color: #D9000C;
+}
+
+.input-and-message.error .input-default:focus + label,
+.input-and-message.error label:focus {
+   color: #D9000C;
+}
+
 /* LOADING */
 
 .container-loading {
@@ -181,7 +201,7 @@ a {
 
 .overlay-signIn.show,
 .overlay-signUp.show,
-.popup-wrapper-profile.show .overlay-profile  {
+.popup-wrapper-profile.show .popup-overlay.show  {
    animation: overflowDelay 1ms 270ms forwards;
 }
 
@@ -214,7 +234,6 @@ a {
 
 .popup-wrapper.show > .overlay-signIn.show > .popup-signIn,
 .popup-wrapper.show > .overlay-signUp.show > .popup-signUp,
-.popup-wrapper-profile.show .popup,
 .popup-wrapper-cookie.show .popup {
    transform: scale(1);
    visibility: visible;
@@ -305,7 +324,7 @@ a {
 
 /* Animation Error */
 
-@keyframes opacityError {
+@keyframes opacityMessage {
    from { opacity: 0; }
    to { opacity: 1; }
 }
@@ -379,6 +398,9 @@ footer {
    lidar com xss (quando precisamos printar no body (Notes)).
    não depender de serviços externos (lordicon).
    adicionar feature de editar e deletar conta.
+   aplicar a arquitetura MVC no backend.
+   mudar o nome das pastas popupForms > popupForms (exemplo).
+   usar métodos static no backend.
    criar a IU da criação de notas.
    
 */
