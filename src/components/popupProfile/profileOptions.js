@@ -1,9 +1,15 @@
 import { chooseErrors } from "./handleErrors.js";
 
-const initProfileOptions = (api, getCookies, deleteCookies, toggleLoading, containerSuccessMessage) => {
+const initProfileOptions = tools => {
    const popupProfile = document.querySelector('.popup-profile'),
-   overlayConfirmDelete = document.querySelector('.overlay-confirm-delete'),
-   inputConfirm = document.querySelector('.input-confirm-delete');
+   popupDeleteAccount = document.querySelector('.popup-confirm-to-delete-account'),
+   inputConfirm = document.querySelector('.input-confirm-delete'),
+   btnDeleteConfirm = document.querySelector('.btn-delete-confirm');
+
+   const resetPopupConfirmToDeleteAccount = () => {
+      inputConfirm.value = "";
+      btnDeleteConfirm.className = 'btn-default btn-delete-confirm';
+   }
 
    const profileOptions = {
       async 'btn-update-credentials'(e) {
@@ -38,13 +44,13 @@ const initProfileOptions = (api, getCookies, deleteCookies, toggleLoading, conta
             inputEmail.setAttribute('value', newCredentials.email);
             inputUsername.setAttribute('value', newCredentials.username);
 
-            containerSuccessMessage.classList.add('show');
+            tools.containerSuccessMessage.classList.add('show');
          }
          
          try {
-            toggleLoading();
+            tools.toggleLoading();
 
-            const { accessToken, refreshToken, apiKey } = getCookies();
+            const { accessToken, refreshToken, apiKey } = tools.getCookies();
 
             const requestOptions = {
                method: "POST",
@@ -55,98 +61,85 @@ const initProfileOptions = (api, getCookies, deleteCookies, toggleLoading, conta
                body: JSON.stringify(updateCredentials)
             } 
 
-            const url = `${api.url}/updateUser?key=${apiKey}`;
-            const response = await fetch(url, requestOptions);
+            const response = await fetch(tools.apiUrl+'/updateUser?key='+apiKey, requestOptions);
 
-            if(!response.ok) {
-               throw 'Http error';
-            }
+            if(!response.ok) throw 'Http error';
 
             const [data, status] = await response.json();
 
             if(data.newAccessToken) {
                document.cookie = `accessToken = ${data.newAccessToken} ; path=/`;
                
-               submitChanges();
+               profileOptions['btn-update-credentials'](e);
             } 
 
             data.state === 'success' && status !== 100
                ? setNewCredentials(data.newDatas) 
                : chooseErrors(data.reason);
 
-            toggleLoading();
+               tools.toggleLoading();
 
          }catch(e) {
             console.log(e);
-            toggleLoading();
+            tools.toggleLoading();
          }
       },
       "btn-delete"() {
-         overlayConfirmDelete.nextElementSibling.classList.remove('show');
+         popupProfile.parentElement.classList.remove('show');
+         resetPopupConfirmToDeleteAccount();
 
-         inputConfirm.value = "";
-         document.querySelector('.btn-delete-confirm')
-            .className = 'btn-default btn-delete-confirm';
+         setTimeout(() => 
+            popupDeleteAccount.parentElement.classList.add('show'), 300);
+      }
+   }
 
-         setTimeout(() => {
-            overlayConfirmDelete.classList.add('show');
-         }, 300);
-      },
-      "close-sub-popup-target"() {
-         overlayConfirmDelete.classList.remove('show');
-
-         inputConfirm.value = "";
-         document.querySelector('.btn-delete-confirm')
-            .className = 'btn-default btn-delete-confirm';
-         
-         setTimeout(() => {
-            overlayConfirmDelete.nextElementSibling.classList.add('show');
-         }, 300);
-      },
+   const confirmToDeleteAccountOptions = {
       async "btn-delete-confirm-active"() {
          this["close-sub-popup-target"]();
          
          try {
-            toggleLoading();
+            tools.toggleLoading();
 
-            const { apiKey } = getCookies();
+            const { apiKey } = tools.getCookies();
 
-            const url = `${api.url}/deleteUser?key=${apiKey}`;
-            const response = await fetch(url);
+            const response = await fetch(tools.apiUrl+'/deleteUser?key='+apiKey);
 
-            if(!response.ok) {
-               throw 'Http error';
-            }
+            if(!response.ok) throw 'Http error';
 
-            const [data, status] = await response.json();
-
-            deleteCookies();
+            tools.deleteCookies();
             window.open('./index.html', '_self');
 
          } catch(e) {
             console.log(e);
-            toggleLoading();
+            tools.toggleLoading();
          }
+      },
+      "close-sub-popup-target"() {
+         popupDeleteAccount.parentElement.classList.remove('show');
+         resetPopupConfirmToDeleteAccount();
+         
+         setTimeout(() => 
+            popupProfile.parentElement.classList.add('show'), 300);
       }
    }
 
    inputConfirm.addEventListener('input', () => {
-      const btnDelete = document.querySelector('.btn-delete-confirm');
       const { username } = JSON.parse(sessionStorage.getItem('credentials'));
 
       username === inputConfirm.value
-         ? btnDelete.className = 'btn-delete-confirm-active btn-default btn-delete-confirm'
-         : btnDelete.className = 'btn-default btn-delete-confirm';
+         ? btnDeleteConfirm.className = 'btn-delete-confirm-active btn-default btn-delete-confirm'
+         : btnDeleteConfirm.className = 'btn-default btn-delete-confirm';
    });
 
-   const chooseOption = e => {
+   popupProfile.addEventListener('click', e => {
       const firstClassOfTarget = e.target.classList[0];
-
       profileOptions[firstClassOfTarget] && profileOptions[firstClassOfTarget](e);
-   }
+   });
 
-   popupProfile.addEventListener('click', chooseOption);
-   overlayConfirmDelete.firstElementChild.addEventListener('click', chooseOption);
+   popupDeleteAccount.addEventListener('click', e => {
+      const firstClassOfTarget = e.target.classList[0];
+      confirmToDeleteAccountOptions[firstClassOfTarget] && confirmToDeleteAccountOptions[firstClassOfTarget](e);
+   });
 }
 
 export default initProfileOptions

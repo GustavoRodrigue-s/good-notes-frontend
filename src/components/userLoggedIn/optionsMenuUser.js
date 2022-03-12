@@ -1,11 +1,7 @@
-import api from '../../services/api.js';
-import renderPopupEditProfile from "../popupProfile/renderPopupEditProfile.js";
 import initProfileOptions from '../popupProfile/ProfileOptions.js';
 import { deleteCookies, getCookies,  } from '../../auth/auth.js';
 
-const optionsMenuUser = () => {
-   renderPopupEditProfile();
-
+const optionsMenuUser = apiUrl => {
    const containerIsLoggedIn = document.querySelector('.container-isLoggedIn');
    const popupWrapper = document.querySelector('.popup-wrapper-profile');
 
@@ -28,7 +24,7 @@ const optionsMenuUser = () => {
             }
          }
 
-         const response = await fetch(`${api.url}/logout?key=${apiKey}`, requestOptions);
+         const response = await fetch(`${apiUrl}/logout?key=${apiKey}`, requestOptions);
 
          if(!response.ok) throw `HTTP error, status: ${response.status}`;
 
@@ -91,8 +87,7 @@ const optionsMenuUser = () => {
    }
 
    const setCredentials = ({ email, username }) => {
-      sessionStorage.setItem(
-         'credentials',
+      sessionStorage.setItem('credentials',
          JSON.stringify({ email: email, username: username }) 
       )         
 
@@ -115,7 +110,7 @@ const optionsMenuUser = () => {
             }
          }
 
-         const response = await fetch(`${api.url}/profile?key=${apiKey}`, requestOptions);
+         const response = await fetch(`${apiUrl}/profile?key=${apiKey}`, requestOptions);
 
          if(!response.ok) throw `HTTP error, status: ${response.status}`;
 
@@ -184,13 +179,9 @@ const optionsMenuUser = () => {
          if(!popupWrapper.classList.contains('show')) return
          else popupWrapper.lastElementChild.classList.toggle('show');
 
-         !sessionStorage.getItem('credentials')
-            ? getUserCredentials()
-            : handleSavedCredentials();
+         !sessionStorage.getItem('credentials') ? getUserCredentials() : handleSavedCredentials();
       }
    }
-
-   // Choose options account.
 
    const chooseOption = e => {
       if (e.type === 'touchstart') e.preventDefault();
@@ -205,7 +196,15 @@ const optionsMenuUser = () => {
    containerIsLoggedIn.addEventListener('mousedown', chooseOption);
    popupWrapper.addEventListener('mousedown', togglePopupEditProfile);
 
-   initProfileOptions(api, getCookies, deleteCookies, toggleLoading, containerSuccessMessage);
+   const tools = { 
+      apiUrl: apiUrl,
+      getCookies,
+      deleteCookies,
+      toggleLoading,
+      containerSuccessMessage: containerSuccessMessage
+   }
+
+   initProfileOptions(tools);
 }
 
 export default optionsMenuUser;

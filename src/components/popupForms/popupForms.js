@@ -1,6 +1,6 @@
 import formInit from "./submitForms.js";
 
-const popupFormInit = () => {
+const popupFormInit = apiUrl => {
    const containerButtons = document.querySelector('.container-buttonsToThePopup');
    const popupWrapper = document.querySelector('.popup-wrapper-auth');
    const containerEyes = document.querySelectorAll('.btn-eyes');
@@ -64,7 +64,7 @@ const popupFormInit = () => {
 
    const resetPopup = () => {
       const forms = document.querySelectorAll('.popup-wrapper-auth form');
-      const containerErrorAndInput = document.querySelectorAll('.popup-wrapper-auth .container-input');
+      const containerErrorAndInput = document.querySelectorAll('.popup-wrapper-auth .input-and-message');
 
       forms[0].reset();
       forms[1].reset();
@@ -134,7 +134,7 @@ const popupFormInit = () => {
       container.addEventListener('touchstart', togglePasswordEye);
    })
 
-   formInit();
+   formInit(apiUrl);
 }
 
 export default popupFormInit;

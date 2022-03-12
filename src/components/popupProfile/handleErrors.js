@@ -20,20 +20,19 @@ export const chooseErrors = data => {
    const errors = {
       "empty input"({ input }) {
          const currentInput = document.querySelector(`.edit-profile-form .${input}`);
-
          showErrorMessage(currentInput, 'Preencha este campo!');
       },
       "email already exists"({ input }) {
          const currentInput = document.querySelector(`.edit-profile-form .${input}`);
-
          showErrorMessage(currentInput, 'Este email já existe!');
       },
       "username already exists"({ input }) {
          const currentInput = document.querySelector(`.edit-profile-form .${input}`);
-
          showErrorMessage(currentInput, 'Este nome já existe!');
       }
    }
+
+   console.log(data);
 
    data.forEach(data => {
       errors[data.reason] && errors[data.reason](data);

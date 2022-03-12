@@ -1,4 +1,6 @@
-const renderPopupEditProfile = () => {
+import optionsMenuUser from "../userLoggedIn/optionsMenuUser.js";
+
+const renderPopupEditProfile = apiUrl => {
    const popupWrapper = document.querySelector('.popup-wrapper-profile');
 
    const popup = `
@@ -16,7 +18,7 @@ const renderPopupEditProfile = () => {
                <div class="body">
                   <div class="texts">
                      <p>
-                        A exclusão da conta é irreversível, seus dados e notas serão completamente apagados. Caso você exclua sua conta, você será redirecionado para a página principal.
+                        A exclusão da conta é irreversível, seus dados e notas serão completamente apagados. Ao excluir sua conta, você será redirecionado para a página principal.
                      </p>
                      <p>
                         Tem certeza que você deseja excluir sua conta? Para confirmar digite o seu (<strong>Nome de usuário</strong>) abaixo.
@@ -76,7 +78,7 @@ const renderPopupEditProfile = () => {
                <form class="edit-profile-form">
                   <div class="input-and-message">
                      <div class="container-input">
-                        <label for="input-username">Nome do usuário</label>
+                        <label for="input-username">Nome de usuário</label>
                         <input type="text" class="input-username input-default" id="input-username" value="" name="inputUsername" autocomplete="off">
                      </div>
                      <div class="container-error"></div>
@@ -123,6 +125,8 @@ const renderPopupEditProfile = () => {
    ` ;
 
    popupWrapper.innerHTML = popup;
+
+   optionsMenuUser(apiUrl);
 }
 
 export default renderPopupEditProfile;

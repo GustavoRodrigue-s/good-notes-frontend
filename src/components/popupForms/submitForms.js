@@ -1,8 +1,7 @@
-import api from '../../services/api.js'
 import { chooseRequestMessage, showMessageError } from "./handleErrors.js";
 import { createCookie } from '../../auth/auth.js';
 
-const formInit = () => {
+const formInit = apiUrl => {
    const formSignIn = document.querySelector('.form-signIn');
    const formSignUp = document.querySelector('.form-signUp');
 
@@ -45,7 +44,7 @@ const formInit = () => {
             body: JSON.stringify(requestBody)
          }
 
-         const url = `${api.url}/${route}`;
+         const url = `${apiUrl}/${route}`;
 
          const response = await fetch(url, requestOptions);
 
@@ -54,6 +53,8 @@ const formInit = () => {
          }
 
          const [data, status] = await response.json();
+
+         console.log(data)
 
          showAndHideLoading(index);
 
@@ -69,6 +70,7 @@ const formInit = () => {
          }
 
       } catch (error) {
+         console.log(error)
          showAndHideLoading(index);
          chooseRequestMessage([{ state: 'error', reason: 'request error' }], index);
       }

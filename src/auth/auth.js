@@ -2,7 +2,7 @@ import api from '../services/api.js';
 import renderHeader from "../components/header/renderHeader.js";
 import renderPopupForms from "../components/popupForms/renderPopupForms.js";
 import renderPopupCookie from '../components/cookie/cookie.js'; 
-import optionsMenuUser from "../components/userLoggedIn/optionsMenuUser.js";
+import renderPopupEditProfile from '../components/popupProfile/renderPopupEditProfile.js';
 
 // create, get and delete cookies.
 export const getCookies = () => {
@@ -39,7 +39,7 @@ const redirectUserAsLoggedOut = () => {
    deleteCookies();
 
    renderHeader(false);
-   renderPopupForms();
+   renderPopupForms(api.url);
    renderPopupCookie();
 
    setTimeout(() => {
@@ -81,7 +81,7 @@ const verifyTheTokens = async () => {
 
       if(status === 200) {
          renderHeader(true);
-         optionsMenuUser();
+         renderPopupEditProfile(api.url);
 
          setTimeout(() => {
             document.querySelector('.container-loading').classList.toggle('show');

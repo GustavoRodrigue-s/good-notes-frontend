@@ -149,6 +149,10 @@
 
 /* POPUP DELETE ACCOUNT */
 
+.popup-confirm-to-delete-account p {
+   color: var(--colorGray);
+}
+
 .popup-confirm-to-delete-account p > strong {
    color: var(--accentColor);
 }
@@ -159,7 +163,7 @@
 }
 
 .popup-confirm-to-delete-account.popup {
-   max-width: 700px;
+   max-width: 650px;
    padding: 20px !important;
 }
 
