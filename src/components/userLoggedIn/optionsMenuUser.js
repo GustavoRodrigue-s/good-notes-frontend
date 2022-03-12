@@ -1,4 +1,4 @@
-import initProfileOptions from '../popupProfile/ProfileOptions.js';
+import initProfileOptions from '../popupProfile/profileOptions.js';
 import { deleteCookies, getCookies,  } from '../../auth/auth.js';
 
 const optionsMenuUser = apiUrl => {
