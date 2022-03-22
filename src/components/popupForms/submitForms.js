@@ -1,7 +1,7 @@
 import { chooseRequestMessage, showMessageError } from "./handleErrors.js";
 import { createCookie } from '../../auth/auth.js';
 
-const formInit = apiUrl => {
+const formInit = api => {
    const formSignIn = document.querySelector('.form-signIn');
    const formSignUp = document.querySelector('.form-signUp');
 
@@ -36,25 +36,11 @@ const formInit = apiUrl => {
       try {
          showAndHideLoading(index);
 
-         const requestOptions = {
+         const [data, status] = await api.request({
             method: "POST",
-            headers: {
-               'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(requestBody)
-         }
-
-         const url = `${apiUrl}/${route}`;
-
-         const response = await fetch(url, requestOptions);
-
-         if (!response.ok) {
-            throw new Error(`HTTP error, status: ${response.status}`);
-         }
-
-         const [data, status] = await response.json();
-
-         console.log(data)
+            route: route,
+            body: requestBody
+         });
 
          showAndHideLoading(index);
 
@@ -70,7 +56,6 @@ const formInit = apiUrl => {
          }
 
       } catch (error) {
-         console.log(error)
          showAndHideLoading(index);
          chooseRequestMessage([{ state: 'error', reason: 'request error' }], index);
       }

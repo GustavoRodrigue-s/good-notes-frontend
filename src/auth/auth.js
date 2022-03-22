@@ -1,8 +1,8 @@
 import api from '../services/api.js';
 import renderHeader from "../components/header/renderHeader.js";
-import renderPopupForms from "../components/popupForms/renderPopupForms.js";
+import renderPopupForms from "../components/popupForms/renderPopup.js";
 import renderPopupCookie from '../components/cookie/cookie.js'; 
-import renderPopupEditProfile from '../components/popupProfile/renderPopupEditProfile.js';
+import renderPopupEditProfile from '../components/popupProfile/renderPopup.js';
 
 // create, get and delete cookies.
 export const getCookies = () => {
@@ -39,7 +39,7 @@ const redirectUserAsLoggedOut = () => {
    deleteCookies();
 
    renderHeader(false);
-   renderPopupForms(api.url);
+   renderPopupForms(api);
    renderPopupCookie();
 
    setTimeout(() => {
@@ -50,22 +50,7 @@ const redirectUserAsLoggedOut = () => {
 
 const verifyTheTokens = async () => {
    try {
-      const { accessToken, refreshToken, apiKey } = getCookies();
-
-      const requestOptions = {
-         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `${accessToken};${refreshToken}`
-         }
-      }
-
-      const response = await fetch(`${api.url}/required?key=${apiKey}`, requestOptions);
-   
-      if(!response.ok) {
-         throw `Http error, status: ${response.status}`;
-      }
-
-      const [data, status] = await response.json();
+      const [data, status] = await api.request({ auth: true, route: "required" });
 
       console.log(data,status);
 
@@ -81,7 +66,7 @@ const verifyTheTokens = async () => {
 
       if(status === 200) {
          renderHeader(true);
-         renderPopupEditProfile(api.url);
+         renderPopupEditProfile(api);
 
          setTimeout(() => {
             document.querySelector('.container-loading').classList.toggle('show');

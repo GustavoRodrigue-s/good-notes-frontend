@@ -1,7 +1,7 @@
 import initProfileOptions from '../popupProfile/profileOptions.js';
-import { deleteCookies, getCookies,  } from '../../auth/auth.js';
+import { deleteCookies } from '../../auth/auth.js';
 
-const optionsMenuUser = apiUrl => {
+const optionsMenuUser = api => {
    const containerIsLoggedIn = document.querySelector('.container-isLoggedIn');
    const popupWrapper = document.querySelector('.popup-wrapper-profile');
 
@@ -15,20 +15,9 @@ const optionsMenuUser = apiUrl => {
 
    const logoutAccount = async () => {
       try {
-         const { accessToken, refreshToken, apiKey } = getCookies();
+         document.querySelector('body > .container-loading').classList.add('show');
 
-         const requestOptions = {
-            headers: {
-               'Content-Type': 'application/json',
-               'Authorization': `${accessToken};${refreshToken}`
-            }
-         }
-
-         const response = await fetch(`${apiUrl}/logout?key=${apiKey}`, requestOptions);
-
-         if(!response.ok) throw `HTTP error, status: ${response.status}`;
-
-         const [data, status] = await response.json();
+         const [data, status] = await api.request({auth: true, route: "logout"});
 
          if(data.newAccessToken) {
             document.cookie = `accessToken = ${data.newAccessToken} ; path=/`;
@@ -101,20 +90,7 @@ const optionsMenuUser = apiUrl => {
       try {
          toggleLoading();
 
-         const { accessToken, refreshToken, apiKey } = getCookies();
-
-         const requestOptions = {
-            headers: {
-               'Content-Type': 'application/json',
-               'Authorization': `${accessToken};${refreshToken}`
-            }
-         }
-
-         const response = await fetch(`${apiUrl}/profile?key=${apiKey}`, requestOptions);
-
-         if(!response.ok) throw `HTTP error, status: ${response.status}`;
-
-         const [data, status] = await response.json();
+         const [data, status] = await api.request({route: "profile", auth: true});
 
          if(data.newAccessToken) {
             document.cookie = `accessToken = ${data.newAccessToken} ; path=/`;
@@ -197,8 +173,7 @@ const optionsMenuUser = apiUrl => {
    popupWrapper.addEventListener('mousedown', togglePopupEditProfile);
 
    const tools = { 
-      apiUrl: apiUrl,
-      getCookies,
+      api: api,
       deleteCookies,
       toggleLoading,
       containerSuccessMessage: containerSuccessMessage

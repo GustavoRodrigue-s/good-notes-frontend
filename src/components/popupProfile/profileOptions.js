@@ -1,6 +1,7 @@
 import { chooseErrors } from "./handleErrors.js";
 
-const initProfileOptions = tools => {
+const initProfileOptions = ({ api, containerSuccessMessage, toggleLoading, deleteCookies }) => {
+
    const popupProfile = document.querySelector('.popup-profile'),
    popupDeleteAccount = document.querySelector('.popup-confirm-to-delete-account'),
    inputConfirm = document.querySelector('.input-confirm-delete'),
@@ -44,28 +45,18 @@ const initProfileOptions = tools => {
             inputEmail.setAttribute('value', newCredentials.email);
             inputUsername.setAttribute('value', newCredentials.username);
 
-            tools.containerSuccessMessage.classList.add('show');
+            containerSuccessMessage.classList.add('show');
          }
          
          try {
-            tools.toggleLoading();
+            toggleLoading();
 
-            const { accessToken, refreshToken, apiKey } = tools.getCookies();
-
-            const requestOptions = {
+            const [data, status] = await api.request({
                method: "POST",
-               headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `${accessToken};${refreshToken}`
-               },
-               body: JSON.stringify(updateCredentials)
-            } 
-
-            const response = await fetch(tools.apiUrl+'/updateUser?key='+apiKey, requestOptions);
-
-            if(!response.ok) throw 'Http error';
-
-            const [data, status] = await response.json();
+               route: "updateUser",
+               body: updateCredentials,
+               auth: true
+            });
 
             if(data.newAccessToken) {
                document.cookie = `accessToken = ${data.newAccessToken} ; path=/`;
@@ -77,11 +68,10 @@ const initProfileOptions = tools => {
                ? setNewCredentials(data.newDatas) 
                : chooseErrors(data.reason);
 
-               tools.toggleLoading();
+               toggleLoading();
 
          }catch(e) {
-            console.log(e);
-            tools.toggleLoading();
+            toggleLoading();
          }
       },
       "btn-delete"() {
@@ -98,20 +88,15 @@ const initProfileOptions = tools => {
          this["close-sub-popup-target"]();
          
          try {
-            tools.toggleLoading();
+            toggleLoading();
 
-            const { apiKey } = tools.getCookies();
+            await api.request({auth: true, route: "deleteUser"});
 
-            const response = await fetch(tools.apiUrl+'/deleteUser?key='+apiKey);
-
-            if(!response.ok) throw 'Http error';
-
-            tools.deleteCookies();
+            deleteCookies();
             window.open('./index.html', '_self');
 
          } catch(e) {
-            console.log(e);
-            tools.toggleLoading();
+            toggleLoading();
          }
       },
       "close-sub-popup-target"() {

@@ -6,7 +6,7 @@
 @import url('../src/components/header/header.css');
 @import url('../src/components/cookie/cookie.css');
 @import url('../src/components/popupForms/popup.css');
-@import url('../src/components/popupProfile/popupEditProfile.css');
+@import url('../src/components/popupProfile/popup.css');
 
 * {
    margin: 0;
@@ -392,15 +392,17 @@ footer {
    mudar as regras de negócio do front para o backend. --- feito
    lidar com sql injection. --- feito
    adicionar data de registro de usuário. --- feito
+   adicionar feature de editar e deletar conta --- feito.
+   usar métodos static no backend --- feito.
+   aplicar a arquitetura MVC no backend --- fetito.
+   mudar o nome das pastas popupForms > popupForms (exemplo) --- feito.
+   criar um js para automatizar o uso das requests --- feito.
    
 
    utilizar o base64 para encode e decode do bd.
    lidar com xss (quando precisamos printar no body (Notes)).
    não depender de serviços externos (lordicon).
-   adicionar feature de editar e deletar conta.
-   aplicar a arquitetura MVC no backend.
-   mudar o nome das pastas popupForms > popupForms (exemplo).
-   usar métodos static no backend.
+   separar as funcs cookies o auth.js.
    criar a IU da criação de notas.
    
 */
