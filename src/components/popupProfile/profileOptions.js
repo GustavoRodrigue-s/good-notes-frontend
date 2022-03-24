@@ -55,7 +55,6 @@ const initProfileOptions = ({ api, containerSuccessMessage, toggleLoading, delet
                method: "POST",
                route: "updateUser",
                body: updateCredentials,
-               auth: true
             });
 
             if(data.newAccessToken) {
@@ -90,7 +89,7 @@ const initProfileOptions = ({ api, containerSuccessMessage, toggleLoading, delet
          try {
             toggleLoading();
 
-            await api.request({auth: true, route: "deleteUser"});
+            await api.request({route: "deleteUser"});
 
             deleteCookies();
             window.open('./index.html', '_self');

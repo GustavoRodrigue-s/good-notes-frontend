@@ -1,31 +1,28 @@
-import { getCookies } from "../auth/auth.js";
-
+// Default request api
 
 const api = {
-   baseUrl: 'https://good-notes-backend.herokuapp.com/',
+   baseUrl: 'http://192.168.0.2:5000/',
 
-   async request({ method, route, body, auth }) {
+   headers: {
+      "Content-Type": "application/json"
+   },
 
-      const cookies = auth ? getCookies() : "";
+   async request({ method, route, body }) {
 
-      const currentUrl = auth ? `${api.baseUrl}${route}?key=${cookies.apiKey}` : api.baseUrl + route;
+      const currentUrl = `${api.baseUrl}${route}${api.apiKey ? api.apiKey : ''}`;
 
-      const requestOptions = {
+      const options = {
          "method": method || "GET",
-         headers: {
-            "Content-Type": "application/json"
-         }
+         headers: api.headers
       }
 
-      if(body) requestOptions.body = JSON.stringify(body);
+      if (body) {
+         options.body = JSON.stringify(body);
+      }
 
-      if(auth) {
-         requestOptions.headers["Authorization"] = `${cookies.accessToken};${cookies.refreshToken}`;
-      } 
+      const response = await fetch(currentUrl, options);
 
-      const response = await fetch(currentUrl, requestOptions);
-
-      if(!response.ok) {
+      if (!response.ok) {
          throw `Http error, status: ${response.status}`;
       }
 

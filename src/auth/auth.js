@@ -10,15 +10,12 @@ export const getCookies = () => {
 
    const accessToken = cookies[cookies.indexOf('accessToken') + 1];
    const refreshToken = cookies[cookies.indexOf('refreshToken') + 1];
-   
-   const apiKey = cookies.indexOf('apiKey') === -1 ? '' : cookies[cookies.indexOf('apiKey') + 1];
+   const apiKey = '' || cookies[cookies.indexOf('apiKey') + 1];
 
    return { accessToken, refreshToken, apiKey }
 }
 
-export const createCookie = (tokens, apiKey) => {
-   const { accessToken, refreshToken } = tokens;
-
+export const createCookie = ({ accessToken, refreshToken }, apiKey) => {
    document.cookie = `apiKey = ${apiKey} ; path=/`;
    document.cookie = `accessToken = ${accessToken} ; path=/`;
    document.cookie = `refreshToken = ${refreshToken} ; path=/`;
@@ -50,9 +47,12 @@ const redirectUserAsLoggedOut = () => {
 
 const verifyTheTokens = async () => {
    try {
-      const [data, status] = await api.request({ auth: true, route: "required" });
+      const { accessToken, refreshToken, apiKey } = getCookies();
 
-      console.log(data,status);
+      api.headers["Authorization"] = `${accessToken};${refreshToken}`;
+      api.apiKey = `?key=${apiKey}`;
+
+      const [data, status] = await api.request({ auth: true, route: "required" });
 
       if(status === 401 || status === 403) {
          throw 'The tokens is not valid.';
@@ -68,9 +68,9 @@ const verifyTheTokens = async () => {
          renderHeader(true);
          renderPopupEditProfile(api);
 
-         setTimeout(() => {
-            document.querySelector('.container-loading').classList.toggle('show');
-         }, 300);
+         setTimeout(() => 
+            document.querySelector('.container-loading').classList.toggle('show'), 300
+         );
       }
       
    }catch(e) {

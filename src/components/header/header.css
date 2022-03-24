@@ -8,6 +8,7 @@ header {
    position: sticky;
    top: 0;
    z-index: 999;
+   padding: 5px 34px; 
 }
 
 header a, .button-signIn  {
@@ -15,6 +16,10 @@ header a, .button-signIn  {
    padding: 7px 10px;
    border-radius: 8px;
    transition: 0.3s;
+}
+
+a.link-logo {
+   padding: 7px 0;
 }
 
 .button-signIn {
@@ -33,12 +38,14 @@ header a, .button-signIn  {
    height: 30px;
 }
 
-.container-header-logo {
-   height: 45px;
-   width: 50px;
-   background: url('../../../images/logo_gn.png') no-repeat center;
-   background-size: cover;
+.good-notes-logo {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   gap: 3px;
+   font: 400 3rem 'Fredoka', sans-serif;
 }
+
 
 .container-header-flex, .container-authentication {
    display: flex;

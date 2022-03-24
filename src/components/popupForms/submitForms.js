@@ -36,11 +36,7 @@ const formInit = api => {
       try {
          showAndHideLoading(index);
 
-         const [data, status] = await api.request({
-            method: "POST",
-            route: route,
-            body: requestBody
-         });
+         const [data, status] = await api.request({method: "POST", route, body: requestBody});
 
          showAndHideLoading(index);
 

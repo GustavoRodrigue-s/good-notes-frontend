@@ -14,11 +14,14 @@ main.container-sticky {
 
 .apresentation-flex {
    width: 95%;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
    margin: auto;
    color: var(--colorGray);
    text-align: center;
    position: sticky;
-   top: 160px;
+   top: 165px;
    z-index: 1;
 }
 
@@ -31,11 +34,11 @@ main.container-sticky {
 .container-texts {
    align-self: flex-start;
    flex-shrink: 0;
-   width: 500px;
+   width: 550px;
 }
 
 .apresentation-flex h1 {
-   font: 800 min(5rem, 9vw) var(--fontDefault);
+   font: 800 min(5.5rem, 9vw) var(--fontDefault);
    width: 100%;
    max-width: 530px;
    color: #000;
@@ -97,8 +100,8 @@ main.container-sticky {
 }
 
 .screen-notebook {
-   width: 550px;
-   height: 400px;
+   width: 630px;
+   height: 450px;
    border: 10px solid #000;
    border-radius: 20px 20px 0 0;
    background: #Fff url('../../../images/test_note.png') no-repeat center;
@@ -106,7 +109,7 @@ main.container-sticky {
 }
 
 .base-notebook {
-   width: 650px;
+   width: 750px;
    height: 11px;
    background: rgb(182, 182, 182);
    border-radius: 0 0 10px 10px;
@@ -119,8 +122,8 @@ main.container-sticky {
 }
 
 .phone {
-   width: 180px;
-   height: 320px;
+   width: 200px;
+   height: 340px;
    border: 7px solid #000;
    border-radius: 20px;
    position: relative;
@@ -143,12 +146,12 @@ main.container-sticky {
 
 .container-about-product {
    background-color: #fff;
-   margin-top: 100px;
+   margin-top: 120px;
    padding: 75px 0;
    border-top: 1px solid rgb(212, 212, 212);
    box-shadow: 0 0 10px rgba(0, 0, 0, 0.157);
    position: sticky;
-   top: 59px;
+   top: 64px;
    z-index: 2;
 }
 

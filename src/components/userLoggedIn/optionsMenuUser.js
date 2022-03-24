@@ -17,12 +17,13 @@ const optionsMenuUser = api => {
       try {
          document.querySelector('body > .container-loading').classList.add('show');
 
-         const [data, status] = await api.request({auth: true, route: "logout"});
+         const [data, status] = await api.request({route: "logout"});
 
          if(data.newAccessToken) {
             document.cookie = `accessToken = ${data.newAccessToken} ; path=/`;
 
             logoutAccount();
+
          }else {
             throw 'exiting...';
          }
@@ -77,7 +78,7 @@ const optionsMenuUser = api => {
 
    const setCredentials = ({ email, username }) => {
       sessionStorage.setItem('credentials',
-         JSON.stringify({ email: email, username: username }) 
+         JSON.stringify({ email, username }) 
       )         
 
       inputEmail.setAttribute('value', email);
@@ -90,13 +91,14 @@ const optionsMenuUser = api => {
       try {
          toggleLoading();
 
-         const [data, status] = await api.request({route: "profile", auth: true});
+         const [data, status] = await api.request({route: "profile"});
 
-         if(data.newAccessToken) {
+         if (data.newAccessToken) {
             document.cookie = `accessToken = ${data.newAccessToken} ; path=/`;
             
             getUserCredentials();
-         }else if(status !== 200) {
+            
+         }else if (status !== 200) {
             throw 'The tokens is not valid.';
          }
 
@@ -173,7 +175,7 @@ const optionsMenuUser = api => {
    popupWrapper.addEventListener('mousedown', togglePopupEditProfile);
 
    const tools = { 
-      api: api,
+      api,
       deleteCookies,
       toggleLoading,
       containerSuccessMessage: containerSuccessMessage

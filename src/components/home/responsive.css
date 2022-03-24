@@ -22,6 +22,11 @@
    .base-notebook {
       width: 600px;
    }
+
+   .phone {
+      width: 180px;
+      height: 320px;
+   }
 }
 
 @media (max-width: 1221px) {
@@ -40,10 +45,6 @@
 @media (max-width: 980px) {
    .apresentation-flex h1 {
       font-size: min(4.5rem, 9vw);
-   }
-
-   .container-texts {
-      width: 450px;
    }
 }
 

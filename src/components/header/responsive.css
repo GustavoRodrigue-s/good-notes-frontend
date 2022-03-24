@@ -1,4 +1,8 @@
 @media (max-width: 765px) {
+   header {
+      padding: 5px 20px 5px 10px;
+   }
+
    .button-hamburguer {
       display: flex;
       padding: 5px;
@@ -41,7 +45,7 @@
       width: 200px;
       background: rgb(255, 255, 255);
       border: 1px solid rgb(226, 226, 226);
-      right: 5%;
+      right: 20px;
       top: 80%;
       height: auto;
       text-align: center;
