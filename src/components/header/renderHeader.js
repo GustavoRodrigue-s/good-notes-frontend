@@ -38,16 +38,12 @@ const renderHeader = hasToken => {
       <div class="container-header-flex">
          <a href="./index.html" tabindex="0" class="link-logo">
             <div class="good-notes-logo">
-               <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" style="overflow: visible;">
-                  <g fill="#000" transform="matrix(0.4, 0, 0, 0.4, 0 0)" data-uid="o_en83865jn_4" width="30" height="30">
-                     <path d="M80.6,66.5h-8.4v-1h8.4c3,0,5.4-2.4,5.4-5.4V25.6c0-3-2.4-5.4-5.4-5.4H35.8c-3,0-5.4,2.4-5.4,5.4v8.2h-1v-8.2 c0-3.5,2.9-6.4,6.4-6.4h44.8c3.5,0,6.4,2.9,6.4,6.4v34.5C87,63.6,84.1,66.5,80.6,66.5z"  fill="#000" data-uid="o_en83865jn_5">
-                     </path>
-                     <path d="M64.9,80.8H33.1C22,80.8,13,71.8,13,60.7V41.2c0-4.3,3.5-7.7,7.7-7.7h44.2c4.3,0,7.7,3.5,7.7,7.7v31.9  C72.6,77.4,69.1,80.8,64.9,80.8z M20.7,34.5c-3.7,0-6.7,3-6.7,6.7v19.5c0,10.5,8.6,19.1,19.1,19.1h31.8c3.7,0,6.7-3,6.7-6.7V41.2     c0-3.7-3-6.7-6.7-6.7H20.7z"  fill="#000" data-uid="o_en83865jn_6">
-                     </path>
-                     <path  fill="#000" data-type="polygon" d="M30.9 80.3L29.9 80.3L29.9 64L13.5 64L13.5 63L30.9 63Z" data-uid="o_en83865jn_7"></path><path  fill="#000" data-type="rect" data-x="21.9" data-y="44.6" data-width="41.3" data-height="1" d="M21.9 44.6H63.199999999999996 V45.6 H21.9 Z" data-uid="o_en83865jn_8">
-                     </path>
-                     <path fill="#000" data-type="rect" data-x="21.9" data-y="53.2" data-width="41.3" data-height="1" d="M21.9 53.2H63.199999999999996 V54.2 H21.9 Z" data-uid="o_en83865jn_9"></path>
-                  </g>
+               <svg width="42" height="35" viewBox="0 0 43 37" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="6.25" y="0.25" width="36.5" height="30.5" rx="4.75" fill="#0058DB" stroke="white" stroke-width="0.5"/>
+                  <path d="M6 6.25H31C34.1756 6.25 36.75 8.82436 36.75 12V31C36.75 34.1756 34.1756 36.75 31 36.75H10C4.61522 36.75 0.25 32.3848 0.25 27V12C0.25 8.82436 2.82436 6.25 6 6.25Z" fill="#0066FF" stroke="white" stroke-width="0.5"/>
+                  <line x1="5.5" y1="11.5" x2="32.5" y2="11.5" stroke="white" stroke-linecap="round"/>
+                  <line x1="5.5" y1="19.5" x2="32.5" y2="19.5" stroke="white" stroke-linecap="round"/>
+                  <line x1="5.5" y1="15.5" x2="32.5" y2="15.5" stroke="white" stroke-linecap="round"/>
                </svg>
                Good Notes
             </div>

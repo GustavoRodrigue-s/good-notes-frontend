@@ -143,3 +143,9 @@
       display: block;
    }
 } 
+
+@media (max-width: 320px) {
+   .good-notes-logo > svg {
+      display: none;
+   }
+}

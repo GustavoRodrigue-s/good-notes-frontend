@@ -1,11 +1,15 @@
 @charset "UTF-8";
 
 @media (max-width: 1365px) {
-   .container-about-product {
-      padding: 30px 0 !important;
-   }
    .about-product {
       justify-content: center;
+   }
+}
+
+@media (max-width: 1355px) {
+   .container-about-product > .background {
+      top: -250px;
+      left: -300px;
    }
 }
 
