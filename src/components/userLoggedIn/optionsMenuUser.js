@@ -1,7 +1,6 @@
 import initProfileOptions from '../popupProfile/profileOptions.js';
-import { deleteCookies } from '../../auth/auth.js';
 
-const optionsMenuUser = api => {
+const optionsMenuUser = ({ api, deleteCookies }) => {
    const containerIsLoggedIn = document.querySelector('.container-isLoggedIn');
    const popupWrapper = document.querySelector('.popup-wrapper-profile');
 

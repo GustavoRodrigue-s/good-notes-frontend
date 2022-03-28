@@ -1,47 +1,29 @@
 import api from '../services/api.js';
 import renderHeader from "../components/header/renderHeader.js";
 import renderPopupForms from "../components/popupForms/renderPopup.js";
-import renderPopupCookie from '../components/cookie/cookie.js'; 
+import renderPopupCookie from '../components/popupCookie/cookie.js'; 
 import renderPopupEditProfile from '../components/popupProfile/renderPopup.js';
+import { getCookies, createCookies, deleteCookies } from '../services/cookie.js';
 
-// create, get and delete cookies.
-export const getCookies = () => {
-   const cookies = document.cookie.split('; ').join('=').split('=');
+const containerLoading = document.querySelector('.container-loading');
 
-   const accessToken = cookies[cookies.indexOf('accessToken') + 1];
-   const refreshToken = cookies[cookies.indexOf('refreshToken') + 1];
-   const apiKey = '' || cookies[cookies.indexOf('apiKey') + 1];
-
-   return { accessToken, refreshToken, apiKey }
-}
-
-export const createCookie = ({ accessToken, refreshToken }, apiKey) => {
-   document.cookie = `apiKey = ${apiKey} ; path=/`;
-   document.cookie = `accessToken = ${accessToken} ; path=/`;
-   document.cookie = `refreshToken = ${refreshToken} ; path=/`;
-
-   window.open('./index.html', '_self');
-}
-
-export const deleteCookies = () => {
-   document.cookie = `accessToken = ; Path=/ ; Expires=Thu, 01 Jan 1970 00:00:00 GMT`;
-   document.cookie = `refreshToken = ; Path=/ ; Expires=Thu, 01 Jan 1970 00:00:00 GMT`;
-   document.cookie = `apiKey = ; Path=/ ; Expires=Thu, 01 Jan 1970 00:00:00 GMT`;
-
-   localStorage.clear();
-   sessionStorage.clear();
-}
 
 const redirectUserAsLoggedOut = () => {
    deleteCookies();
 
    renderHeader(false);
-   renderPopupForms(api);
-   renderPopupCookie();
+   renderPopupForms({ api, createCookies });
+   
+   const cookieConfirm = localStorage.getItem('cookieConfirm');
+
+   !cookieConfirm && renderPopupCookie();
 
    setTimeout(() => {
-      document.querySelector('.container-loading').classList.toggle('show');
-      document.querySelector('.popup-wrapper-cookie').classList.add('show');
+      containerLoading.classList.toggle('show');
+      
+      if (!cookieConfirm) {
+         document.querySelector('.popup-wrapper-cookie').classList.add('show');
+      }
    }, 300);
 }
 
@@ -66,11 +48,9 @@ const verifyTheTokens = async () => {
 
       if(status === 200) {
          renderHeader(true);
-         renderPopupEditProfile(api);
+         renderPopupEditProfile({ api, deleteCookies });
 
-         setTimeout(() => 
-            document.querySelector('.container-loading').classList.toggle('show'), 300
-         );
+         setTimeout(() => containerLoading.classList.toggle('show'), 300);
       }
       
    }catch(e) {

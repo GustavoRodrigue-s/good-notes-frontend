@@ -12,6 +12,8 @@ const closePopupCookie = () => {
          popupWrapper.classList.remove('show');
 
          setTimeout(() => popupWrapper.remove(), 500);
+
+         localStorage.setItem('cookieConfirm', 'ok');
       }
    });
 }
@@ -28,7 +30,7 @@ const renderPopupCookie = () => {
             <div class="header">
                <div class="title">
                   <h1>Cookies</h1>
-                  <img src="../images/cookie_icon.svg" alt="ícone de cookie">
+                  <img src="./images/cookie_icon.svg" alt="ícone de cookie">
                </div>
             </div>
             <div class="main-content">

@@ -36,7 +36,7 @@ const renderHeader = hasToken => {
 
    const headerContent = `
       <div class="container-header-flex">
-         <a href="./index.html" tabindex="0" class="link-logo">
+         <a href="/" tabindex="0" class="link-logo">
             <div class="good-notes-logo">
                <svg width="42" height="35" viewBox="0 0 43 37" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <rect x="6.25" y="0.25" width="36.5" height="30.5" rx="4.75" fill="#0058DB" stroke="white" stroke-width="0.5"/>
@@ -56,12 +56,12 @@ const renderHeader = hasToken => {
                   <nav>
                      <ul>
                         <li>
-                           <a href="#"class="link-home">
+                           <a href="/"class="link-home">
                               Home
                            </a>
                         </li>
                         <li>
-                           <a href="#" class="my-notes">
+                           <a href="./notes.html" class="my-notes">
                               Minhas Notas
                            </a>
                         </li>
@@ -72,10 +72,10 @@ const renderHeader = hasToken => {
                <div class="hamburguer-wrapper" aria-label="Fechar Menu"></div>
                <div class="container-authentication popup-hamburguer" id="menu-hamburguer" role="menu">
                   <nav class="nav-hamburguer">
-                     <a href="#">
+                     <a href="/">
                         Home
                      </a>
-                     <a href="#" class="my-notes">
+                     <a href="./notes.html" class="my-notes">
                         Minhas Notas
                      </a>
                   </nav>

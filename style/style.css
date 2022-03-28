@@ -5,7 +5,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400&display=swap');
 
 @import url('../src/components/header/header.css');
-@import url('../src/components/cookie/cookie.css');
+@import url('../src/components/popupCookie/cookie.css');
 @import url('../src/components/popupForms/popup.css');
 @import url('../src/components/popupProfile/popup.css');
 
@@ -398,12 +398,13 @@ footer {
    aplicar a arquitetura MVC no backend --- fetito.
    mudar o nome das pastas popupForms > popupForms (exemplo) --- feito.
    criar um js para automatizar o uso das requests --- feito.
+   separar as funcs cookies o auth.js. --- feito
    
 
    utilizar o base64 para encode e decode do bd.
    lidar com xss (quando precisamos printar no body (Notes)).
    não depender de serviços externos (lordicon).
-   separar as funcs cookies o auth.js.
+   pensar em importar as folhas css pelo js.
    criar a IU da criação de notas.
    
 */

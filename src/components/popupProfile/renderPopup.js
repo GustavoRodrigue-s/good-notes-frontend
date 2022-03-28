@@ -1,6 +1,6 @@
 import optionsMenuUser from "../userLoggedIn/optionsMenuUser.js";
 
-const renderPopupEditProfile = api => {
+const renderPopupEditProfile = someFunctions => {
    const popupWrapper = document.querySelector('.popup-wrapper-profile');
 
    const popup = `
@@ -126,7 +126,7 @@ const renderPopupEditProfile = api => {
 
    popupWrapper.innerHTML = popup;
 
-   optionsMenuUser(api);
+   optionsMenuUser(someFunctions);
 }
 
 export default renderPopupEditProfile;

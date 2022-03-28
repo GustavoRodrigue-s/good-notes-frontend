@@ -1,6 +1,6 @@
 import popupFormInit from "./popup.js";
 
-const renderPopupForms = api => {
+const renderPopupForms = someFunctions => {
    const popupWrapper = document.querySelector('.popup-wrapper-auth');
 
    const popupContent = `
@@ -161,7 +161,7 @@ const renderPopupForms = api => {
 
    popupWrapper.innerHTML = popupContent;
 
-   popupFormInit(api);
+   popupFormInit(someFunctions);
 }
 
 export default renderPopupForms; 

@@ -1,6 +1,6 @@
 import formInit from "./submitForms.js";
 
-const popupFormInit = apiUrl => {
+const popupFormInit = someFunctions => {
    const containerButtons = document.querySelector('.container-buttonsToThePopup');
    const popupWrapper = document.querySelector('.popup-wrapper-auth');
    const containerEyes = document.querySelectorAll('.btn-eyes');
@@ -134,7 +134,7 @@ const popupFormInit = apiUrl => {
       container.addEventListener('touchstart', togglePasswordEye);
    })
 
-   formInit(apiUrl);
+   formInit(someFunctions);
 }
 
 export default popupFormInit;

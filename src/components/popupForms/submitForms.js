@@ -1,7 +1,6 @@
 import { chooseRequestMessage, showMessageError } from "./handleErrors.js";
-import { createCookie } from '../../auth/auth.js';
 
-const formInit = api => {
+const formInit = ({ api, createCookie }) => {
    const formSignIn = document.querySelector('.form-signIn');
    const formSignUp = document.querySelector('.form-signUp');
 
