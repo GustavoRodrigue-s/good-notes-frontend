@@ -1,7 +1,7 @@
 // Default request api
 
 const api = {
-   baseUrl: 'http://192.168.0.9:5000/',
+   baseUrl: 'https://good-notes-backend.herokuapp.com/',
 
    headers: {
       "Content-Type": "application/json"
