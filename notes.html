@@ -7,9 +7,19 @@
    <meta name="author" content="Gustavo Rodrigues Fabiano & Lucas Polli">
    <meta name="description" content="Crie e guarde seu mundo!">
    <link rel="stylesheet" type="text/css" href="style/style.css">
+   <link rel="stylesheet" type="text/css" href="style/notes.css">
    <link rel="stylesheet" type="text/css" href="src/components/header/responsive.css">
    <link rel="shortcut icon" href="../images/logo_gn.png" type="image/x-icon">
    <title>Good Notes</title>
+
+   <style>
+      .my-notes {
+         color: var(--accentColor);
+      }
+      .my-notes:hover {
+         color: var(--accentColor) !important;
+      }
+   </style>
 </head>
 <body>
    
@@ -18,6 +28,245 @@
    </div>
 
    <header></header>
+
+   <main>
+      <div class="note-app">
+         <section class="categories">
+            <div>
+               <div class="container-search">
+                  <div>
+                     <img src="./images/search_icon.svg" alt="search_icon" />
+                     <input type="search" name="inputSearch" placeholder="Pesquisar categoria..." autocomplete="off" />
+                  </div>
+               </div>
+               <div class="container-categories-list">
+                  <ul>
+
+                     <li class="category-item selected">
+                        <button class="category-name">
+                           <svg width="25" height="20" viewBox="0 0 25 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M0 5.33333H15.1661V8H0V5.33333ZM0 2.66667H15.1661V0H0V2.66667ZM0 13.3333H9.65118V10.6667H0V13.3333ZM20.6949 9.16L21.6738 8.21333C21.8013 8.08973 21.9529 7.99167 22.1196 7.92476C22.2864 7.85785 22.4652 7.82341 22.6458 7.82341C22.8264 7.82341 23.0052 7.85785 23.172 7.92476C23.3388 7.99167 23.4903 8.08973 23.6178 8.21333L24.5967 9.16C25.1344 9.68 25.1344 10.52 24.5967 11.04L23.6178 11.9867L20.6949 9.16ZM19.716 10.1067L12.4087 17.1733V20H15.3316L22.6389 12.9333L19.716 10.1067Z" fill="#969696"/>
+                           </svg>
+                           <span>Notas</span>
+                        </button>
+                        <button class="category-more">
+                           <svg width="20" height="10" viewBox="0 0 21 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <circle cx="2.5" cy="2.5" r="2.5" fill="#969696"/>
+                              <circle cx="18.5" cy="2.5" r="2.5" fill="#969696"/>
+                              <circle cx="10.5" cy="2.5" r="2.5" fill="#969696"/>
+                           </svg>
+                        </button>
+                     </li>
+
+                     <li class="category-item">
+                        <button class="category-name">
+                           <svg width="25" height="20" viewBox="0 0 25 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M0 5.33333H15.1661V8H0V5.33333ZM0 2.66667H15.1661V0H0V2.66667ZM0 13.3333H9.65118V10.6667H0V13.3333ZM20.6949 9.16L21.6738 8.21333C21.8013 8.08973 21.9529 7.99167 22.1196 7.92476C22.2864 7.85785 22.4652 7.82341 22.6458 7.82341C22.8264 7.82341 23.0052 7.85785 23.172 7.92476C23.3388 7.99167 23.4903 8.08973 23.6178 8.21333L24.5967 9.16C25.1344 9.68 25.1344 10.52 24.5967 11.04L23.6178 11.9867L20.6949 9.16ZM19.716 10.1067L12.4087 17.1733V20H15.3316L22.6389 12.9333L19.716 10.1067Z" fill="#969696"/>
+                           </svg>
+                           <span>Tarefas</span>
+                        </button>
+                        <button class="category-more">
+                           <svg width="20" height="10" viewBox="0 0 21 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <circle cx="2.5" cy="2.5" r="2.5" fill="#969696"/>
+                              <circle cx="18.5" cy="2.5" r="2.5" fill="#969696"/>
+                              <circle cx="10.5" cy="2.5" r="2.5" fill="#969696"/>
+                           </svg>
+                        </button>
+                     </li>
+
+                     <li class="category-item">
+                        <button class="category-name">
+                           <svg width="25" height="20" viewBox="0 0 25 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M0 5.33333H15.1661V8H0V5.33333ZM0 2.66667H15.1661V0H0V2.66667ZM0 13.3333H9.65118V10.6667H0V13.3333ZM20.6949 9.16L21.6738 8.21333C21.8013 8.08973 21.9529 7.99167 22.1196 7.92476C22.2864 7.85785 22.4652 7.82341 22.6458 7.82341C22.8264 7.82341 23.0052 7.85785 23.172 7.92476C23.3388 7.99167 23.4903 8.08973 23.6178 8.21333L24.5967 9.16C25.1344 9.68 25.1344 10.52 24.5967 11.04L23.6178 11.9867L20.6949 9.16ZM19.716 10.1067L12.4087 17.1733V20H15.3316L22.6389 12.9333L19.716 10.1067Z" fill="#969696"/>
+                           </svg>
+                           <span>Mercado</span>
+                        </button>
+                        <button class="category-more">
+                           <svg width="20" height="10" viewBox="0 0 21 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <circle cx="2.5" cy="2.5" r="2.5" fill="#969696"/>
+                              <circle cx="18.5" cy="2.5" r="2.5" fill="#969696"/>
+                              <circle cx="10.5" cy="2.5" r="2.5" fill="#969696"/>
+                           </svg>
+                        </button>
+                     </li>
+
+                  </ul>
+               </div>
+            </div>
+
+            <div class="container-add-categorie">
+               <button class="btn-default btn-default-hover">
+                  <svg width="16" height="16" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                     <path d="M6 1L6 12" stroke="#fff" stroke-linecap="round"/>
+                     <line x1="11.5" y1="6.5" x2="0.5" y2="6.5" stroke="#fff" stroke-linecap="round"/>
+                  </svg>
+                  Adicionar Categoria
+               </button>
+            </div>
+         </section>
+
+         <section class="note-list">
+            <div>
+               <h1>Notas</h1>
+            </div>
+            <div class="container-add-note">
+               <button class="btn-default">
+                  <svg width="16" height="16" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                     <path d="M6 1L6 12" stroke="#0066FF" stroke-linecap="round"/>
+                     <line x1="11.5" y1="6.5" x2="0.5" y2="6.5" stroke="#0066FF" stroke-linecap="round"/>
+                  </svg>
+                  Adicionar Nota
+               </button>
+            </div>
+            <div class="container-notes">
+               <ul>
+
+                  <li class="note-item selected">
+                     <button>
+                        <div>
+                           <small>28 Março 2022 às 17:22</small>
+                        </div>
+                        <div>
+                           <h2>Nota test</h2>
+                        </div>
+                        <div>
+                           <p>
+                              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Officiis molestias fugiat, dolore laboriosam enim necessitatibus deleniti velit corporis iure impedit fuga cupiditate odit porro dolorum alias similique, libero numquam sint? Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci, neque praesentium sint est dignissimos aspernatur reiciendis saepe. Qui, quaerat eius, natus quasi doloremque dolore dolorum provident fugit nesciunt debitis veniam!
+                           </p>
+                        </div>
+                     </button>
+                  </li>
+                  <li class="note-item">
+                     <button>
+                        <div>
+                           <small>28 Março 2022 às 17:22</small>
+                        </div>
+                        <div>
+                           <h2>Nota test</h2>
+                        </div>
+                        <div>
+                           <p>
+                              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Officiis molestias fugiat, dolore laboriosam enim necessitatibus deleniti velit corporis iure impedit fuga cupiditate odit porro dolorum alias similique, libero numquam sint? Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci, neque praesentium sint est dignissimos aspernatur reiciendis saepe. Qui, quaerat eius, natus quasi doloremque dolore dolorum provident fugit nesciunt debitis veniam!
+                           </p>
+                        </div>
+                     </button>
+                  </li>
+                  <li class="note-item">
+                     <button>
+                        <div>
+                           <small>28 Março 2022 às 17:22</small>
+                        </div>
+                        <div>
+                           <h2>Nota test</h2>
+                        </div>
+                        <div>
+                           <p>
+                              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Officiis molestias fugiat, dolore laboriosam enim necessitatibus deleniti velit corporis iure impedit fuga cupiditate odit porro dolorum alias similique, libero numquam sint? Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci, neque praesentium sint est dignissimos aspernatur reiciendis saepe. Qui, quaerat eius, natus quasi doloremque dolore dolorum provident fugit nesciunt debitis veniam!
+                           </p>
+                        </div>
+                     </button>
+                  </li>
+                  <li class="note-item">
+                     <button>
+                        <div>
+                           <small>28 Março 2022 às 17:22</small>
+                        </div>
+                        <div>
+                           <h2>Nota test</h2>
+                        </div>
+                        <div>
+                           <p>
+                              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Officiis molestias fugiat, dolore laboriosam enim necessitatibus deleniti velit corporis iure impedit fuga cupiditate odit porro dolorum alias similique, libero numquam sint? Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci, neque praesentium sint est dignissimos aspernatur reiciendis saepe. Qui, quaerat eius, natus quasi doloremque dolore dolorum provident fugit nesciunt debitis veniam!
+                           </p>
+                        </div>
+                     </button>
+                  </li>
+
+               </ul>
+            </div>
+         </section>
+
+         <section class="current-note">
+            <div class="header">
+               <div class="note-path">
+                  Notas > Nota test
+               </div>
+               <div>
+                  <svg width="20" height="10" viewBox="0 0 21 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                     <circle cx="2.5" cy="2.5" r="2.5" fill="#000"/>
+                     <circle cx="18.5" cy="2.5" r="2.5" fill="#000"/>
+                     <circle cx="10.5" cy="2.5" r="2.5" fill="#000"/>
+                  </svg>
+               </div>
+            </div>
+            <div class="main">
+               <div class="title-note">
+                  <div>
+                     <input type="text" name="inputText" value="Nota Teste" maxlength="55" />
+                  </div>
+                  <div class="last-modification">
+                     <small>
+                        última modificação:
+                        <strong>28/03/2022 às 17:52</strong>
+                     </small>
+                  </div>
+               </div>
+               <div class="tool-bar" role="ferramentas adicionais">
+                  <div>
+                     <button>
+                        <img src="./images/text_editor/strong_icon.svg" alt="texto forte" />
+                     </button>
+                     <button>
+                        <img src="./images/text_editor/italic_icon.svg" alt="texto em italico" />
+                     </button>
+                     <button>
+                        <img src="./images/text_editor/underline_icon.svg" alt="texto com sublinhado" />
+                     </button>
+                     <button>
+                        <img src="./images/text_editor/ul_icon.svg" alt="lista não ordenada" />
+                     </button>
+                     <button>
+                        <img src="./images/text_editor/ol_icon.svg" alt="lista ordenada" />
+                     </button>
+                  </div>
+                  <div class="center-tools">
+                     <button>
+                        <img src="./images/text_editor/left_text_icon.svg" alt="texto para esquerda" />
+                     </button>
+                     <button>
+                        <img src="./images/text_editor/center_text_icon.svg" alt="texto centralizado" />
+                     </button>
+                     <button>
+                        <img src="./images/text_editor/right_text_icon.svg" alt="texto para direita" />
+                     </button>
+                     <button>
+                        <img src="./images/text_editor/justify_text_icon.svg" alt="texto justificado" />
+                     </button>
+                  </div>
+                  <div class="select-group">
+                     <select name="selectFontSize">
+                        <option name="12" selected >12</option>
+                        <option name="14" >14</option>
+                        <option name="16" >16</option>
+                        <option name="18" >18</option>
+                        <option name="20" >20</option>
+                     </select>
+                     <select name="selectFontFamily" >
+                        <option name="arial" selected >Arial</option>
+                     </select>
+                     <input type="color" name="inputColor" >
+                  </div>
+               </div>
+               <div class="note-content">
+                  <textarea >Lorem Ipsum!
+                     
+                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta veritatis vitae officia odit tenetur aut, nam ullam nemo aliquid ipsam? Labore laboriosam temporibus adipisci dolores. Libero nostrum est sit cupiditate. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quibusdam inventore molestias consequatur. Minus fuga corporis eos, deleniti sed at molestiae non labore alias autem, numquam itaque distinctio laboriosam et! Recusandae. Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum id dolores, laborum enim animi optio deserunt veritatis asperiores vitae quae tenetur perspiciatis in ipsa quo ipsam atque voluptatibus commodi recusandae. Lorem, ipsum dolor sit amet consectetur adipisicing elit. Autem corrupti excepturi delectus quasi tenetur totam itaque deleniti repudiandae numquam, ex blanditiis fuga Lorem ipsum dolor sit amet consectetur adipisicing elit. Error dolor quibusdam ipsa voluptas ducimus dolores facilis velit, in quod, recusandae dolore consequuntur vitae reprehenderit quisquam cupiditate magni eius, est suscipit. Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque dolorem, deserunt quos tenetur aperiam harum corrupti adipisci, obcaecati aliquam quisquam labore incidunt ad tempore eum! Tempore alias facilis expedita sit! Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur, omnis veniam! Maiores, fuga laboriosam velit tempore aliquam iure aspernatur labore incidunt totam culpa voluptatum at? Voluptatibus, architecto consequuntur. Cupiditate, consequuntur.
+                  </textarea>
+               </div>
+            </div>
+         </section>
+      </div>
+   </main>
 
    <div class="popup-wrapper-auth popup-wrapper" tabindex="0"></div>
    <div class="popup-wrapper-profile popup-wrapper" tabindex="0"></div>

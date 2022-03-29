@@ -32,8 +32,6 @@ export const chooseErrors = data => {
       }
    }
 
-   console.log(data);
-
    data.forEach(data => {
       errors[data.reason] && errors[data.reason](data);
    })

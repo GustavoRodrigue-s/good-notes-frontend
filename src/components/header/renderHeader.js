@@ -56,7 +56,7 @@ const renderHeader = hasToken => {
                   <nav>
                      <ul>
                         <li>
-                           <a href="/"class="link-home">
+                           <a href="/" class="link-home">
                               Home
                            </a>
                         </li>
@@ -72,7 +72,7 @@ const renderHeader = hasToken => {
                <div class="hamburguer-wrapper" aria-label="Fechar Menu"></div>
                <div class="container-authentication popup-hamburguer" id="menu-hamburguer" role="menu">
                   <nav class="nav-hamburguer">
-                     <a href="/">
+                     <a href="/" class="link-home">
                         Home
                      </a>
                      <a href="./notes.html" class="my-notes">

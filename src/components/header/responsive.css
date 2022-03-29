@@ -42,6 +42,7 @@
 
    .popup-hamburguer {
       position: absolute;
+      z-index: 9999;
       width: 200px;
       background: rgb(255, 255, 255);
       border: 1px solid rgb(226, 226, 226);

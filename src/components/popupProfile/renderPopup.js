@@ -21,7 +21,7 @@ const renderPopupEditProfile = someFunctions => {
                         A exclusão da conta é irreversível, seus dados e notas serão completamente apagados. Ao excluir sua conta, você será redirecionado para a página principal.
                      </p>
                      <p>
-                        Tem certeza que você deseja excluir sua conta? Para confirmar digite o seu (<strong>Nome de usuário</strong>) abaixo.
+                        Tem certeza que deseja excluir sua conta? Para confirmar digite o seu (<strong>Nome de usuário</strong>) abaixo.
                      </p>
                   </div>
                   <div class="controls">
@@ -53,12 +53,7 @@ const renderPopupEditProfile = someFunctions => {
             </div>
             <div class="popup-edit-photo">
                <div class="container-photo">
-                  <lord-icon
-                     src="https://cdn.lordicon.com/dxjqoygy.json"
-                     trigger="loop"
-                     delay="3000"
-                     colors="primary:#646369,secondary:#646369">
-                  </lord-icon>
+                  <img src="./images/avatar_icon.svg" alt="avatar icon" />
                </div>
                <div class="container-photo-contents">
                   <div class="photo-texts">

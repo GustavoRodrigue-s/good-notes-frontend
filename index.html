@@ -7,12 +7,20 @@
       <meta name="author" content="Gustavo Rodrigues Fabiano & Lucas Polli">
       <meta name="description" content="Crie e guarde seu mundo!">
       <link rel="stylesheet" type="text/css" href="style/style.css">
-      <link rel="stylesheet" type="text/css" href="src/components/home/home.css">
+      <link rel="stylesheet" type="text/css" href="style/home.css">
       <link rel="stylesheet" type="text/css" href="src/components/header/responsive.css">
-      <link rel="stylesheet" type="text/css" href="src/components/home/responsive.css">
       <link rel="shortcut icon" href="../images/logo_gn.png" type="image/x-icon">
       <script src="https://cdn.lordicon.com/libs/mssddfmo/lord-icon-2.1.0.js"></script>
       <title>Good Notes</title>
+
+      <style>
+         .link-home {
+            color: var(--accentColor);
+         }
+         .link-home:hover {
+            color: var(--accentColor) !important;
+         }
+      </style>
    </head>
    <body>
 
@@ -28,14 +36,14 @@
                <h1>Crie suas primeiras anotações grátis e super rápido!</h1>
                <h2>Todas anotações são confidencializadas e salvadas para uma melhor experiência.</h2>
                <div class="container-buttons-apresentation">
-                  <a href="layout/user/login/login.html" tabindex="-1">
+                  <a href="./notes.html" tabindex="-1">
                      <button class="btn-startNow btn-default btn-default-hover">
                         Começar agora
                      </button>
                   </a>
-                  <a href="src/pages/notes.html" tabindex="-1">
+                  <a href="#container-about-product" tabindex="-1">
                      <button class="btn-showAllNotes btn-default">
-                        Ver suas anotações
+                        Ver mais
                      </button>
                   </a>
                </div>
@@ -57,7 +65,7 @@
             </div>
          </section>
 
-         <section class="container-about-product">
+         <section class="container-about-product" id="container-about-product">
             <div class="about-product container-limiter">
                <div class="about-creative center-flex">
                   <div class="about-icon">

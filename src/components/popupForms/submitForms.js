@@ -1,6 +1,6 @@
 import { chooseRequestMessage, showMessageError } from "./handleErrors.js";
 
-const formInit = ({ api, createCookie }) => {
+const formInit = ({ api, createCookies }) => {
    const formSignIn = document.querySelector('.form-signIn');
    const formSignUp = document.querySelector('.form-signUp');
 
@@ -40,7 +40,7 @@ const formInit = ({ api, createCookie }) => {
          showAndHideLoading(index);
 
          data.state === 'success'
-            ? createCookie(data.userData, data.apiKey)
+            ? createCookies(data.userData, data.apiKey)
             : chooseRequestMessage(data.errors, index);
 
          if(status === 200) {

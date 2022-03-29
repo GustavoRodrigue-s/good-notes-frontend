@@ -35,6 +35,7 @@ body {
    font: 1.6em 'Inter', sans-serif;
    overflow-x: hidden;
    font-family: var(--fontDefault);
+   scroll-behavior: smooth;
 }
 
 ul, ol {
