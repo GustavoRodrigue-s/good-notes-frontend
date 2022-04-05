@@ -15,20 +15,20 @@ const renderHeader = hasToken => {
 
    const loggedInUser = `
       <div class="container-isLoggedIn">
-         <details class="user-information tabindex="0">
-               <summary class="center-flex">
-                  <img src="../images/avatar_icon.svg" alt="ícone do avatar do usuário">
-               </summary>
-               <ul>
-                  <li class="user-edit" tabindex="0" aria-haspopup="true" aria-expanded="false" aria-label="Abrir caixa para editar perfil.">Editar perfil</li>
-                  <li class="user-exit" tabindex="0" aria-label="Sair da conta.">Sair</li>
-               </ul>
+         <details class="user-information details-default" tabindex="0">
+            <summary class="center-flex">
+               <img src="../images/avatar_icon.svg" alt="ícone do avatar do usuário">
+            </summary>
+            <ul>
+               <li class="user-edit" tabindex="0" aria-haspopup="true" aria-expanded="false" aria-label="Abrir caixa para editar perfil.">Editar perfil</li>
+               <li class="user-exit" tabindex="0" aria-label="Sair da conta.">Sair</li>
+            </ul>
          </details>
          <div class="user-information-hamburguer">
-               <ul>
-                  <li class="user-edit" tabindex="0" aria-haspopup="true" aria-expanded="false" aria-label="Abrir caixa para editar perfil.">Editar perfil</li>
-                  <li class="user-exit" tabindex="0" aria-label="Sair da conta.">Sair</li>
-               </ul>
+            <ul>
+               <li class="user-edit" tabindex="0" aria-haspopup="true" aria-expanded="false" aria-label="Abrir caixa para editar perfil.">Editar perfil</li>
+               <li class="user-exit" tabindex="0" aria-label="Sair da conta.">Sair</li>
+            </ul>
          </div>
       </div>`;
 

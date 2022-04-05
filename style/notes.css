@@ -38,6 +38,7 @@ section.current-note {
 .container-search, .category-item, .container-add-categorie {
    border-radius: 8px;
    height: 50px;
+   flex-shrink: 0;
 }
 
 section.categories {
@@ -46,8 +47,10 @@ section.categories {
    display: flex;
    flex-direction: column;
    justify-content: space-between;
+   gap: 50px;
    padding: 20px;
    color: #969696;
+   overflow-y: auto;
 }
 
 .container-search > div {
@@ -83,62 +86,146 @@ section.categories {
    gap: 10px;
 }
 
+/* CATEGORY CARDS */
+
 .category-item {
    width: 100%;
    background-color: #F9F9F9;
    display: flex;
-   justify-content: space-between;
-   align-items: center;
-   cursor: pointer;
+   transition: 0.3s;
 }
 
-.category-item:hover span, .category-item:hover svg > path {
+.category-item.confirmation {
+   background-color: #fff;
+}
+
+.category-item.confirmation .btn-name > input {
+   position: relative;
+   z-index: 99999;
+}
+
+.category-item:hover {
+   box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+   background-color: #fff;
+}
+
+.category-item:hover .category-name {
    color: #000;
-   fill: #000;
 }
 
-.category-name, .category-more {
-   cursor: pointer;
+.category-item > div {
    height: 100%;
-   border: none;
-   background: none;
-   color: #969696;
 }
 
-.category-more {
-   padding: 0 20px; 
-}
+/* -------- */
 
-.category-more:hover > svg > circle {
-   fill: #000;
-}
-
-.category-name {
-   padding-left: 20px; 
+.container-name {
    width: 100%;
+}
+
+.container-options > .container-dropDown {
+   width: 50px;
+}
+
+.container-options > .container-confirmation {
+   position: relative;
+   z-index: 9999;
+   width: 90px;
+}
+
+.container-options {
+   padding: 5px;
+}
+
+.container-options .list-dropDown > li:hover > .tooltip {
+   visibility: visible;
+   opacity: 1;
+   transform: translateX(0);
+}
+
+.btn-name {
+   height: 100%;
+   width: 100%;
+   background: none;
+   color: var(--colorGray);
+   transition: color 0.3s;
+   padding-left: 20px; 
    display: flex;
    align-items: center;
    gap: 10px;
-   font: 1.6rem var(--fontDefault), sans-serif;
-   text-overflow: ellipsis;
+   font-size: 1.6rem;
 }
 
-.category-name > svg {
-   margin-top: 3px;
+.btn-name > input {
+   pointer-events: none;
+   height: 100%;
+   padding: 0;
+   border: none;
+   cursor: pointer;
+}
+
+.btn-name > svg {
+   margin-top: 2px;
+}
+
+.category-item.confirmation input {
+   pointer-events: all;
+   cursor: text;
+}
+
+.container-options > div {
+   width: 100%;
+   height: 100%;
+}
+
+.container-options .list-dropDown > li:hover svg {
+   fill: #000;
 }
 
 .category-item.selected {
    background-color: #fff;
 }
 
-.category-item.selected span, .category-item.selected svg > path {
+.category-item.selected .btn-name, .category-item.selected .btn-name > input {
    color: var(--accentColor);
-   fill: var(--accentColor);
 }
 
-.category-item.selected > .category-more > svg > circle {
-   fill: #000;
+.container-confirmation > button {
+   flex: 1 1;
+   height: 100%;
+   background-color: transparent;
+   cursor: pointer;
 }
+
+.btn-confirm-category {
+   z-index: 99999;
+}
+
+.category-item .container-options > div {
+   display: none;
+}
+
+.category-item > .container-options > div.show {
+   display: flex;
+}
+
+.btn-confirm-category:hover {
+   background-color: #32ff8e28;
+}
+
+.btn-undo-category:hover {
+   background-color: rgba(255, 126, 126, 0.205);
+}
+
+.list-dropDown > li > button {
+   cursor: pointer;
+   width: 100%;
+   height: 100%;
+   background-color: transparent;
+   border: none;
+   outline: none;
+}
+
 
 /* SECTION NOTES LIST */
 
@@ -312,4 +399,44 @@ section.current-note {
    border: none;
    outline: none;
    font: 1.6rem Arial, sans-serif;
+}
+
+/* OTHER STYLES */
+
+.popup-category-delete {
+   max-width: 350px;
+   text-align: center;
+   padding-bottom: 20px;
+   color: var(--colorGray);
+}
+
+.container-btn-category {
+   margin-top: 35px;
+}
+
+.popup-category-delete h1 {
+   font-size: 2.5rem;
+   color: #000;
+   margin-bottom: 5px;
+}
+
+.btn-confirm-delete-category, .btn-cancel-delete-category {
+   width: 100%;
+   height: 40px;
+   font-size: 1.5rem;
+   font-weight: 500; 
+}
+
+.btn-cancel-delete-category {
+   background-color: #fff;
+   color: #000;
+   margin-top: 5px;
+}
+
+.btn-confirm-delete-category {
+   background-color: rgb(255, 77, 77);
+}
+
+.btn-confirm-delete-category:hover {
+   background-color: #b90009da;
 }

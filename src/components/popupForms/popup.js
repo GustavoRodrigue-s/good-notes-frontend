@@ -41,7 +41,7 @@ const popupFormInit = someFunctions => {
       if (!avalibleToOpen) return
       if (e.type === 'touchstart') e.preventDefault();
 
-      const popupsOverlay = document.querySelectorAll('.popup-overlay'),
+      const popupsOverlay = document.querySelectorAll('.popup-wrapper-auth > .popup-overlay'),
       dataJsOfTheElementClicked = e.target.dataset.js;
       
       const addShowClassOfPopup = () => {

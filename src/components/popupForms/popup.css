@@ -1,8 +1,8 @@
 .popup-signIn.popup {
-   max-width: 450px;
+   max-width: 410px;
 }
 .popup-signUp.popup {
-   max-width: 600px;
+   max-width: 560px;
 }
 
 .popup-signIn > div, .popup-signUp > div {

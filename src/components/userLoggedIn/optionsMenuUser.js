@@ -4,14 +4,6 @@ const optionsMenuUser = ({ api, deleteCookies }) => {
    const containerIsLoggedIn = document.querySelector('.container-isLoggedIn');
    const popupWrapper = document.querySelector('.popup-wrapper-profile');
 
-   // Open and close menu options.
-
-   const summaryOptions = document.querySelector('.user-information > summary');
-
-   summaryOptions.addEventListener('click', () => {
-      summaryOptions.classList.toggle('show');
-   });
-
    const logoutAccount = async () => {
       try {
          document.querySelector('body > .container-loading').classList.add('show');

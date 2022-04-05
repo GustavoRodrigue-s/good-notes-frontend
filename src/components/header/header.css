@@ -89,6 +89,10 @@ a.link-logo {
    color: var(--colorGray);
 }
 
+.user-information {
+   width: 150px;
+}
+
 .user-information > summary {
    list-style-type: "";
    cursor: pointer;
@@ -96,21 +100,6 @@ a.link-logo {
 }
 
 .user-information > summary::after {
-   content: "";
-   width: 100%;
-   height: 100%;
-   position: fixed;
-   inset: 0;
-   z-index: 999;
-   display: none;
-   cursor: default;
-}
-
-.user-information > summary.show::after{
-   display: block;
-}
-
-.user-information > summary::before {
    content: "";
    position: absolute;
    right: -20%;
@@ -123,42 +112,6 @@ a.link-logo {
 .user-information > summary > img{
    width: 40px;
    height: 40px;
-}
-
-.user-information > ul {
-   position: absolute;
-   z-index: 99999;
-   width: 150px;
-   top: 110%;
-   right: 5%;
-   background: rgb(255, 255, 255);
-   border: 1px solid rgb(226, 226, 226);
-   text-align: center;
-   padding: 10px;
-   border-radius: 10px;
-   display: flex;
-   flex-direction: column;
-   gap: 5px; 
-}
-
-.user-information > ul::before, .popup-hamburguer::before {
-   content: "";
-   position: absolute;
-   right: 10%;
-   top: -5px;
-   transform: rotateZ(45deg);
-   width: 10px;
-   height: 10px;
-   background: #fff;
-   border-top: 1px solid rgb(226, 226, 226);
-   border-left: 1px solid rgb(226, 226, 226);
-   border-radius: 2px;
-}
-
-.user-information > ul > li, .user-information-hamburguer li {
-   padding: 7px 10px;
-   cursor: pointer;
-   transition: 0.3s;
 }
 
 :is(.user-information > ul > li, .user-information-hamburguer li):hover {
