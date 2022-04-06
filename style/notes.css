@@ -217,7 +217,7 @@ section.categories {
    background-color: rgba(255, 126, 126, 0.205);
 }
 
-.list-dropDown > li > button {
+.container-options .list-dropDown > li > button {
    cursor: pointer;
    width: 100%;
    height: 100%;
@@ -226,6 +226,9 @@ section.categories {
    outline: none;
 }
 
+.container-options .list-dropDown > li {
+   padding: 0;
+}
 
 /* SECTION NOTES LIST */
 
