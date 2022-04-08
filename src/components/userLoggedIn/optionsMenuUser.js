@@ -3,6 +3,13 @@ import initProfileOptions from '../popupProfile/profileOptions.js';
 const optionsMenuUser = ({ api, deleteCookies }) => {
    const containerIsLoggedIn = document.querySelector('.container-isLoggedIn');
    const popupWrapper = document.querySelector('.popup-wrapper-profile');
+   const btnDropDown = document.querySelector('.btn-dropDown-header-menu');
+
+   // Header btn account
+
+   btnDropDown.addEventListener('click', e => e.target.classList.toggle('active'));
+
+   // menu options
 
    const logoutAccount = async () => {
       try {

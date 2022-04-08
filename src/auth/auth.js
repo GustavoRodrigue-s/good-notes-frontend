@@ -11,7 +11,7 @@ class AuthProvider {
    }
 
    async verifyAuth() {
-      const containerLoading = document.querySelector('.container-loading');
+      const containerLoading = document.querySelector('body > .container-loading');
 
       const redirectUserAsLoggedOut = () => {
          deleteCookies();
@@ -24,7 +24,7 @@ class AuthProvider {
          !cookieConfirm && renderPopupCookie();
       
          setTimeout(() => {
-            containerLoading.classList.toggle('show');
+            containerLoading.classList.remove('show');
             
             if (!cookieConfirm) {
                document.querySelector('.popup-wrapper-cookie').classList.add('show');
@@ -38,7 +38,7 @@ class AuthProvider {
          renderHeader(true);
          renderPopupEditProfile({ api, deleteCookies });
       
-         setTimeout(() => containerLoading.classList.toggle('show'), 300);
+         setTimeout(() => containerLoading.classList.remove('show'), 300);
       }
       
       const validateTokens = async () => {
@@ -65,7 +65,7 @@ class AuthProvider {
          }
       }
       
-      const { accessToken, refreshToken } = getCookies();
+      const { accessToken, refreshToken, apiKey } = getCookies();
       
       
       const itemConnected = localStorage.getItem('keepConnected');
@@ -75,8 +75,8 @@ class AuthProvider {
       const user_first_session = itemSession && JSON.parse(itemSession);
       
       
-      // if not has tokens or is not first session of user and he dosen't want to keep connected
-      if (!accessToken && !refreshToken || !user_first_session && !keepConnected) {
+      // if not has tokens and api key or is not first session of user and he doesn't want to keep connected...
+      if (!accessToken && !refreshToken && !apiKey || !user_first_session && !keepConnected) {
          redirectUserAsLoggedOut();
       } else {
          const hasNewAccessToken = await validateTokens();

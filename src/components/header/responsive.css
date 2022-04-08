@@ -41,54 +41,54 @@
    }
 
    .popup-hamburguer {
+      width: 150px;
       position: absolute;
       z-index: 9999;
-      width: 200px;
-      background: rgb(255, 255, 255);
-      border: 1px solid rgb(226, 226, 226);
-      right: 20px;
+      background: #fff;
+      box-shadow: 0;
+      border: 1px solid #D4D4D4;
+      right: 10px;
       top: 80%;
       height: auto;
-      text-align: center;
-      padding: 10px;
-      border-radius: 10px;
+      padding: 5px;
+      border-radius: 8px;
       display: block;
-      visibility: hidden;
+      transition: 0.25s;
+
       opacity: 0;
-      transition: 0.3s cubic-bezier(.6,.4,0,1);
-      transform: scale(0.5);
+      visibility: hidden;
+      transform: translateY(-5px);
+   }
+
+   .button-hamburguer.active ~ .popup-hamburguer {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(15px);
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.185);
+   }
+   
+   .popup-hamburguer button, .nav-hamburguer a {
+      color: #000;
+   }
+
+   .popup-hamburguer a, .popup-hamburguer li {
+      padding: 10px 15px 10px 10px;
+      white-space: nowrap;
    }
 
    .popup-hamburguer::before {
       right: 5%;
    }
 
-   .hamburguer-wrapper {
-      position: fixed;
-      background: rgba(0, 0, 0, 0.055);
-      width: 100%;
-      height: 100%;
-      inset: 0;
+   .button-hamburguer::before {
       visibility: hidden;
-      transition: 0.3s ease-in-out;
       opacity: 0;
+      transition: 0.3s;
    }
 
-   .hamburguer-wrapper.active, .hamburguer-wrapper.active ~ .popup-hamburguer {
+   .button-hamburguer.active::before {
       visibility: visible;
       opacity: 1;
-   }
-
-   .hamburguer-wrapper.active ~ .popup-hamburguer {
-      transform: scale(1);
-   }
-
-   .nav-hamburguer {
-      margin-bottom: 10px;
-   }
-
-   .popup-hamburguer > div {
-      margin-top: 10px;
    }
 
    .popup-hamburguer > div a {
@@ -100,12 +100,10 @@
    }
 
    .line-hamburguer {
+      margin: 5px;
       display: block;
-   }
-
-   .line-hamburguer {
-      background-color: rgb(226, 226, 226);
       height: 1px;
+      background-color: #D4D4D4;
       border: none;
    }
 
@@ -117,31 +115,42 @@
    .popup-hamburguer button {
       background: none;
       box-shadow: none;
-      color: var(--colorGray);
       margin: 0;
-      padding: 7px 10px;
+      padding: 10px 15px 10px 10px;
       width: 100%;
-      height: 33px;
-      transition: 0;
-   }
-
-   .nav-hamburguer a {
-      border-radius: 0;
+      height: 40px;
+      text-align: left;
    }
 
    .popup-hamburguer button:hover, .nav-hamburguer a:hover {
       background-color: rgb(245, 245, 245);
-      color: #000;
    }
 
    /* USER LOGGED IN */
 
-   .user-information  {
-      display: none;
+   .container-isLoggedIn {
+      width: 100%;
+      height: auto;
    }
 
-   .user-information-hamburguer {
-      display: block;
+   .container-isLoggedIn > button {
+      display: none !important;
+   }
+
+   .container-isLoggedIn > ul.list-dropDown {
+      width: 100%;
+      padding: 0;
+      border: 0;
+      box-shadow: none;
+      background-color: transparent;
+      position: static;
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+   }
+
+   .container-isLoggedIn > button.active ~ ul.list-dropDown {
+      transform: none;
    }
 } 
 

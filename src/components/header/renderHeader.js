@@ -14,22 +14,17 @@ const renderHeader = hasToken => {
       </div>`;
 
    const loggedInUser = `
-      <div class="container-isLoggedIn">
-         <details class="user-information details-default" tabindex="0">
-            <summary class="center-flex">
-               <img src="../images/avatar_icon.svg" alt="ícone do avatar do usuário">
-            </summary>
-            <ul>
-               <li class="user-edit" tabindex="0" aria-haspopup="true" aria-expanded="false" aria-label="Abrir caixa para editar perfil.">Editar perfil</li>
-               <li class="user-exit" tabindex="0" aria-label="Sair da conta.">Sair</li>
-            </ul>
-         </details>
-         <div class="user-information-hamburguer">
-            <ul>
-               <li class="user-edit" tabindex="0" aria-haspopup="true" aria-expanded="false" aria-label="Abrir caixa para editar perfil.">Editar perfil</li>
-               <li class="user-exit" tabindex="0" aria-label="Sair da conta.">Sair</li>
-            </ul>
-         </div>
+      <div class="container-isLoggedIn container-dropDown">
+         <button class="btn-dropDown btn-wrapper-default btn-dropDown-header-menu">
+            <img src="../../../images/avatar_icon.svg" alt="ícone do avatar do usuário">
+            <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 0 24 24" width="20px" fill="#000000">
+               <path d="M24 24H0V0h24v24z" fill="none" opacity=".87"/><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6-1.41-1.41z"/>
+            </svg>
+         </button>
+         <ul class="list-dropDown">
+            <li class="user-edit" tabindex="0" aria-haspopup="true" aria-expanded="false" aria-label="Abrir caixa para editar perfil.">Editar perfil</li>
+            <li class="user-exit" tabindex="0" aria-label="Sair da conta.">Sair</li>
+         </ul>
       </div>`;
 
    const stringAuth = hasToken ? loggedInUser : userNotLoggedIn;
@@ -48,40 +43,40 @@ const renderHeader = hasToken => {
                Good Notes
             </div>
          </a>
-         <div class="container-content-header">
-               <button class="button-hamburguer btn-default" aria-expanded="false" aria-haspopup="true" aria-label="Abrir Menu" aria-controls="menu-hamburguer" tabindex="0">
-                  <span class="span-hamburguer"></span>
-               </button>
-               <div class="container-navigation">
-                  <nav>
-                     <ul>
-                        <li>
-                           <a href="/" class="link-home">
-                              Home
-                           </a>
-                        </li>
-                        <li>
-                           <a href="./notes.html" class="my-notes">
-                              Minhas Notas
-                           </a>
-                        </li>
-                     </ul>
-                  </nav>
-                  <span class="pipe-header">|</span>
-               </div>
-               <div class="hamburguer-wrapper" aria-label="Fechar Menu"></div>
-               <div class="container-authentication popup-hamburguer" id="menu-hamburguer" role="menu">
-                  <nav class="nav-hamburguer">
-                     <a href="/" class="link-home">
-                        Home
-                     </a>
-                     <a href="./notes.html" class="my-notes">
-                        Minhas Notas
-                     </a>
-                  </nav>
-                  <hr class="line-hamburguer">
-                  ${stringAuth}
-               </div>
+         <div class="container-content-header container-dropDown">
+            <div class="container-navigation">
+               <nav>
+                  <ul>
+                     <li>
+                        <a href="/" class="link-home">
+                           Home
+                        </a>
+                     </li>
+                     <li>
+                        <a href="./notes.html" class="my-notes">
+                           Minhas Notas
+                        </a>
+                     </li>
+                  </ul>
+               </nav>
+               <span class="pipe-header">|</span>
+            </div>
+            <div class="hamburguer-wrapper" aria-label="Fechar Menu"></div>
+            <button class="button-hamburguer btn-default btn-wrapper-default" aria-expanded="false" aria-haspopup="true" aria-label="Abrir Menu" aria-controls="menu-hamburguer" tabindex="0">
+               <span class="span-hamburguer"></span>
+            </button>
+            <div class="container-authentication popup-hamburguer" id="menu-hamburguer" role="menu">
+               <nav class="nav-hamburguer">
+                  <a href="/" class="link-home">
+                     Home
+                  </a>
+                  <a href="./notes.html" class="my-notes">
+                     Minhas Notas
+                  </a>
+               </nav>
+               <hr class="line-hamburguer">
+               ${stringAuth}
+            </div>
          </div>
       </div>`;
 

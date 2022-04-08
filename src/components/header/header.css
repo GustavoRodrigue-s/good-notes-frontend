@@ -7,7 +7,7 @@ header {
 }
 
 header a, .button-signIn  {
-   font-size: 1.5rem;
+   font-size: 1.6rem;
    padding: 7px 10px;
    border-radius: 8px;
    transition: 0.3s;
@@ -18,12 +18,11 @@ a.link-logo {
 }
 
 .button-signIn {
-   color: var(--colorGray) !important;
-   background: transparent !important;
+   color: var(--colorGray);
+   background: transparent;
 }
 
 .button-signUp {
-   font-size: 1.5rem;
    color: #fff;
    margin: 0 10px;
 }
@@ -34,13 +33,13 @@ a.link-logo {
 }
 
 .good-notes-logo {
+   color: #000;
    display: flex;
    align-items: center;
    justify-content: center;
    gap: 10px;
    font: 400 3rem 'Fredoka', sans-serif;
 }
-
 
 .container-header-flex, .container-authentication {
    display: flex;
@@ -63,7 +62,7 @@ a.link-logo {
    gap: 13px;
 }
 
-:is(.container-navigation a, .container-authentication a:first-child, .user-information > summary):hover {
+:is(.container-navigation a, .container-authentication a:first-child):hover {
    color: #000;
 }
 .button-signIn:hover {
@@ -77,44 +76,38 @@ a.link-logo {
 /* USER LOGGED IN */
 
 .container-isLoggedIn {
-   position: relative;
+   width: 70px;
+   height: 50px;
 }
 
-.user-information-hamburguer {
-   display: none;
+.btn-dropDown-header-menu.btn-dropDown:hover {
+   background-color: #fff !important;
 }
 
-.user-information, .user-information-hamburguer {
-   font-size: 1.5rem;
-   color: var(--colorGray);
+.btn-dropDown-header-menu {
+   text-align: left;
 }
 
-.user-information {
-   width: 150px;
+.btn-dropDown-header-menu > img {
+   width: 50px;
+   height: 50px;
 }
 
-.user-information > summary {
-   list-style-type: "";
-   cursor: pointer;
-   padding: 0 10px;
-}
-
-.user-information > summary::after {
-   content: "";
+.btn-dropDown-header-menu > svg {
    position: absolute;
-   right: -20%;
-   z-index: 999;
-   width: 30px;
-   height: 30px;
-   background: url('../../../images/arrow_drop.svg');
+   right: 5px;
+   height: 100%;
 }
 
-.user-information > summary > img{
-   width: 40px;
-   height: 40px;
+.container-isLoggedIn > ul.list-dropDown {
+   width: 130px;
+   left: -10%;
+   transform: translate(-50%, -25px);
+}
+.container-isLoggedIn > button.active ~ ul.list-dropDown {
+   transform: translate(-50%, -5px);
 }
 
-:is(.user-information > ul > li, .user-information-hamburguer li):hover {
-   background-color: rgb(245, 245, 245);
-   color: #000;
+.container-isLoggedIn > ul > li:hover {
+   background-color: rgb(240, 240, 240);
 }
