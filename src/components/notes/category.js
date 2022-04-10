@@ -3,8 +3,9 @@ import { getCookies } from '../../services/cookie.js';
 
 const categoryInit = () => {
    const categoryList = document.querySelector('.category-list');
-   const btnNewCategory = document.querySelector('.add-new-category');
    const popupWrapper = document.querySelector('.popup-wrapper-category-delete');
+   const btnNewCategory = document.querySelector('.add-new-category');
+   const btnDeleteCategory = document.querySelector('.btn-confirm-delete-category');
 
    const requestTemplate = async configs => {
       try {
@@ -56,7 +57,7 @@ const categoryInit = () => {
                      <span class="tooltip">Renomear</span>
                   </li>
                   <li class="delete-category">
-                     <button class="btn-delete-category" data-js="togglePopupConfirmDeleteCategory">
+                     <button class="btn-delete-category" data-js="openPopupDeleteCategory">
                         <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 0 24 24" width="30px" fill="#696969"><path d="M0 0h24v24H0V0z" fill="none"/>
                            <path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/>
                         </svg>
@@ -66,12 +67,12 @@ const categoryInit = () => {
                </ul>
             </div>
             <div class="${!newCategory ? 'container-confirmation' : 'container-confirmation show'} center-flex">
-               <button class="btn-confirm-category btn-default center-flex" data-js="confirmationAddCategory">
+               <button class="btn-confirm-category btn-default center-flex" data-js="shouldCreateCategory">
                   <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#00dd6f"><path d="M0 0h24v24H0V0z" fill="none"/>
                      <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
                   </svg>
                </button>
-               <button class="btn-undo-category btn-default btn-wrapper-default center-flex" data-js="removeCategory">
+               <button class="btn-undo-category btn-default btn-wrapper-default center-flex" data-js="cancelCategory">
                   <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#f52500">
                      <path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
                   </svg>
@@ -84,174 +85,194 @@ const categoryInit = () => {
       categoryList.innerHTML += template;
    }
 
-   const categoryActions = {
+   const inputAutoFocus = currentInput => {
+      const strLength = currentInput.value.length;
+
+      currentInput.focus();
+      currentInput.setSelectionRange(strLength, strLength);
+   }
+
+   const UIcategoryActions = {
       "dropDown"(e) {
-         const currentLi = e.target.parentElement.parentElement.parentElement;
+         const currentCategory = e.target.parentElement.parentElement.parentElement;
          const currentButton = e.target;
-         
-         currentLi.classList.toggle('dropDown-active');
+
+         currentCategory.classList.toggle('dropDown-active');
          currentButton.classList.toggle('active');
       },
-      "togglePopupConfirmDeleteCategory"(e) {
-         const classOfElementClicked = e.target.classList[0];
-
-         const listOfTogglePopup = ['popup-overlay', 'btn-delete-category', 'btn-cancel-delete-category'];
-         const enableToToggle = listOfTogglePopup.includes(classOfElementClicked);
-
-         if (enableToToggle) {
-            popupWrapper.classList.toggle('show');
-         }
-
-         classOfElementClicked === 'btn-confirm-delete-category' && categoryActions['deleteCategory']();
+      "openPopupDeleteCategory"() {
+         popupWrapper.classList.toggle('show');
       },
       "selectCategory"(e) {
-         const currentLi = e.target.parentElement.parentElement;
+         const currentCategory = e.target.parentElement.parentElement;
 
-         if (currentLi.classList.contains('confirmation')) {
-            return
-         }
+         const alreadySelected = currentCategory.classList.contains('confirmation');
+
+         if (alreadySelected) return
 
          const lastSelectedLi = document.querySelector('.category-list > li.selected');
          lastSelectedLi && lastSelectedLi.classList.remove('selected');
 
-         currentLi.classList.add('selected');
+         currentCategory.classList.add('selected');
       },
-      "removeCategory"() {
-         const currentLi = document.querySelector('.category-list > li.confirmation');
+      "cancelCategory"() {
+         const currentCategory = document.querySelector('.category-list > li.confirmation');
 
-         currentLi.remove();
+         currentCategory.remove();
+      },
+      "resetCategory"() {
+         const [, currentInput] = UIcategoryActions['removeConfirmation']();
+
+         currentInput.value = currentInput.getAttribute('value');
       },
       "removeConfirmation"() {
-         const currentLi = document.querySelector('.category-list > li.confirmation');
+         const currentCategory = document.querySelector('.category-list > li.confirmation');
          const currentInput = document.querySelector('.category-item.confirmation input');
-         const btnDropDown = document.querySelector('.category-item.confirmation .container-dropDown > button');
-         const [containerDropDown, containerConfirmation] = 
-            document.querySelectorAll('.category-item.confirmation > .container-options > div');
+         const btnDropDown = document.querySelector('.category-item.confirmation .btn-dropDown');
+         const [containerDropDown, containerConfirmation] = currentCategory.lastElementChild.children;
          
-         currentInput.value = currentInput.getAttribute('value');
-
          containerConfirmation.classList.remove('show');   
          containerDropDown.classList.add('show');
 
+         currentCategory.classList.remove('confirmation', 'dropDown-active');
          btnDropDown.classList.remove('active');
-         currentLi.classList.remove('confirmation', 'dropDown-active');
+
+         currentInput.setAttribute('readonly', 'readonly');
+
+         return [currentCategory, currentInput];
       },
       "addConfirmation"() {
-         const currentLi = document.querySelector('.category-list > li.dropDown-active');
-         const [containerDropDown, containerConfirmation] = 
-            document.querySelectorAll('.category-item.dropDown-active > .container-options > div');
+         const currentCategory = document.querySelector('.category-list > li.dropDown-active');
+         const currentInput = document.querySelector('.category-item.dropDown-active input');
+         const [containerDropDown, containerConfirmation] = currentCategory.lastElementChild.children;
          
          containerDropDown.classList.remove('show');
          containerConfirmation.classList.add('show');   
 
-         currentLi.classList.add('confirmation');
-      },
-      "confirmationAddCategory"() {
-         const currentInput = document.querySelector('.category-item.confirmation input');
-
-         currentInput.setAttribute('readonly', 'readonly');
-         currentInput.setAttribute('value', currentInput.value.trim() || 'Nova Categoria');
-
-         currentInput.focus();
-
-         const currentLi = document.querySelector('.category-list > li.confirmation');
-
-         categoryActions['removeConfirmation']();
-
-         (async () => {
-            const { categoryId } = await requestTemplate({
-               route: "addCategory",
-               method: "POST",
-               body: { 'categoryName': currentInput.value.trim() }
-            });
-               
-            currentLi.setAttribute('data-js', categoryId);
-         })();
-      },
-      "confirmationEditCategory"() {
-         const currentLi = document.querySelector('.category-item.dropDown-active');
-         const currentInput = document.querySelector('.category-item.dropDown-active input');
-         const [btnConfirm, btnCancel] = 
-            document.querySelectorAll('.category-item.dropDown-active .container-confirmation > button');
-         
-         categoryActions['addConfirmation']();
+         currentCategory.classList.add('confirmation');
 
          currentInput.removeAttribute('readonly');
+         inputAutoFocus(currentInput);
 
-         btnConfirm.setAttribute('data-js', 'updateCategory');
-         btnCancel.setAttribute('data-js', 'removeConfirmation');
-         currentLi.classList.add('confirmation');
-
-         currentInput.focus();
+         return currentCategory;
       },
-      "addNewCategory"() {
-         renderCategory({ newCategory: true });         
+      "confirmationEditCategory"() {
+         const currentCategory = UIcategoryActions['addConfirmation']();
+         const [btnConfirm, btnCancel] = currentCategory.lastElementChild.lastElementChild.children;
 
-         document.querySelector('.category-item.confirmation input').focus();
+         btnConfirm.setAttribute('data-js', 'shouldUpdateCategory');
+         btnCancel.setAttribute('data-js', 'resetCategory');
+      }
+   }
+
+   const CategoryActions = {
+      async createCategory({ currentCategory, categoryName }) {
+         const { categoryId } = await requestTemplate({
+            route: "addCategory",
+            method: "POST",
+            body: { 'categoryName': categoryName }
+         });
+            
+         currentCategory.setAttribute('data-js', categoryId);
       },
-      "deleteCategory"() {
-         const currentLi = document.querySelector('.category-item.dropDown-active');
-         const currentCategoryId = currentLi.dataset.js;
-
-         if (!currentCategoryId) return
-
-         requestTemplate({
-            route: 'deleteCategory',
-            method: 'POST',
-            body: { categoryId: currentCategoryId }
-         })
-            .then(() => {
-               currentLi.remove();
-               popupWrapper.classList.remove('show');
-            });
-      },
-      "updateCategory"() {
-         const currentLi = document.querySelector('.category-item.confirmation');
-         const currentInput = document.querySelector('.category-item.confirmation input');
-
-         const categoryId = currentLi.dataset.js;
-
-         if (!categoryId) return
-
-         const newCategoryName = currentInput.value || 'Nova Categoria';
-         currentInput.setAttribute('value', newCategoryName);
-
-         categoryActions['removeConfirmation']();
-
-         requestTemplate({
+      async updateCategory({ categoryId, newCategoryName }) {
+         const data = await requestTemplate({
             route: 'updateCategory',
             method: 'POST',
             body: { categoryId, newCategoryName }
          })
-            .then(data => console.log(data));
+         
+         console.log(data);
       },
-      "getCategories"() {
-         (async () => {
-            const { categories } = await requestTemplate({route: 'getCategories'})
-            
-            if (categories === []) return
-
-            categories.forEach(
-               ([categoryId, categoryName]) => 
-               renderCategory({ newCategory: false, categoryId, categoryName })
-            );
-         })();
+      async deleteCategory({ currentCategory ,categoryId }) {
+         await requestTemplate({
+            route: 'deleteCategory',
+            method: 'POST',
+            body: { categoryId }
+         })
+         
+         currentCategory.remove();
+         popupWrapper.classList.remove('show');
+      },
+      async getCategories() {
+         const { categories } = await requestTemplate({route: 'getCategories'})
+         
+         if (categories === []) return
+   
+         // alterar para o reduce
+         categories.forEach(([categoryId, categoryName]) => 
+            renderCategory({ newCategory: false, categoryId, categoryName })
+         );
+   
+         document.querySelector('.container-category-loading').classList.remove('show');
       }
+   }
+
+   const DispatchActions = {
+      "shouldCreateCategory"() {
+         const [currentCategory, inputCategoryName] = UIcategoryActions['removeConfirmation']();
+         const categoryName = inputCategoryName.value.trim() ;
+
+         currentCategory.setAttribute('value', categoryName || 'Nova Categoria');
+
+         CategoryActions.createCategory({ currentCategory, categoryName });
+      },
+      "shouldUpdateCategory"() {
+         const [currentCategory, inputCategoryName] = UIcategoryActions['removeConfirmation']();
+         const categoryId = currentCategory.dataset.js;
+   
+         if (!categoryId) return
+
+         const newCategoryName = inputCategoryName.value.trim();
+
+         CategoryActions.updateCategory({ categoryId, newCategoryName })
+      },
+      "shouldDeleteCategory"() {
+         const currentCategory = document.querySelector('.category-item.dropDown-active');
+         const categoryId = currentCategory.dataset.js;
+   
+         if (!categoryId) return
+
+         CategoryActions.deleteCategory({ currentCategory, categoryId });
+      }
+   }
+   
+   const addNewNodeCategory = () => {
+      const isStillGettingAllCategories = document.querySelector('.category-list > li');
+
+      if (!isStillGettingAllCategories) return
+
+      renderCategory({ newCategory: true });         
+
+      const currentInput = document.querySelector('.category-item.confirmation input');
+      inputAutoFocus(currentInput);
+   }
+
+   const togglePopupDeleteCategory = e => {
+      const classOfElementClicked = e.target.classList[0];
+
+      const listOfTogglePopup = ['popup-overlay', 'btn-cancel-delete-category'];
+      const shouldToToggle = listOfTogglePopup.includes(classOfElementClicked);
+
+      shouldToToggle && popupWrapper.classList.toggle('show');
+   }
+
+   const chooseAction = e => {
+      const dataJsOfThisElement = e.target.dataset.js;
+
+      UIcategoryActions[dataJsOfThisElement] && UIcategoryActions[dataJsOfThisElement](e);
+      DispatchActions[dataJsOfThisElement] && DispatchActions[dataJsOfThisElement]();
    }
 
    /* Trigger elements */ 
 
-   categoryList.addEventListener('click', e => {
-      const dataJsOfThisElement = e.target.dataset.js;
+   categoryList.addEventListener('click', chooseAction);
+   popupWrapper.addEventListener('click', togglePopupDeleteCategory);
+   btnNewCategory.addEventListener('click', addNewNodeCategory);
+   btnDeleteCategory.addEventListener('click', DispatchActions['shouldDeleteCategory']);
 
-      categoryActions[dataJsOfThisElement] && categoryActions[dataJsOfThisElement](e);
-   })
-
-   btnNewCategory.addEventListener('click', categoryActions['addNewCategory']);
-
-   popupWrapper.addEventListener('click', categoryActions['togglePopupConfirmDeleteCategory']);
-
-   categoryActions['getCategories']();
+   // get all session categories
+   CategoryActions.getCategories();
 }
 
 export default categoryInit
