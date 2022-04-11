@@ -8,7 +8,6 @@ const popupFormInit = someFunctions => {
    // Show and hide input value password.
 
    const togglePasswordEye = e => {
-
       if (e.type === "touchstart") e.preventDefault();
 
       const currentContainer = e.currentTarget;

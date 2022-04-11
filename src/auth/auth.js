@@ -50,8 +50,6 @@ class AuthProvider {
       
             const [data, status] = await api.request({ auth: true, route: "required" });
       
-            console.log(data, status);
-
             if(status === 401 || status === 403) {
                throw 'The tokens is not valid.';
             }
@@ -66,7 +64,6 @@ class AuthProvider {
       }
       
       const { accessToken, refreshToken, apiKey } = getCookies();
-      
       
       const itemConnected = localStorage.getItem('keepConnected');
       const keepConnected = itemConnected && JSON.parse(itemConnected);
