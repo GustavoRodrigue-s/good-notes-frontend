@@ -36,13 +36,13 @@ const categoryInit = () => {
 
    const createCategoryTemplate = ({ newCategory, ...categoryProps }) => {
       const template = `
-      <li class="${!newCategory ? 'category-item' : 'category-item confirmation'}" ${!newCategory ? `data-id="${categoryProps.categoryId}"` : ''}>
+      <li class="${!newCategory ? 'category-item' : 'category-item confirmation'}" ${!newCategory ? 'data-id="' + categoryProps.categoryId + '"' : ''}>
          <div class="container-name">
             <button class="btn-name btn-default" data-js="selectItem">
                <svg width="25" height="20" viewBox="0 0 25 20" fill="#969696" xmlns="http://www.w3.org/2000/svg">
                   <path d="M0 5.33333H15.1661V8H0V5.33333ZM0 2.66667H15.1661V0H0V2.66667ZM0 13.3333H9.65118V10.6667H0V13.3333ZM20.6949 9.16L21.6738 8.21333C21.8013 8.08973 21.9529 7.99167 22.1196 7.92476C22.2864 7.85785 22.4652 7.82341 22.6458 7.82341C22.8264 7.82341 23.0052 7.85785 23.172 7.92476C23.3388 7.99167 23.4903 8.08973 23.6178 8.21333L24.5967 9.16C25.1344 9.68 25.1344 10.52 24.5967 11.04L23.6178 11.9867L20.6949 9.16ZM19.716 10.1067L12.4087 17.1733V20H15.3316L22.6389 12.9333L19.716 10.1067Z" fill="currentColor"/>
                </svg>
-               <input placeholder="Nome da categoria" class="input-default" type="text" name="inputNameCategory" autocomplete="off" ${!newCategory ? `value="${categoryProps.categoryName}"` : ''}/>
+               <input placeholder="Nome da categoria" class="input-default" type="text" name="inputNameCategory" autocomplete="off" ${!newCategory ? 'value="' + categoryProps.categoryName + '"' : ''}/>
             </button>
          </div>
          <div class="container-options">
@@ -108,8 +108,7 @@ const categoryInit = () => {
 
    const UIcategoryActions = {
       activateDropDown(e) {
-         const currentCategory = e.target.parentElement.parentElement.parentElement;
-         const currentButton = e.target;
+         const [currentCategory, currentButton] = [e.target.parentElement.parentElement.parentElement, e.target];
 
          currentCategory.classList.toggle('dropDown-active');
          currentButton.classList.toggle('active');
@@ -157,8 +156,8 @@ const categoryInit = () => {
          const { currentCategory, currentInput, containers } = getCategoryBaseItems('dropDown-active');
          const [containerDropDown, containerConfirmation] = containers;
          
-         containerDropDown.classList.remove('show');
          containerConfirmation.classList.add('show');   
+         containerDropDown.classList.remove('show');
 
          currentCategory.classList.add('confirmation');
 

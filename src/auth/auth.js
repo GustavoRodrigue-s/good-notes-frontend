@@ -54,7 +54,11 @@ class AuthProvider {
                throw 'The tokens is not valid.';
             }
       
-            if (data.newAccessToken) return data.newAccessToken
+            if (data.newAccessToken) {
+               document.cookie = `accessToken = ${data.newAccessToken} ; path=/`;
+
+               return true
+            }
 
             redirectUserAsLoggedIn();
             
@@ -77,12 +81,7 @@ class AuthProvider {
          redirectUserAsLoggedOut();
       } else {
          const hasNewAccessToken = await validateTokens();
-      
-         if (hasNewAccessToken) {
-            document.cookie = `accessToken = ${hasNewAccessToken} ; path=/`;
-
-            await validateTokens();
-         }
+         hasNewAccessToken && await validateTokens();
       }
 
       return
