@@ -6,10 +6,20 @@ const categoryInit = () => {
    const popupWrapper = document.querySelector('.popup-wrapper-category-delete');
    const btnNewCategory = document.querySelector('.add-new-category');
    const btnDeleteCategory = document.querySelector('.btn-confirm-delete-category');
+   
+   const inputSearchCategories = document.querySelector('.input-search-categories');
 
    // global categories states
    const categoriesState = {
-      gettingCategories: true
+      gettingCategories: true,
+      allCategories: null
+   }
+
+   const setAllCategories = categories => {
+      const allCategories = categories.map(([categoryId, categoryName]) => ({categoryId, categoryName}));
+         
+      categoriesState.allCategories = allCategories;
+      categoriesState.gettingCategories = false;
    }
 
    const requestTemplate = async configs => {
@@ -173,7 +183,7 @@ const categoryInit = () => {
          btnConfirm.setAttribute('data-js', 'shouldUpdateCategory');
          btnCancel.setAttribute('data-js', 'resetItem');
       },
-      addItem() {
+      renderItem() {
          if (categoriesState.gettingCategories) return
 
          const template = createCategoryTemplate({ newCategory: true });         
@@ -181,6 +191,25 @@ const categoryInit = () => {
 
          const currentInput = document.querySelector('.category-item.confirmation input');
          inputAutoFocus(currentInput);
+      },
+      renderAllItems(categories) {
+         const allCategoryTemplates = categories.reduce((acc, { categoryId, categoryName }) => 
+            acc += createCategoryTemplate({ newCategory: false, categoryId, categoryName })
+         , '');
+
+         categoryList.innerHTML = allCategoryTemplates;
+      },
+      searchItem() {
+         const { gettingCategories, allCategories } = categoriesState;
+
+         if (gettingCategories || allCategories === []) return
+
+         const inputValue = inputSearchCategories.value.trim();
+         const regex = new RegExp(inputValue, 'i');
+
+         const filteredCategories = allCategories.filter(({ categoryName }) => regex.test(categoryName))
+
+         UIcategoryActions.renderAllItems(filteredCategories);
       }
    }
 
@@ -218,16 +247,11 @@ const categoryInit = () => {
          const { categories } = await requestTemplate({route: 'getCategories'})
          
          if (categories === []) return
-   
-         const allCategoryTemplates = categories.reduce((acc, [categoryId, categoryName]) => 
-            acc += createCategoryTemplate({ newCategory: false, categoryId, categoryName })
-         , '');
-   
-         categoryList.innerHTML = allCategoryTemplates;
 
+         setAllCategories(categories);
+         UIcategoryActions.renderAllItems(categoriesState.allCategories);
+   
          document.querySelector('.container-category-loading').classList.remove('show');
-
-         categoriesState.gettingCategories = false;
       }
    }
 
@@ -283,8 +307,9 @@ const categoryInit = () => {
 
    categoryList.addEventListener('click', chooseAction);
    popupWrapper.addEventListener('click', toggleOpenClosePopupDeleteCategory);
-   btnNewCategory.addEventListener('click', UIcategoryActions['addItem']);
-   btnDeleteCategory.addEventListener('click', DispatchActions['shouldDeleteCategory']);
+   btnNewCategory.addEventListener('click', UIcategoryActions.renderItem);
+   inputSearchCategories.addEventListener('input', UIcategoryActions.searchItem);
+   btnDeleteCategory.addEventListener('click', DispatchActions.shouldDeleteCategory);
 
    // get all session categories
    CategoryActions.getCategories();
