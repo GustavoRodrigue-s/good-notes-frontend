@@ -89,7 +89,7 @@ const optionsMenuUser = ({ api, deleteCookies }) => {
       try {
          toggleLoading();
 
-         const [data, status] = await api.request({route: "profile"});
+         const [data, status] = await api.request({route: "userCredentials"});
 
          if (data.newAccessToken) {
             document.cookie = `accessToken = ${data.newAccessToken} ; path=/`;

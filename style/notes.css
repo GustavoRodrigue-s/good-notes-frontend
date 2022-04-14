@@ -100,19 +100,24 @@ section.categories {
    background-color: #F9F9F9;
    display: flex;
    transition: 0.3s;
-   animation: slideUp 0.3s forwards;
+   animation: slideUp 0.3s ease;
 }
 
 .category-item.hide {
-   position: absolute !important;
+   display: none;
+
+   /* animation future */
+
+   /* position: absolute !important;
    opacity: 0 !important;
+   visibility: hidden; */
 }
 
 .category-item.confirmation {
    background-color: #fff;
 }
 
-.category-item.confirmation .btn-name > input {
+.category-item.confirmation .btn-name input {
    position: relative;
    z-index: 99999;
 }
@@ -169,7 +174,7 @@ section.categories {
    font-size: 1.6rem;
 }
 
-.btn-name > input {
+.btn-name input {
    pointer-events: none;
    height: 100%;
    padding: 0;
@@ -178,6 +183,7 @@ section.categories {
 }
 
 .btn-name > svg {
+   flex-shrink: 0;
    margin-top: 2px;
 }
 
@@ -199,7 +205,7 @@ section.categories {
    background-color: #fff;
 }
 
-.category-item.selected .btn-name, .category-item.selected .btn-name > input {
+.category-item.selected .btn-name, .category-item.selected .btn-name input {
    color: var(--accentColor);
 }
 

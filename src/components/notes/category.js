@@ -1,25 +1,6 @@
 import api from '../../services/api.js';
 import { getCookies } from '../../services/cookie.js';
 
-// Global categories states
-class UseCategory {
-   constructor() {
-      this.gettingCategories = true;
-      this.allCategories = [];
-   }
-
-   setCategory(categoryFormated) {
-      this.allCategories.push(categoryFormated);
-   }
-
-   setAllCategories(categories) {
-      const allCategoriesFormated = categories.map(([ id, name ]) => ({ id, name }));
-
-      this.allCategories = allCategoriesFormated;
-      this.gettingCategories = false;
-   }
-}
-
 const categoryInit = () => {
    const categoryList = document.querySelector('.category-list');
    const popupWrapper = document.querySelector('.popup-wrapper-category-delete');
@@ -27,7 +8,9 @@ const categoryInit = () => {
    const btnDeleteCategory = document.querySelector('.btn-confirm-delete-category');
    const inputSearchCategories = document.querySelector('.input-search-categories');
 
-   const categoriesState = new UseCategory();
+   const categoriesState = {
+      gettingCategories: true
+   }
 
    const requestTemplate = async configs => {
       try {
@@ -107,6 +90,10 @@ const categoryInit = () => {
       categoryItem.className = isItNewCategory ? 'category-item confirmation' : 'category-item';
       categoryItem.innerHTML = content;
 
+      if (!isItNewCategory) {
+         categoryItem.setAttribute('data-id', category.id);
+      }
+
       return categoryItem
    }
 
@@ -118,10 +105,10 @@ const categoryInit = () => {
    }
 
    const getCategoryBaseItems = path => {
-      const currentCategory = document.querySelector(`.category-list > li.${path}`);
-      const currentInput = document.querySelector(`.category-item.${path} input`);
-      const currentBtnDropDown = document.querySelector(`.category-item.${path} .btn-dropDown`);
-      const containers = currentCategory.lastElementChild.children;
+      const currentCategory = categoryList.querySelector(`li.${path}`);
+      const currentInput = currentCategory.querySelector('input');
+      const currentBtnDropDown = currentCategory.querySelector('.btn-dropDown');
+      const containers = currentCategory.querySelectorAll('.container-options > div');
 
       return { currentCategory, currentInput, currentBtnDropDown, containers };
    }
@@ -141,7 +128,9 @@ const categoryInit = () => {
 
          const alreadySelected = currentCategory.classList.contains('confirmation');
 
-         if (alreadySelected) return
+         if (alreadySelected) {
+            return
+         }
 
          const lastSelectedLi = document.querySelector('.category-list > li.selected');
          lastSelectedLi && lastSelectedLi.classList.remove('selected');
@@ -149,7 +138,7 @@ const categoryInit = () => {
          currentCategory.classList.add('selected');
       },
       cancelItemAddition() {
-         const { currentCategory } = getCategoryBaseItems('confirmation');
+         const currentCategory = categoryList.querySelector('li.confirmation');
 
          currentCategory.remove();
       },
@@ -188,40 +177,49 @@ const categoryInit = () => {
       },
       toggleDatasetForRenameItem() {
          const currentCategory = UIcategoryActions['addConfirmation']();
-         const [btnConfirm, btnCancel] = currentCategory.lastElementChild.lastElementChild.children;
+         const [btnConfirm, btnCancel] = currentCategory.querySelectorAll('.container-confirmation > button');
 
          btnConfirm.setAttribute('data-js', 'shouldUpdateCategory');
          btnCancel.setAttribute('data-js', 'resetItem');
       },
-      renderItem() {
+      renderNewItem() {
          if (categoriesState.gettingCategories) return
 
-         const categoryItem = createCategoryElement({ isItNewCategory: true });       
+         const categoryElement = createCategoryElement({ isItNewCategory: true });       
 
-         categoryList.append(categoryItem);
+         categoryList.append(categoryElement);
 
-         const currentInput = document.querySelector('.category-item.confirmation input');
-         inputAutoFocus(currentInput);
+         inputAutoFocus(categoryElement.querySelector('input'));
       },
-      renderAllItems() {
-         categoriesState.allCategories.forEach(category => {
-            const categoryElement = createCategoryElement({ isItNewCategory: false, ...category });
+      renderAllItems(categories) {
+         categories.forEach(([id, name]) => {
+            const categoryElement = createCategoryElement({ isItNewCategory: false, id, name });
 
-            category.element = categoryElement;
-            
             categoryList.append(categoryElement);
          });
       },
       searchItem() {
-         const { gettingCategories, allCategories } = categoriesState;
+         const { gettingCategories } = categoriesState;
 
-         if (gettingCategories || allCategories === []) return
+         if (gettingCategories) {
+            return
+         }
 
-         const inputValue = inputSearchCategories.value.trim();
-         const areTheSameTexts = new RegExp(inputValue, 'i');
+         const allCategories = [...categoryList.children];
 
-         allCategories.forEach(({ name, element }) => {
-            areTheSameTexts.test(name) ? element.classList.remove('hide') : element.classList.add('hide');
+         if (allCategories === []) {
+            return
+         } 
+
+         const valueInputSeach = inputSearchCategories.value.trim();
+         const areTheSameTexts = new RegExp(valueInputSeach, 'i');
+
+         allCategories.forEach(element => {
+            const categoryName = element.querySelector('input').value.trim();
+
+            areTheSameTexts.test(categoryName) 
+               ? element.classList.remove('hide') 
+               : element.classList.add('hide');
          })
       }
    }
@@ -235,8 +233,6 @@ const categoryInit = () => {
          });
             
          categoryElement.setAttribute('data-id', categoryId);
-
-         categoriesState.setCategory({ id: categoryId, name: categoryName, element: categoryElement });
       },
       async updateCategory({ currentInput, categoryId, newCategoryName }) {
          const data = await requestTemplate({
@@ -245,7 +241,6 @@ const categoryInit = () => {
             body: { categoryId, newCategoryName }
          })
          
-         console.log(data);
          currentInput.setAttribute('value', newCategoryName);
       },
       async deleteCategory({ categoryElement, categoryId }) {
@@ -262,22 +257,22 @@ const categoryInit = () => {
          const { categories } = await requestTemplate({route: 'getCategories'});
          
          if (categories !== []) {
-            categoriesState.setAllCategories(categories);
             UIcategoryActions.renderAllItems(categories);
          }
 
          document.querySelector('.container-category-loading').classList.remove('show');
+         categoriesState.gettingCategories = false;
       }
    }
 
    const DispatchActions = {
       shouldCreateCategory() {
          const { currentCategory, currentInput } = UIcategoryActions['removeConfirmation']();
-         const categoryName = currentInput.value.trim() ;
+         const categoryName = currentInput.value.trim() || 'Nova Categoria';
 
-         currentInput.setAttribute('value', categoryName || 'Nova Categoria');
+         currentInput.setAttribute('value', categoryName);
 
-         CategoryActions.createCategory({ currentCategory, categoryName });
+         CategoryActions.createCategory({ categoryElement: currentCategory, categoryName });
       },
       shouldUpdateCategory() {
          const { currentCategory, currentInput } = UIcategoryActions['removeConfirmation']();
@@ -298,7 +293,7 @@ const categoryInit = () => {
    
          if (!categoryId) return
 
-         CategoryActions.deleteCategory({ currentCategory, categoryId });
+         CategoryActions.deleteCategory({ categoryElement: currentCategory, categoryId });
       }
    }
 
@@ -322,7 +317,7 @@ const categoryInit = () => {
 
    categoryList.addEventListener('click', chooseAction);
    popupWrapper.addEventListener('click', toggleOpenClosePopupDeleteCategory);
-   btnNewCategory.addEventListener('click', UIcategoryActions.renderItem);
+   btnNewCategory.addEventListener('click', UIcategoryActions.renderNewItem);
    inputSearchCategories.addEventListener('input', UIcategoryActions.searchItem);
    btnDeleteCategory.addEventListener('click', DispatchActions.shouldDeleteCategory);
 

@@ -48,7 +48,7 @@ class AuthProvider {
             api.headers["Authorization"] = `${accessToken};${refreshToken}`;
             api.apiKey = `?key=${apiKey}`;
       
-            const [data, status] = await api.request({ auth: true, route: "required" });
+            const [data, status] = await api.request({ auth: true, route: "auth" });
       
             if(status === 401 || status === 403) {
                throw 'The tokens is not valid.';
