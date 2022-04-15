@@ -48,7 +48,7 @@
    height: 105px;
    border-radius: 10px;
    background: #F6F6F6;
-   border: 1px solid #00000028;
+   border: 1px solid #DBDBDB;
    display: flex;
    align-items: center;
    justify-content: center;
@@ -95,6 +95,7 @@
 }
 
 .edit-profile-form input {
+   background: #F6F6F6;
    margin-top: 5px;
 }
 
@@ -163,6 +164,10 @@
 .container-input {
    width: 100%;
    position: relative;
+}
+
+.container-input > input {
+   background: #F6F6F6;
 }
 
 .popup-confirm-to-delete-account.popup {

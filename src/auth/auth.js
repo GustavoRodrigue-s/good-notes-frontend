@@ -36,7 +36,7 @@ class AuthProvider {
          this.authenticated = true;
 
          renderHeader(true);
-         renderPopupEditProfile({ api, deleteCookies });
+         renderPopupEditProfile({ api, getCookies, deleteCookies });
       
          setTimeout(() => containerLoading.classList.remove('show'), 300);
       }

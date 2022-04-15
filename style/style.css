@@ -105,7 +105,7 @@ button svg, button div, button span, button img {
 
 .input-default {
    outline: none;
-   border: 1px solid #00000028;
+   border: 1px solid #DBDBDB;
    background: transparent;
    color: var(--colorGray);
    width: 100%;
@@ -140,8 +140,8 @@ button svg, button div, button span, button img {
 }
 
 .input-and-message.error .input-default:focus + label,
-.input-and-message.error label:focus {
-   color: #D9000C;
+.input-and-message.error label:focus, .input-and-message.error label {
+   color: #D9000C !important;
 }
 
 /* LOADING */

@@ -1,6 +1,6 @@
 import initProfileOptions from '../popupProfile/profileOptions.js';
 
-const optionsMenuUser = ({ api, deleteCookies }) => {
+const optionsMenuUser = ({ api, getCookies, deleteCookies }) => {
    const containerIsLoggedIn = document.querySelector('.container-isLoggedIn');
    const popupWrapper = document.querySelector('.popup-wrapper-profile');
    const btnDropDown = document.querySelector('.btn-dropDown-header-menu');
@@ -13,6 +13,11 @@ const optionsMenuUser = ({ api, deleteCookies }) => {
 
    const logoutAccount = async () => {
       try {
+         const { accessToken, refreshToken, apiKey } = getCookies();
+
+         api.headers["Authorization"] = `${accessToken};${refreshToken}`;
+         api.apiKey = `?key=${apiKey}`;
+
          document.querySelector('body > .container-loading').classList.add('show');
 
          const [data, status] = await api.request({route: "logout"});

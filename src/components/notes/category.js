@@ -1,7 +1,4 @@
-import api from '../../services/api.js';
-import { getCookies } from '../../services/cookie.js';
-
-const categoryInit = () => {
+const categoryInit = ({ api, getCookies, shouldGetNotes }) => {
    const categoryList = document.querySelector('.category-list');
    const popupWrapper = document.querySelector('.popup-wrapper-category-delete');
    const btnNewCategory = document.querySelector('.add-new-category');
@@ -136,6 +133,11 @@ const categoryInit = () => {
          lastSelectedLi && lastSelectedLi.classList.remove('selected');
 
          currentCategory.classList.add('selected');
+
+         const categoryId = currentCategory.dataset.id;
+         const categoryName = currentCategory.querySelector('input').value;
+
+         shouldGetNotes({ categoryId, categoryName });
       },
       cancelItemAddition() {
          const currentCategory = categoryList.querySelector('li.confirmation');
