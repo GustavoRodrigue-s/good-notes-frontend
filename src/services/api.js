@@ -12,7 +12,7 @@ const api = {
       const currentUrl = `${api.baseUrl}${route}${api.apiKey ? api.apiKey : ''}`;
 
       const options = {
-         "method": method || "GET",
+         method: method || "GET",
          headers: api.headers
       }
 

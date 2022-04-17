@@ -293,7 +293,9 @@ const categoryInit = ({ api, getCookies, shouldGetNotes }) => {
          const currentCategory = document.querySelector('.category-item.dropDown-active');
          const categoryId = currentCategory.dataset.id;
    
-         if (!categoryId) return
+         if (!categoryId) {
+            return
+         }
 
          CategoryActions.deleteCategory({ categoryElement: currentCategory, categoryId });
       }

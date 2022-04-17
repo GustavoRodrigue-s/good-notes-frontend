@@ -11,7 +11,8 @@ main, .note-app {
 /* Global */
 
 .note-app > section.hide {
-   display: none;
+   opacity: 0;
+   visibility: hidden;
 }
 
 section.categories {
@@ -159,7 +160,7 @@ section.categories {
    padding: 5px;
 }
 
-.container-options .list-dropDown > li:hover > .tooltip {
+.note-app .list-dropDown > li:hover > .tooltip {
    visibility: visible;
    opacity: 1;
    transform: translateX(0);
@@ -255,7 +256,7 @@ section.categories {
 
 /* CATEGORY LOADING SKELETON */
 
-.container-category-loading {
+.container-category-loading, .container-noteList-loading {
    position: absolute;
    inset: 0;
    width: 100%;
@@ -264,7 +265,7 @@ section.categories {
    display: none;
 }
 
-.container-category-loading.show {
+.container-category-loading.show, .container-noteList-loading.show {
    display: block;
 }
 
@@ -321,7 +322,7 @@ section.categories {
    /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
 }
 
-.container-category-loading li .item {
+.container-category-loading li .item, .container-noteList-loading li .item, .note-item .date-loading {
    background: linear-gradient(120deg, #ededee 30%, #f2f2f3 38%, #f2f2f3 40%, #ededee 48%);
    background-size: 200% 100%;
    background-position: 100% 0;
@@ -351,24 +352,34 @@ section.note-list {
    color: var(--accentColor);
 }
 
-.container-notes > ul {
+.container-notes {
+   position: relative;
+}
+
+.container-notes ul {
    display: flex;
    flex-direction: column;
    gap: 20px;
 }
 
+.note-item {
+   width: 100%;
+   height: 130px;
+   border-radius: 8px;
+   background-color: #F9F9F9;
+   overflow: hidden;
+   animation: slideUp 0.3s ease;
+}
 
 .note-item > button {
    width: 100%;
-   height: 130px;
+   height: 100%;
    text-align: left;
    padding: 10px;
-   border-radius: 8px;
    border: none;
    cursor: pointer;
-   background-color: #F9F9F9;
+   background-color: transparent;
    color: #969696;
-   overflow: hidden;
    display: flex;
    flex-direction: column;
 }
@@ -391,13 +402,76 @@ section.note-list {
    font-size: 1.3rem;
 }
 
-.note-item.selected > button {
+.note-item.selected  {
    background-color: #EDEDED !important;
    color: #666666;
 }
 
+.note-item.selected .date-loading {
+   background: linear-gradient(120deg, #e2e2e2 30%, #f2f2f3 38%, #f2f2f3 40%, #e2e2e2 48%);
+   background-size: 200% 100%;
+   background-position: 100% 0;
+   animation: load 2s infinite;
+}
+
 .note-item.selected h2 {
    color: #000;
+}
+
+/* LOADING NOTE */
+
+.container-noteList-loading {
+   background-color: #fff;
+}
+
+.container-noteList-loading > ul {
+   display: flex;
+   flex-direction: column;
+   gap: 20px;
+
+}
+
+.noteItem-loading {
+   width: 100%;
+   height: 130px;
+   background-color: #F9F9F9;
+   border-radius: 8px;
+   padding: 10px;
+}
+
+.noteItem-loading > .small, .note-item .date-loading {
+   width: 100%;
+   max-width: 220px;
+   height: 20px;
+   border-radius: 5px;
+}
+
+.noteItem-loading > .title {
+   width: 180px;
+   height: 30px;
+   margin: 10px 0;
+   border-radius: 5px;
+}
+
+.noteItem-loading > .content {
+   width: 100%;
+   height: 40px;
+   border-radius: 5px;
+}
+
+.note-item .date {
+   width: 100%;
+}
+
+.note-item .date.loading > small, .date-loading {
+   display: none;
+} 
+
+.date.loading .date-loading {
+   display: block;
+   height: 15px;
+   max-width: 160px;
+   border-radius: 3px;
 }
 
 /* SECTION CURRENT NOTE */
@@ -406,6 +480,9 @@ section.current-note {
    height: 100%;
    padding: 20px;
    overflow: hidden !important;
+   transition: 0.2s;
+   opacity: 1;
+   visibility: visible;
 }
 
 .note-path {
@@ -415,6 +492,35 @@ section.current-note {
 .current-note > .header {
    border-bottom: 1px solid #DBDBDB; 
    padding-bottom: 10px;
+}
+
+.container-more-currentNote > button {
+   padding: 10px;
+   cursor: pointer;
+   border: none;
+   background: transparent;
+}
+
+.container-more-currentNote button:hover {
+   background-color: #ebebeb;
+}
+
+.container-more-currentNote .list-dropDown li {
+   padding: 0;
+}
+
+.container-more-currentNote .list-dropDown button {
+   background-color: transparent;
+   border: none;
+   cursor: pointer;
+}
+
+.container-more-currentNote > .list-dropDown {
+   transform: translate(-50%, -20px);
+}
+
+.container-more-currentNote .btn-dropDown.active ~ .list-dropDown {
+   transform: translate(-50%, 0px);
 }
 
 .current-note > .main {

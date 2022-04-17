@@ -131,34 +131,65 @@
                </button>
             </div>
             <div class="container-notes">
-               <ul class="notes-list">
+               <div>
+                  <ul class="notes-list">
 
-               </ul>
+                  </ul>
+               </div>
+               <div class="container-noteList-loading show">
+                  <ul>
+                     <li class="noteItem-loading">
+                        <div class="small item"></div>
+                        <div class="title item"></div>
+                        <div class="content item"></div>
+                     </li>
+                     <li class="noteItem-loading">
+                        <div class="small item"></div>
+                        <div class="title item"></div>
+                        <div class="content item"></div>
+                     </li>
+                     <li class="noteItem-loading">
+                        <div class="small item"></div>
+                        <div class="title item"></div>
+                        <div class="content item"></div>
+                     </li>
+                  </ul>
+               </div>
             </div>
          </section>
 
          <section class="current-note hide">
             <div class="header">
-               <div class="note-path">
-                  Notas > Nota test
-               </div>
-               <div>
-                  <svg width="20" height="10" viewBox="0 0 21 5" fill="none" xmlns="http://www.w3.org/2000/svg">
-                     <circle cx="2.5" cy="2.5" r="2.5" fill="#000"/>
-                     <circle cx="18.5" cy="2.5" r="2.5" fill="#000"/>
-                     <circle cx="10.5" cy="2.5" r="2.5" fill="#000"/>
-                  </svg>
+               <div class="note-path"></div>
+               <div class="container-more-currentNote container-dropDown">
+                  <button class="btn-dropDown btn-wrapper-default" data-js="activateDropDown">
+                     <svg width="25" height="10" viewBox="0 0 21 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="2.5" cy="2.5" r="2.5" fill="#000"/>
+                        <circle cx="18.5" cy="2.5" r="2.5" fill="#000"/>
+                        <circle cx="10.5" cy="2.5" r="2.5" fill="#000"/>
+                     </svg>
+                  </button>
+                  <ul class="list-dropDown">
+                     <li>
+                        <button data-js="shouldDeleteNote">
+                           <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 0 24 24" width="30px" fill="#696969"><path d="M0 0h24v24H0V0z" fill="none"/>
+                              <path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/>
+                           </svg>
+                        </button>
+                        <span class="tooltip">Excluir</span>
+                     </li>
+                  </ul>
                </div>
             </div>
             <div class="main">
                <div class="title-note">
-                  <div>
+                  <div class="container-currentNote-title">
                      <input type="text" name="inputText" value="Nova Nota" maxlength="55" />
                   </div>
                   <div class="last-modification">
                      <small>
-                        última modificação:
-                        <strong>28/03/2022 às 17:52</strong>
+                        Última modificação:
+                        <strong></strong>
                      </small>
                   </div>
                </div>
@@ -209,9 +240,8 @@
                   </div>
                </div>
                <div class="note-content">
-                  <textarea >Lorem Ipsum!
+                  <textarea>
                      
-                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta veritatis vitae officia odit tenetur aut, nam ullam nemo aliquid ipsam? Labore laboriosam temporibus adipisci dolores. Libero nostrum est sit cupiditate. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quibusdam inventore molestias consequatur. Minus fuga corporis eos, deleniti sed at molestiae non labore alias autem, numquam itaque distinctio laboriosam et! Recusandae. Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum id dolores, laborum enim animi optio deserunt veritatis asperiores vitae quae tenetur perspiciatis in ipsa quo ipsam atque voluptatibus commodi recusandae. Lorem, ipsum dolor sit amet consectetur adipisicing elit. Autem corrupti excepturi delectus quasi tenetur totam itaque deleniti repudiandae numquam, ex blanditiis fuga Lorem ipsum dolor sit amet consectetur adipisicing elit. Error dolor quibusdam ipsa voluptas ducimus dolores facilis velit, in quod, recusandae dolore consequuntur vitae reprehenderit quisquam cupiditate magni eius, est suscipit. Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque dolorem, deserunt quos tenetur aperiam harum corrupti adipisci, obcaecati aliquam quisquam labore incidunt ad tempore eum! Tempore alias facilis expedita sit! Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur, omnis veniam! Maiores, fuga laboriosam velit tempore aliquam iure aspernatur labore incidunt totam culpa voluptatum at? Voluptatibus, architecto consequuntur. Cupiditate, consequuntur.
                   </textarea>
                </div>
             </div>

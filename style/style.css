@@ -98,7 +98,7 @@ button svg, button div, button span, button img {
 }
 
 .close-popup:hover {
-   background-color: rgb(235, 235, 235);
+   background-color: #ebebeb;
 }
 
 /* INPUT DEFAULT */
@@ -406,7 +406,7 @@ span.tooltip::before {
 .list-dropDown {
    background-color: #fff;
    border: 1px solid #D4D4D4;
-   box-shadow: 0;
+   box-shadow: none;
    border-radius: 8px;
    padding: 5px;
    position: absolute;
