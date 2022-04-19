@@ -162,7 +162,7 @@
             <div class="header">
                <div class="note-path"></div>
                <div class="container-more-currentNote container-dropDown">
-                  <button class="btn-dropDown btn-wrapper-default" data-js="activateDropDown">
+                  <button class="btn-dropDown btn-wrapper-default" data-js="handleToggleDropDown">
                      <svg width="25" height="10" viewBox="0 0 21 5" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="2.5" cy="2.5" r="2.5" fill="#000"/>
                         <circle cx="18.5" cy="2.5" r="2.5" fill="#000"/>
@@ -170,6 +170,14 @@
                      </svg>
                   </button>
                   <ul class="list-dropDown">
+                     <li>
+                        <button data-js="shouldUpdateNote">
+                           <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 0 24 24" width="30px" fill="#696969">
+                              <path d="M0 0h24v24H0V0z" fill="none"/><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm2 16H5V5h11.17L19 7.83V19zm-7-7c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3zM6 6h9v4H6z"/>
+                           </svg>
+                        </button>
+                        <span class="tooltip">Salvar Alterações</span>
+                     </li>
                      <li>
                         <button data-js="shouldDeleteNote">
                            <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 0 24 24" width="30px" fill="#696969"><path d="M0 0h24v24H0V0z" fill="none"/>
@@ -184,7 +192,7 @@
             <div class="main">
                <div class="title-note">
                   <div class="container-currentNote-title">
-                     <input type="text" name="inputText" value="Nova Nota" maxlength="55" />
+                     <input type="text" class="input-note-title" name="inputText" value="Nova Nota" maxlength="55" autocomplete="off" />
                   </div>
                   <div class="last-modification">
                      <small>
@@ -195,7 +203,7 @@
                </div>
                <div class="tool-bar" role="ferramentas adicionais">
                   <div>
-                     <button>
+                     <button data-action="bold">
                         <img src="./images/text_editor/strong_icon.svg" alt="texto forte" />
                      </button>
                      <button>
@@ -226,12 +234,14 @@
                      </button>
                   </div>
                   <div class="select-group">
-                     <select name="selectFontSize">
-                        <option name="12" selected >12</option>
-                        <option name="14" >14</option>
-                        <option name="16" >16</option>
-                        <option name="18" >18</option>
-                        <option name="20" >20</option>
+                     <select name="selectFontSize" data-action="fontSize">
+                        <option value="1" selected >1</option>
+                        <option value="2" >2</option>
+                        <option value="3" >3</option>
+                        <option value="4" >4</option>
+                        <option value="5" >5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
                      </select>
                      <select name="selectFontFamily" >
                         <option name="arial" selected >Arial</option>
@@ -240,9 +250,9 @@
                   </div>
                </div>
                <div class="note-content">
-                  <textarea>
+                  <div class="area-note-content" contenteditable="true">
                      
-                  </textarea>
+                  </div>
                </div>
             </div>
          </section>

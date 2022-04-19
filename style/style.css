@@ -436,13 +436,15 @@ span.tooltip::before {
    border-radius: 5px;
    font-size: 1.6rem;
    transition: 0.2s;
+   white-space: nowrap;
 }
 
-.list-dropDown > hr {
+.list-dropDown hr {
    display: block;
    height: 1px;
    background-color: #D4D4D4;
    border: none;
+   margin: 0 2px;
 }
 
 
