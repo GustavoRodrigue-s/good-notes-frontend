@@ -206,47 +206,51 @@
                      <button data-action="bold">
                         <img src="./images/text_editor/strong_icon.svg" alt="texto forte" />
                      </button>
-                     <button>
+                     <button data-action="italic">
                         <img src="./images/text_editor/italic_icon.svg" alt="texto em italico" />
                      </button>
-                     <button>
+                     <button data-action="underline">
                         <img src="./images/text_editor/underline_icon.svg" alt="texto com sublinhado" />
                      </button>
-                     <button>
+                     <button data-action="insertUnorderedList">
                         <img src="./images/text_editor/ul_icon.svg" alt="lista não ordenada" />
                      </button>
-                     <button>
+                     <button data-action="insertOrderedList">
                         <img src="./images/text_editor/ol_icon.svg" alt="lista ordenada" />
                      </button>
                   </div>
                   <div class="center-tools">
-                     <button>
+                     <button data-action="justifyLeft">
                         <img src="./images/text_editor/left_text_icon.svg" alt="texto para esquerda" />
                      </button>
-                     <button>
+                     <button data-action="justifyCenter">
                         <img src="./images/text_editor/center_text_icon.svg" alt="texto centralizado" />
                      </button>
-                     <button>
+                     <button data-action="justifyRight">
                         <img src="./images/text_editor/right_text_icon.svg" alt="texto para direita" />
                      </button>
-                     <button>
+                     <button data-action="justifyFull">
                         <img src="./images/text_editor/justify_text_icon.svg" alt="texto justificado" />
                      </button>
                   </div>
                   <div class="select-group">
                      <select name="selectFontSize" data-action="fontSize">
-                        <option value="1" selected >1</option>
-                        <option value="2" >2</option>
-                        <option value="3" >3</option>
-                        <option value="4" >4</option>
-                        <option value="5" >5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
+                        <option value="1">12px</option>
+                        <option value="2">14px</option>
+                        <option value="3" >16px</option>
+                        <option value="4">18px</option>
+                        <option value="5">20px</option>
+                        <option value="6">24px</option>
+                        <option value="7">26px</option>
                      </select>
-                     <select name="selectFontFamily" >
-                        <option name="arial" selected >Arial</option>
+                     <select name="selectFontFamily" data-action="fontName">
+                        <option value="arial" >Arial</option>
+                        <option value="calabri">Calabri</option>
+                        <option value="impact">Impact</option>
+                        <option value="inter">Inter</option>
+                        <option value="open sans">Open Sans</option>
                      </select>
-                     <input type="color" name="inputColor" >
+                     <input type="color" name="inputColor" data-action="foreColor">
                   </div>
                </div>
                <div class="note-content">

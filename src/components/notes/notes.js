@@ -2,8 +2,8 @@ const notesInit = ({ api, getCookies }) => {
    const notesList = document.querySelector('.notes-list');
    const sectionNoteList = document.querySelector('section.note-list');
    const sectionCurrentNote = document.querySelector('section.current-note');
+
    const toolBar = sectionCurrentNote.querySelector('.tool-bar');
-   
    const btnAddNote = document.querySelector('.container-add-note > button');
 
    const containerLoading = document.querySelector('.container-noteList-loading');
@@ -92,9 +92,9 @@ const notesInit = ({ api, getCookies }) => {
                <h2 class="title">${note.title || 'Nova Nota'}</h2>
             </div>
             <div>
-               <p class="content">
+               <div class="content">
                   ${note.content || 'O conteúdo da nova nota está aqui...'}
-               </p>
+               </div>
             </div>
          </div>
       </button>
@@ -130,7 +130,7 @@ const notesInit = ({ api, getCookies }) => {
          const noteContent = sectionCurrentNote.querySelector('.area-note-content');
 
          lastModification.innerText = dateOne;
-         noteContent.innerText = content;
+         noteContent.innerHTML = content;
       },
       setNewLastModification(newLastModification) {
          const lastModification = sectionCurrentNote.querySelector('.last-modification strong');
@@ -141,22 +141,28 @@ const notesInit = ({ api, getCookies }) => {
 
          btnDropDown.classList.toggle('active');
       },
-      textEditor(e) {
+      btnTextEditor(e) {
          const elementClicked = e.target;
 
-         if (!elementClicked.dataset.action) {
+         if (elementClicked.tagName !== 'BUTTON') {
             return
          }
 
-         // const acceptedCommands = {
-
-         // }
-
          const command = elementClicked.dataset.action;
          
-         console.log(command)
+         document.execCommand(command);
+      },
+      selectionsTextEditor(e) {
+         const elementClicked = e.target;
 
-         // document.execCommand(command, false, elementClicked.value);
+         if (!elementClicked.dataset.action) {
+            return 
+         }
+
+         const command = elementClicked.dataset.action;
+         const value = elementClicked.value;
+
+         document.execCommand(command, false, value);
       }
    }
 
@@ -219,7 +225,9 @@ const notesInit = ({ api, getCookies }) => {
          const content = noteElement.querySelector('.content');
 
          title.innerText = newTitle;
-         content.innerText = newContent
+         content.innerHTML = newContent;
+
+         console.log(content, newContent)
 
          const firstNoteElement = notesList.firstElementChild;
 
@@ -349,7 +357,7 @@ const notesInit = ({ api, getCookies }) => {
          
          if (title === newTitle && content === newContent) {
             return
-         }         
+         }
 
          NotesAction.updateNote({ noteId, categoryId, newTitle, newContent });
       }
@@ -368,7 +376,9 @@ const notesInit = ({ api, getCookies }) => {
    notesList.addEventListener('click', chooseAction);
    sectionCurrentNote.addEventListener('click', chooseAction);
    btnAddNote.addEventListener('click', chooseAction);
-   toolBar.addEventListener('click', UIcurrentNoteActions.textEditor);
+
+   toolBar.addEventListener('click', UIcurrentNoteActions.btnTextEditor);
+   toolBar.addEventListener('change', UIcurrentNoteActions.selectionsTextEditor);
 
    return DispatchActions.shouldGetNotes
 }
