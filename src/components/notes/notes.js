@@ -5,8 +5,11 @@ const notesInit = ({ api, getCookies }) => {
 
    const toolBar = sectionCurrentNote.querySelector('.tool-bar');
    const btnAddNote = document.querySelector('.container-add-note > button');
+   const btnExpandSummary = sectionCurrentNote.querySelector('.container-summary > button');
 
    const containerLoading = document.querySelector('.container-noteList-loading');
+
+   // adicionar update em cada item => updateItem (noteState)
 
    const noteState = {
       gettingNotes: true,
@@ -20,6 +23,7 @@ const notesInit = ({ api, getCookies }) => {
          this.allNotes.push({ 
             id, categoryId, 
             title: 'Nova Nota', 
+            summary: 'O resumo da nova nota está aqui...',
             content: 'O conteúdo da nova nota está aqui...',
             dateOne, dateTwo
          });
@@ -92,8 +96,8 @@ const notesInit = ({ api, getCookies }) => {
                <h2 class="title">${note.title || 'Nova Nota'}</h2>
             </div>
             <div>
-               <div class="content">
-                  ${note.content || 'O conteúdo da nova nota está aqui...'}
+               <div class="summary">
+                  ${note.summary || 'O resumo da nova nota está aqui...'}
                </div>
             </div>
          </div>
@@ -118,13 +122,15 @@ const notesInit = ({ api, getCookies }) => {
       },
       setCurrentNote(noteId) {
          const sectionNoteListTitle = sectionNoteList.querySelector('.section-title').innerText;
-         const { title, content, dateOne } = noteState.getNote(noteId);
+         const { title, summary, content, dateOne } = noteState.getNote(noteId);
 
          const sectionPath = sectionCurrentNote.querySelector('.note-path');
          const inputNoteTitle = sectionCurrentNote.querySelector('.title-note input');
+         const summaryArea = sectionCurrentNote.querySelector('.summaryArea');
 
          sectionPath.innerText = `${sectionNoteListTitle} > ${title}`;
          inputNoteTitle.value = title;
+         summaryArea.value = summary;
 
          const lastModification = sectionCurrentNote.querySelector('.last-modification strong');
          const noteContent = sectionCurrentNote.querySelector('.area-note-content');
@@ -136,8 +142,8 @@ const notesInit = ({ api, getCookies }) => {
          const lastModification = sectionCurrentNote.querySelector('.last-modification strong');
          lastModification.innerText = newLastModification;
       },
-      handleToggleDropDown() {
-         const btnDropDown = sectionCurrentNote.querySelector('.btn-dropDown');
+      handleToggleDropDown(e) {
+         const btnDropDown = e.target;
 
          btnDropDown.classList.toggle('active');
       },
@@ -218,16 +224,14 @@ const notesInit = ({ api, getCookies }) => {
          noteDate.innerText = dateTwo;
          containerDate.classList.remove('loading');
       },
-      updateListItem({ noteId, newTitle, newContent }) {
+      updateListItem({ noteId, newTitle, newSummary }) {
          const noteElement = notesList.querySelector(`li[data-id="${noteId}"]`);
 
          const title = noteElement.querySelector('.title');
-         const content = noteElement.querySelector('.content');
+         const summary = noteElement.querySelector('.summary');
 
          title.innerText = newTitle;
-         content.innerHTML = newContent;
-
-         console.log(content, newContent)
+         summary.innerText = newSummary;
 
          const firstNoteElement = notesList.firstElementChild;
 
@@ -342,7 +346,7 @@ const notesInit = ({ api, getCookies }) => {
          NotesAction.deleteNote({ currentCategoryId, currentNoteId });
       },
       shouldUpdateNote() {
-         UIcurrentNoteActions.handleToggleDropDown();
+         document.querySelector('.container-more-currentNote > .btn-dropDown').classList.remove('active');
 
          const { currentNoteId: noteId, currentCategoryId: categoryId } = noteState;
 
@@ -350,16 +354,17 @@ const notesInit = ({ api, getCookies }) => {
             return
          }
 
-         const { title, content } = noteState.getNote(noteId);
+         const { title, content, summary } = noteState.getNote(noteId);
 
          const newTitle = sectionCurrentNote.querySelector('.input-note-title').value;
          const newContent = sectionCurrentNote.querySelector('.area-note-content').innerHTML;
-         
-         if (title === newTitle && content === newContent) {
+         const newSummary = sectionCurrentNote.querySelector('.summaryArea').value;
+
+         if (title === newTitle && content === newContent && summary === newSummary) {
             return
          }
 
-         NotesAction.updateNote({ noteId, categoryId, newTitle, newContent });
+         NotesAction.updateNote({ noteId, categoryId, newTitle, newContent, newSummary });
       }
    }
 
@@ -379,6 +384,8 @@ const notesInit = ({ api, getCookies }) => {
 
    toolBar.addEventListener('click', UIcurrentNoteActions.btnTextEditor);
    toolBar.addEventListener('change', UIcurrentNoteActions.selectionsTextEditor);
+
+   btnExpandSummary.addEventListener('click', UIcurrentNoteActions.handleToggleDropDown);
 
    return DispatchActions.shouldGetNotes
 }

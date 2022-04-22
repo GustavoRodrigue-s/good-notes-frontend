@@ -191,10 +191,10 @@ section.categories {
    display: flex;
    align-items: center;
    gap: 10px;
-   font-size: 1.6rem;
 }
 
 .btn-name input {
+   font-size: 1.6rem;
    pointer-events: none;
    height: 100%;
    padding: 0;
@@ -391,14 +391,6 @@ section.note-list {
    flex-direction: column;
 }
 
-.note-item p {
-   font-size: 1.5rem;
-   display: -webkit-box;
-   -webkit-line-clamp: 3;
-   -webkit-box-orient: vertical;
-   overflow: hidden;
-}
-
 .note-item h2 {
    margin: 10px 0;
    font-size: 2rem;
@@ -433,7 +425,8 @@ section.note-list {
    text-overflow: ellipsis;
 }
 
-.note-item .content {
+.note-item .summary {
+   font-size: 1.5rem;
    overflow: hidden;
    text-overflow: ellipsis;
 }
@@ -505,16 +498,15 @@ section.current-note {
    transition: 0.2s;
    opacity: 1;
    visibility: visible;
-
-   display: flex;
-   flex-direction: column;
 }
 
 .current-note > .main {
    padding: 20px 0;
    height: 100%;
    overflow-y: auto;
+}
 
+section.current-note, .current-note > .main {
    display: flex;
    flex-direction: column;
 }
@@ -557,13 +549,78 @@ section.current-note {
    transform: translate(-50%, 0px);
 }
 
-
-.title-note input {
+.title-note .input-note-title {
    width: 100%;
    border: none;
    outline: none;
    background-color: none;
    font: 400 4rem var(--fontDefault), sans-serif;
+}
+
+.container-summary {
+   position: relative;
+   margin: 10px 0;
+}
+
+.container-summary > button {
+   position: relative;
+   z-index: 99;
+   padding-right: 10px;
+   display: flex;
+   align-items: center;
+   font: 500 1.6rem var(--fontDefault);
+   transition: 0.3s;
+   border-radius: 5px;
+}
+
+.container-summary > button:hover {
+   background-color: #F6F6F6;
+}
+
+.container-summary > button > img {
+   width: 30px;
+   height: 30px;
+   transition: 0.2s;
+}
+
+.container-summary-textarea {
+   width: 100%;
+   position: absolute;
+   z-index: 1;
+   margin-top: 10px;
+   opacity: 0;
+   visibility: hidden;
+   transform: translateY(-50%);
+   transition: 0.3s;
+}
+
+.container-summary > button.active > img {
+   transform: rotateZ(-180deg);
+}
+
+.container-summary > button.active ~ .container-summary-textarea {
+   position: relative;
+   opacity: 1;
+   visibility: visible;
+   transform: translateY(0);
+}
+
+.summaryArea {
+   width: 100%;
+   height: 70px;
+   resize: none;
+   outline: none;
+   border-radius: 8px;
+   color: var(--colorGray);
+   border: 1px solid #DBDBDB;
+   background-color: #F6F6F6;
+   font: 1.5rem var(--fontDefault);
+   padding: 10px;
+   transition: border-color 0.3s;
+}
+
+.summaryArea:focus {
+   border-color: #afafaf;
 }
 
 .last-modification {
@@ -580,7 +637,7 @@ section.current-note {
 
 .tool-bar {
    margin: 20px 0;
-   padding: 10px 20px;
+   padding: 5px 20px;
    display: flex;
    align-items: center;
    justify-content: space-between;
@@ -589,8 +646,8 @@ section.current-note {
 }
 
 .tool-bar button, .select-group > select, .select-group > input {
-   height: 30px;
-   padding: 5px;
+   height: 40px;
+   padding: 10px;
    border-radius: 3px;
    background: none;
    outline: none;
@@ -601,7 +658,7 @@ section.current-note {
 }
 
 .tool-bar button:hover {
-   background-color: #ebebeb;
+   background-color: #F6F6F6;
 }
 
 .tool-bar button > img {
@@ -611,7 +668,7 @@ section.current-note {
 
 .tool-bar > div {
    display: flex;
-   gap: 25px;
+   gap: 15px;
 }
 
 .center-tools {
@@ -623,16 +680,18 @@ section.current-note {
 .select-group > select, .select-group > input {
    height: 30px;
    border: 1px solid #DBDBDB;
+   background-color: #F6F6F6;
    border-radius: 5px;
    padding: 0 5px;
    transition: border-color 0.3s;
 }
 
 :is(.select-group > select, .select-group > input):focus {
-   border-color: rgb(78, 169, 255);
+   border-color: var(--accentColor);
 }
 
 .select-group > input {
+   width: 40px;
    padding: 1px 3px;
 }
 
