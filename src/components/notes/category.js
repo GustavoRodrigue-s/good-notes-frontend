@@ -1,4 +1,4 @@
-const categoryInit = ({ api, getCookies, shouldGetNotes }) => {
+const categoryInit = ({ api, getCookies, shouldGetNotes, loading }) => {
    const categoryList = document.querySelector('.category-list');
    const popupWrapper = document.querySelector('.popup-wrapper-category-delete');
    const btnNewCategory = document.querySelector('.add-new-category');
@@ -228,6 +228,8 @@ const categoryInit = ({ api, getCookies, shouldGetNotes }) => {
 
    const CategoryActions = {
       async createCategory({ categoryElement, categoryName }) {
+         const id = loading.showLoading();
+
          const { categoryId } = await requestTemplate({
             route: "addCategory",
             method: "POST",
@@ -235,17 +237,23 @@ const categoryInit = ({ api, getCookies, shouldGetNotes }) => {
          });
             
          categoryElement.setAttribute('data-id', categoryId);
+         loading.shouldHideLoading(id);
       },
       async updateCategory({ currentInput, categoryId, newCategoryName }) {
-         const data = await requestTemplate({
+         const id = loading.showLoading();
+
+         await requestTemplate({
             route: 'updateCategory',
             method: 'POST',
             body: { categoryId, newCategoryName }
          })
          
          currentInput.setAttribute('value', newCategoryName);
+         loading.shouldHideLoading(id);
       },
       async deleteCategory({ categoryElement, categoryId }) {
+         const id = loading.showLoading();
+
          categoryElement.remove();
          popupWrapper.classList.remove('show');
          
@@ -254,6 +262,8 @@ const categoryInit = ({ api, getCookies, shouldGetNotes }) => {
             method: 'POST',
             body: { categoryId }
          })
+
+         loading.shouldHideLoading(id);
       },
       async getCategories() {
          const { categories } = await requestTemplate({route: 'getCategories'});

@@ -1,4 +1,4 @@
-const notesInit = ({ api, getCookies }) => {
+const notesInit = ({ api, getCookies, loading }) => {
    const notesList = document.querySelector('.notes-list');
    const sectionNoteList = document.querySelector('section.note-list');
    const sectionCurrentNote = document.querySelector('section.current-note');
@@ -31,17 +31,6 @@ const notesInit = ({ api, getCookies }) => {
       setAllItems(notes) {
          this.allNotes = [...notes, ...this.allNotes];
       },
-      hasNotesInThisCategory() {
-         const { currentCategoryId, allNotes } = this;
-
-         if (allNotes === []) {
-            return
-         }
-
-         const shouldGetNotes = allNotes.some(({ categoryId }) => categoryId === +currentCategoryId);
-         
-         return shouldGetNotes
-      },
       getNotesInThisCategory() {
          const { currentCategoryId, allNotes } = this;
 
@@ -55,6 +44,32 @@ const notesInit = ({ api, getCookies }) => {
          const currentNote = allNotes.find(({ id }) => id === +noteId);
 
          return currentNote
+      },
+      deleteItem(noteId) {
+         const { allNotes } = this;
+
+         const newNoteList = allNotes.filter(({ id }) => id !== +noteId);
+
+         this.allNotes = newNoteList;
+      },
+      updateItem(noteDatas) {
+         const { allNotes } = this;
+         const { noteId, categoryId, newTitle, newContent, newSummary, newDateOne } = noteDatas;
+
+         const noteUpdated = {
+            id: +noteId,
+            categoryId: +categoryId,
+            title: newTitle,
+            content: newContent,
+            summary: newSummary,
+            dateOne: newDateOne
+         };
+
+         this.allNotes = allNotes.map(note => 
+            note.id === +noteId
+               ? note = { ...noteUpdated, dateTwo: note.dateTwo }
+               : note
+         );
       }
    }
 
@@ -121,8 +136,15 @@ const notesInit = ({ api, getCookies }) => {
          sectionCurrentNote.classList.remove('hide');
       },
       setCurrentNote(noteId) {
+         if (!noteId) {
+            return
+         }
+
          const sectionNoteListTitle = sectionNoteList.querySelector('.section-title').innerText;
+         const btnExpandSummary = sectionCurrentNote.querySelector('.container-summary > .btn-dropDown');
          const { title, summary, content, dateOne } = noteState.getNote(noteId);
+
+         btnExpandSummary.classList.remove('active');
 
          const sectionPath = sectionCurrentNote.querySelector('.note-path');
          const inputNoteTitle = sectionCurrentNote.querySelector('.title-note input');
@@ -244,7 +266,6 @@ const notesInit = ({ api, getCookies }) => {
    const NotesAction = {
       async getNotes({ categoryId }) {
          noteState.gettingNotes = true;
-
          sectionNoteList.scrollTop = 0;
 
          const { notes } = await requestTemplate({
@@ -264,6 +285,8 @@ const notesInit = ({ api, getCookies }) => {
          containerLoading.classList.remove('show');
       },
       async createNote({ currentCategoryId }) {
+         const id = loading.showLoading();
+
          const noteElement = UInotesListActions.renderNewItem();
 
          const { noteData } = await requestTemplate({
@@ -276,8 +299,12 @@ const notesInit = ({ api, getCookies }) => {
 
          noteElement.setAttribute('data-id', noteData.id);
          UInotesListActions.setDate(noteElement, noteData);
+
+         loading.shouldHideLoading(id);
       },
       async deleteNote({ currentCategoryId, currentNoteId }) {
+         const id = loading.showLoading();
+
          const noteElement = notesList.querySelector(`[data-id="${currentNoteId}"]`);
          noteElement.remove();
 
@@ -288,16 +315,28 @@ const notesInit = ({ api, getCookies }) => {
             method: 'POST',
             body: { categoryId: currentCategoryId, noteId: currentNoteId }
          })
+
+         noteState.deleteItem(currentNoteId);
+
+         loading.shouldHideLoading(id);
       },
       async updateNote(noteDatas) {
+         const id = loading.showLoading();
+
          const { lastModification } = await requestTemplate({
             route: 'updateNote',
             method: 'POST',   
             body: { ...noteDatas }
          });
 
+         noteDatas.newDateOne = lastModification;
+
+         noteState.updateItem(noteDatas);
+
          UIcurrentNoteActions.setNewLastModification(lastModification);
          UInotesListActions.updateListItem(noteDatas);
+
+         loading.shouldHideLoading(id);
       }
    }
 
@@ -314,11 +353,10 @@ const notesInit = ({ api, getCookies }) => {
 
          noteState.currentCategoryId = categoryId;
 
-         const hasNotes = noteState.hasNotesInThisCategory();
+         const hasNotes = noteState.getNotesInThisCategory();
 
-         if (hasNotes) {
-            const notesInThisCategory = noteState.getNotesInThisCategory();
-            UInotesListActions.renderAllItems(notesInThisCategory);
+         if (hasNotes.length) {
+            UInotesListActions.renderAllItems(hasNotes);
 
             containerLoading.classList.remove('show');
 

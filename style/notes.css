@@ -14,6 +14,14 @@ main, .note-app {
    scroll-behavior: smooth;
 }
 
+.note-app > section::-webkit-scrollbar, .current-note > .main::-webkit-scrollbar {
+   width: 5px;
+   background: #F4F4F4;
+}
+.note-app > section::-webkit-scrollbar-thumb, .current-note > .main::-webkit-scrollbar-thumb {
+   background: #dad7d7;
+}
+
 .note-app > section.hide {
    opacity: 0;
    visibility: hidden;
@@ -574,7 +582,7 @@ section.current-note, .current-note > .main {
 }
 
 .container-summary > button:hover {
-   background-color: #F6F6F6;
+   background-color: #ebebeb;
 }
 
 .container-summary > button > img {
@@ -611,7 +619,6 @@ section.current-note, .current-note > .main {
    resize: none;
    outline: none;
    border-radius: 8px;
-   color: var(--colorGray);
    border: 1px solid #DBDBDB;
    background-color: #F6F6F6;
    font: 1.5rem var(--fontDefault);
@@ -646,7 +653,7 @@ section.current-note, .current-note > .main {
 }
 
 .tool-bar button, .select-group > select, .select-group > input {
-   height: 40px;
+   height: 35px;
    padding: 10px;
    border-radius: 3px;
    background: none;
@@ -658,7 +665,7 @@ section.current-note, .current-note > .main {
 }
 
 .tool-bar button:hover {
-   background-color: #F6F6F6;
+   background-color: #ebebeb;
 }
 
 .tool-bar button > img {
@@ -671,10 +678,8 @@ section.current-note, .current-note > .main {
    gap: 15px;
 }
 
-.center-tools {
-   border-right: 1px solid #DBDBDB;
-   border-left: 1px solid #DBDBDB;
-   padding: 0 20px;
+.tool-bar > span {
+   color: #DBDBDB;
 }
 
 .select-group > select, .select-group > input {
@@ -759,7 +764,12 @@ section.current-note, .current-note > .main {
 /* CURRENT NOTE */
 
 .area-note-content ul, .area-note-content ol {
-   list-style: initial;
+   list-style-position: inside;
+   list-style-type: initial;
+}
+
+.area-note-content ol {
+   list-style-type: decimal;
 }
 
 font[size="1"] {
@@ -788,4 +798,46 @@ font[size="6"] {
 
 font[size="7"] {
    font-size: 32px;
+}
+
+/* Container Loading */
+
+.container-auto-save {
+   position: fixed;
+   z-index: 9999;
+   right: 20px;
+   bottom: 20px;
+   width: 250px;
+   height: 50px;
+   background-color: #000;
+   border-radius: 8px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   gap: 15px;
+   color: #fff;
+
+   visibility: hidden;
+   opacity: 0;
+   transition: 0.3s;
+   transform: scale(0.9);
+}
+
+.container-auto-save.show {
+   visibility: visible;
+   opacity: 1;
+   transform: scale(1);
+}
+
+.container-auto-save.reset {
+   transition: 0;
+   opacity: 0.5;
+   transform: scale(0.8);
+}
+
+.container-auto-save > .loading {
+   width: 25px;
+   height: 25px;
+   border-color: #000;
+   border-top-color: #fff;
 }

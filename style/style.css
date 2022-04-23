@@ -163,7 +163,7 @@ button svg, button div, button span, button img {
    to { transform: rotateZ(360deg) }
 }
 
-.container-loading > div {
+.container-loading > div, .container-auto-save > .loading {
    height: 45px;
    width: 45px;
    border-radius: 50%;
