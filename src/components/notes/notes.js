@@ -1,4 +1,4 @@
-const notesInit = ({ api, getCookies, loading }) => {
+const notesInit = ({ api, getCookies, loading, confirmDelete }) => {
    const notesList = document.querySelector('.notes-list');
    const sectionNoteList = document.querySelector('section.note-list');
    const sectionCurrentNote = document.querySelector('section.current-note');
@@ -8,8 +8,6 @@ const notesInit = ({ api, getCookies, loading }) => {
    const btnExpandSummary = sectionCurrentNote.querySelector('.container-summary > button');
 
    const containerLoading = document.querySelector('.container-noteList-loading');
-
-   // adicionar update em cada item => updateItem (noteState)
 
    const noteState = {
       gettingNotes: true,
@@ -129,138 +127,6 @@ const notesInit = ({ api, getCookies, loading }) => {
       }
 
       return noteItem
-   }
-
-   const UIcurrentNoteActions = {
-      showSection() {
-         sectionCurrentNote.classList.remove('hide');
-      },
-      setCurrentNote(noteId) {
-         if (!noteId) {
-            return
-         }
-
-         const sectionNoteListTitle = sectionNoteList.querySelector('.section-title').innerText;
-         const btnExpandSummary = sectionCurrentNote.querySelector('.container-summary > .btn-dropDown');
-         const { title, summary, content, dateOne } = noteState.getNote(noteId);
-
-         btnExpandSummary.classList.remove('active');
-
-         const sectionPath = sectionCurrentNote.querySelector('.note-path');
-         const inputNoteTitle = sectionCurrentNote.querySelector('.title-note input');
-         const summaryArea = sectionCurrentNote.querySelector('.summaryArea');
-
-         sectionPath.innerText = `${sectionNoteListTitle} > ${title}`;
-         inputNoteTitle.value = title;
-         summaryArea.value = summary;
-
-         const lastModification = sectionCurrentNote.querySelector('.last-modification strong');
-         const noteContent = sectionCurrentNote.querySelector('.area-note-content');
-
-         lastModification.innerText = dateOne;
-         noteContent.innerHTML = content;
-      },
-      setNewLastModification(newLastModification) {
-         const lastModification = sectionCurrentNote.querySelector('.last-modification strong');
-         lastModification.innerText = newLastModification;
-      },
-      handleToggleDropDown(e) {
-         const btnDropDown = e.target;
-
-         btnDropDown.classList.toggle('active');
-      },
-      btnTextEditor(e) {
-         const elementClicked = e.target;
-
-         if (elementClicked.tagName !== 'BUTTON') {
-            return
-         }
-
-         const command = elementClicked.dataset.action;
-         
-         document.execCommand(command);
-      },
-      selectionsTextEditor(e) {
-         const elementClicked = e.target;
-
-         if (!elementClicked.dataset.action) {
-            return 
-         }
-
-         const command = elementClicked.dataset.action;
-         const value = elementClicked.value;
-
-         document.execCommand(command, false, value);
-      }
-   }
-
-   const UInotesListActions = {
-      renderNewItem() {
-         const noteElement = createNoteElement({ isItNewNote: true });
-
-         notesList.prepend(noteElement);
-
-         return noteElement;
-      },
-      renderAllItems(notes) {
-         notesList.innerHTML = "";
-
-         notes.forEach(({ categoryId, ...props }) => {
-            const noteElement = createNoteElement({ isItNewNote: false, ...props });
-
-            notesList.append(noteElement);
-         });
-      },
-      selectItem(elementClicked) {
-         const noteElement = elementClicked.parentElement;
-
-         const alreadySelected = noteElement.classList.contains('selected');
-
-         if (alreadySelected) {
-            return
-         }
-
-         const lastNoteClicked = notesList.querySelector('li.selected');
-         lastNoteClicked && lastNoteClicked.classList.remove('selected');
-
-         noteElement.classList.add('selected');
-         
-         const noteName = noteElement.querySelector('h2.title').innerText;
-         const noteId = noteElement.dataset.id;
-
-         noteState.currentNoteId = noteId;
-
-         UIcurrentNoteActions.showSection(noteName);
-         UIcurrentNoteActions.setCurrentNote(noteId);
-      },
-      showSection({ categoryName }) {
-         const sectionTitle = sectionNoteList.querySelector('.section-title');
-
-         sectionNoteList.classList.remove('hide');
-         sectionTitle.innerText = categoryName;
-      },
-      setDate(noteElement, { dateTwo }) {
-         const containerDate = noteElement.querySelector('.date');
-         const noteDate = noteElement.querySelector('small');
-
-         noteDate.innerText = dateTwo;
-         containerDate.classList.remove('loading');
-      },
-      updateListItem({ noteId, newTitle, newSummary }) {
-         const noteElement = notesList.querySelector(`li[data-id="${noteId}"]`);
-
-         const title = noteElement.querySelector('.title');
-         const summary = noteElement.querySelector('.summary');
-
-         title.innerText = newTitle;
-         summary.innerText = newSummary;
-
-         const firstNoteElement = notesList.firstElementChild;
-
-         notesList.insertBefore(noteElement, firstNoteElement);
-
-         sectionNoteList.scrollTop = 0;
-      }
    }
 
    const NotesAction = {
@@ -403,6 +269,162 @@ const notesInit = ({ api, getCookies, loading }) => {
          }
 
          NotesAction.updateNote({ noteId, categoryId, newTitle, newContent, newSummary });
+      },
+      shouldHideNoteList(categoryId) {
+         if (categoryId === noteState.currentCategoryId) {
+            UInotesListActions.hideSection();
+         }
+      }
+   }
+
+   const UIcurrentNoteActions = {
+      showSection() {
+         sectionCurrentNote.classList.remove('hide');
+      },
+      showPopupDelete() {
+         confirmDelete.subscribe(DispatchActions.shouldDeleteNote);
+         confirmDelete.showPopup('note');
+      },
+      resetToolBar() {
+         const [
+            selectFontSize, selectFontFamily, inputColor
+         ] = sectionCurrentNote.querySelector('.select-group').children;
+
+         selectFontSize.value = '3';
+         selectFontFamily.value = 'arial';
+         inputColor.value = '#000000';
+      },
+      setCurrentNote(noteId) {
+         if (!noteId) {
+            return
+         }
+
+         const sectionNoteListTitle = sectionNoteList.querySelector('.section-title').innerText;
+         const btnExpandSummary = sectionCurrentNote.querySelector('.container-summary > .btn-dropDown');
+         const { title, summary, content, dateOne } = noteState.getNote(noteId);
+
+         btnExpandSummary.classList.remove('active');
+
+         const sectionPath = sectionCurrentNote.querySelector('.note-path');
+         const inputNoteTitle = sectionCurrentNote.querySelector('.title-note input');
+         const summaryArea = sectionCurrentNote.querySelector('.summaryArea');
+
+         sectionPath.innerText = `${sectionNoteListTitle} > ${title}`;
+         inputNoteTitle.value = title;
+         summaryArea.value = summary;
+
+         const lastModification = sectionCurrentNote.querySelector('.last-modification strong');
+         const noteContent = sectionCurrentNote.querySelector('.area-note-content');
+
+         lastModification.innerText = dateOne;
+         noteContent.innerHTML = content;
+
+         this.resetToolBar();
+      },
+      setNewLastModification(newLastModification) {
+         const lastModification = sectionCurrentNote.querySelector('.last-modification strong');
+         lastModification.innerText = newLastModification;
+      },
+      handleToggleDropDown(e) {
+         const btnDropDown = e.target;
+
+         btnDropDown.classList.toggle('active');
+      },
+      btnTextEditor(e) {
+         const elementClicked = e.target;
+
+         if (elementClicked.tagName !== 'BUTTON') {
+            return
+         }
+
+         const command = elementClicked.dataset.action;
+         
+         document.execCommand(command);
+      },
+      selectionsTextEditor(e) {
+         const elementClicked = e.target;
+
+         if (!elementClicked.dataset.action) {
+            return 
+         }
+
+         const command = elementClicked.dataset.action;
+         const value = elementClicked.value;
+
+         document.execCommand(command, false, value);
+      }
+   }
+
+   const UInotesListActions = {
+      hideSection() {
+         notesList.innerHTML = '';
+         sectionNoteList.classList.add('hide');
+      },
+      renderNewItem() {
+         const noteElement = createNoteElement({ isItNewNote: true });
+
+         notesList.prepend(noteElement);
+
+         return noteElement;
+      },
+      renderAllItems(notes) {
+         notesList.innerHTML = "";
+
+         notes.forEach(({ categoryId, ...props }) => {
+            const noteElement = createNoteElement({ isItNewNote: false, ...props });
+
+            notesList.append(noteElement);
+         });
+      },
+      selectItem(elementClicked) {
+         const noteElement = elementClicked.parentElement;
+
+         const alreadySelected = noteElement.classList.contains('selected');
+
+         if (alreadySelected) {
+            return
+         }
+
+         const lastNoteClicked = notesList.querySelector('li.selected');
+         lastNoteClicked && lastNoteClicked.classList.remove('selected');
+
+         noteElement.classList.add('selected');
+         
+         const noteName = noteElement.querySelector('h2.title').innerText;
+         const noteId = noteElement.dataset.id;
+
+         noteState.currentNoteId = noteId;
+
+         UIcurrentNoteActions.showSection(noteName);
+         UIcurrentNoteActions.setCurrentNote(noteId);
+      },
+      showSection({ categoryName }) {
+         const sectionTitle = sectionNoteList.querySelector('.section-title');
+
+         sectionNoteList.classList.remove('hide');
+         sectionTitle.innerText = categoryName;
+      },
+      setDate(noteElement, { dateTwo }) {
+         const containerDate = noteElement.querySelector('.date');
+         const noteDate = noteElement.querySelector('small');
+
+         noteDate.innerText = dateTwo;
+         containerDate.classList.remove('loading');
+      },
+      updateListItem({ noteId, newTitle, newSummary }) {
+         const noteElement = notesList.querySelector(`li[data-id="${noteId}"]`);
+
+         const title = noteElement.querySelector('.title');
+         const summary = noteElement.querySelector('.summary');
+
+         title.innerText = newTitle;
+         summary.innerText = newSummary;
+
+         const firstNoteElement = notesList.firstElementChild;
+
+         notesList.insertBefore(noteElement, firstNoteElement);
+
+         sectionNoteList.scrollTop = 0;
       }
    }
 
@@ -425,7 +447,10 @@ const notesInit = ({ api, getCookies, loading }) => {
 
    btnExpandSummary.addEventListener('click', UIcurrentNoteActions.handleToggleDropDown);
 
-   return DispatchActions.shouldGetNotes
+   return {
+      shouldGetNotes: DispatchActions.shouldGetNotes,
+      shouldHideNoteList: DispatchActions.shouldHideNoteList
+   }
 }
 
 export default notesInit

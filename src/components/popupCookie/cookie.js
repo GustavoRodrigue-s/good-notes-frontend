@@ -54,6 +54,8 @@ const renderPopupCookie = () => {
    popupWrapper.innerHTML = cookieContent;
 
    closePopupCookie();
+
+   setTimeout(() => popupWrapper.classList.add('show'), 0);
 }
 
 export default renderPopupCookie;

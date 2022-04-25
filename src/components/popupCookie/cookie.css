@@ -6,6 +6,14 @@
    gap: 10px;
 }
 
+.popup-wrapper-cookie.show {
+   transition-delay: 0.3s;
+}
+
+.popup-wrapper-cookie.show .popup-cookie {
+   transition-delay: 0.3s;
+}
+
 .header {
    display: flex;
    align-items: center;

@@ -163,7 +163,7 @@ button svg, button div, button span, button img {
    to { transform: rotateZ(360deg) }
 }
 
-.container-loading > div, .container-auto-save > .loading {
+.container-loading > div, .container-auto-save .loading {
    height: 45px;
    width: 45px;
    border-radius: 50%;
@@ -189,8 +189,8 @@ button svg, button div, button span, button img {
    z-index: 99999;
    visibility: hidden;
    opacity: 0;
-   transition: 0.3s;
    overflow: hidden;
+   transition: 0.3s;
 }
 
 .popup-wrapper.show {
@@ -239,7 +239,7 @@ button svg, button div, button span, button img {
 .popup-wrapper.show > .overlay-signIn.show > .popup-signIn,
 .popup-wrapper.show > .overlay-signUp.show > .popup-signUp,
 .popup-wrapper-cookie.show .popup,
-.popup-wrapper-category-delete.show .popup {
+.popup-wrapper-confirm-delete.show .popup {
    transform: scale(1);
    visibility: visible;
    opacity: 1;

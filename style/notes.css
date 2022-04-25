@@ -715,42 +715,54 @@ section.current-note, .current-note > .main {
 
 /* OTHER STYLES */
 
-.popup-category-delete {
+.popup-confirm-delete {
    max-width: 350px;
    text-align: center;
    padding-bottom: 20px;
    color: var(--colorGray);
 }
 
-.container-btn-category {
+.category-message, .note-message {
+   display: none;
+}
+
+.container-btn {
    margin-top: 35px;
 }
 
-.popup-category-delete h1 {
+.popup-confirm-delete h1 {
    font-size: 2.5rem;
    color: #000;
    margin-bottom: 5px;
 }
 
-.btn-confirm-delete-category, .btn-cancel-delete-category {
+.btn-confirm-delete, .btn-cancel-delete {
    width: 100%;
    height: 40px;
    font-size: 1.5rem;
    font-weight: 500; 
 }
 
-.btn-cancel-delete-category {
+.btn-cancel-delete {
    background-color: #fff;
    color: #000;
    margin-top: 5px;
 }
 
-.btn-confirm-delete-category {
+.btn-confirm-delete {
    background-color: rgb(255, 77, 77);
 }
 
-.btn-confirm-delete-category:hover {
+.btn-confirm-delete:hover {
    background-color: #b90009da;
+}
+
+.popup-wrapper-confirm-delete.category .category-message {
+   display: block;
+}
+
+.popup-wrapper-confirm-delete.note .note-message {
+   display: block;
 }
 
 /* TEXT EDITOR */
@@ -807,20 +819,43 @@ font[size="7"] {
    z-index: 9999;
    right: 20px;
    bottom: 20px;
-   width: 250px;
+   width: 260px;
    height: 50px;
    background-color: #000;
    border-radius: 8px;
+   transition: 0.3s;
+}
+
+.container-auto-save > div {
+   width: 100%;
+   height: 100%;
+   position: absolute;
    display: flex;
    align-items: center;
    justify-content: center;
    gap: 15px;
    color: #fff;
+   transition: 0.3s;
+}
 
+.container-auto-save > .success {
+   gap: 8px;
+}
+
+.container-auto-save.success > .pending,
+.container-auto-save > .success,
+.container-auto-save.hide {
    visibility: hidden;
    opacity: 0;
-   transition: 0.3s;
-   transform: scale(0.9);
+}
+
+@keyframes fadeLoading {
+   from { visibility: hidden; opacity: 0; }
+   to { visibility: visible; opacity: 1; }
+}
+
+.container-auto-save.success > .success {
+   animation: fadeLoading 0.3s 0.3s forwards;
 }
 
 .container-auto-save.show {
@@ -829,13 +864,18 @@ font[size="7"] {
    transform: scale(1);
 }
 
+.container-auto-save.hide {
+   transition-delay: 1.5s;
+   transform: scale(0.9);
+}
+
 .container-auto-save.reset {
    transition: 0;
    opacity: 0.5;
    transform: scale(0.8);
 }
 
-.container-auto-save > .loading {
+.container-auto-save .loading {
    width: 25px;
    height: 25px;
    border-color: #000;
