@@ -835,7 +835,7 @@ font[size="7"] {
    justify-content: center;
    gap: 15px;
    color: #fff;
-   transition: 0.3s;
+   transition: 0.3s ease;
 }
 
 .container-auto-save > .success {
