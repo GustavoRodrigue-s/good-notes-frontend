@@ -1,4 +1,4 @@
-const categoryInit = ({ api, getCookies, shouldGetNotes, shouldHideNoteList, loading, confirmDelete }) => {
+const categoryInit = ({ api, getCookies, loading, confirmDelete, ...noteFunctions }) => {
    const categoryList = document.querySelector('.category-list');
    const btnNewCategory = document.querySelector('.add-new-category');
    const inputSearchCategories = document.querySelector('.input-search-categories');
@@ -132,12 +132,14 @@ const categoryInit = ({ api, getCookies, shouldGetNotes, shouldHideNoteList, loa
          
          currentInput.setAttribute('value', newCategoryName);
          loading.shouldHideLoading(id);
+
+         noteFunctions.shouldUpdatePath(categoryId, newCategoryName);
       },
       async deleteCategory({ categoryElement, categoryId }) {
          const id = loading.showLoading();
 
          categoryElement.remove();
-         shouldHideNoteList(categoryId);
+         noteFunctions.shouldHideNoteUIs(categoryId);
 
          await requestTemplate({
             route: 'deleteCategory',
@@ -222,7 +224,7 @@ const categoryInit = ({ api, getCookies, shouldGetNotes, shouldHideNoteList, loa
          const categoryId = currentCategory.dataset.id;
          const categoryName = currentCategory.querySelector('input').value;
 
-         shouldGetNotes({ categoryId, categoryName });
+         noteFunctions.shouldGetNotes({ categoryId, categoryName });
       },
       cancelItemAddition() {
          const currentCategory = categoryList.querySelector('li.confirmation');
