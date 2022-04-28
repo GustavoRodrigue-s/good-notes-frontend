@@ -66,7 +66,7 @@ const notesInit = ({ api, getCookies, loading, confirmDelete }) => {
       },
       updateItem(noteDatas) {
          const { allNotes } = this;
-         const { noteId, categoryId, newTitle, newContent, newSummary, newDateOne } = noteDatas;
+         const { noteId, categoryId, newTitle, newContent, newSummary, newLastModification } = noteDatas;
 
          const noteUpdated = {
             id: +noteId,
@@ -74,12 +74,12 @@ const notesInit = ({ api, getCookies, loading, confirmDelete }) => {
             title: newTitle,
             content: newContent,
             summary: newSummary,
-            dateOne: newDateOne
+            lastModification: newLastModification
          };
 
          this.allNotes = allNotes.map(note => 
             note.id === +noteId
-               ? note = { ...noteUpdated, dateTwo: note.dateTwo }
+               ? note = { ...noteUpdated, dateCreated: note.dateCreated }
                : note
          );
       },
@@ -123,7 +123,7 @@ const notesInit = ({ api, getCookies, loading, confirmDelete }) => {
       const content = `
       <button data-js="selectItem">
          <div class="${isItNewNote ? 'date loading' : 'date'}">
-            <small>${isItNewNote ? '' : note.dateTwo}</small>
+            <small>${isItNewNote ? '' : note.dateCreated}</small>
             <div class="date-loading"></div>
          </div>
          <div class="note-texts">
@@ -187,7 +187,6 @@ const notesInit = ({ api, getCookies, loading, confirmDelete }) => {
          const id = loading.showLoading();
 
          const noteElement = UInotesListActions.renderNewItem();
-
          const newNote = noteState.setItem(currentCategoryId);
 
          const { noteData } = await requestTemplate({
@@ -197,8 +196,8 @@ const notesInit = ({ api, getCookies, loading, confirmDelete }) => {
          });
 
          newNote.id = noteData.id;
-         newNote.dateOne = noteData.dateOne;
-         newNote.dateTwo = noteData.dateTwo;
+         newNote.dateCreated = noteData.dateCreated;
+         newNote.lastModification = noteData.lastModification;
 
          noteElement.setAttribute('data-id', noteData.id);
          UInotesListActions.setDate(noteElement, noteData);
@@ -232,7 +231,7 @@ const notesInit = ({ api, getCookies, loading, confirmDelete }) => {
             body: { ...noteDatas }
          });
 
-         noteDatas.newDateOne = lastModification;
+         noteDatas.newLastModification = lastModification;
 
          noteState.updateItem(noteDatas);
 
@@ -362,7 +361,7 @@ const notesInit = ({ api, getCookies, loading, confirmDelete }) => {
 
          const sectionNoteListTitle = sectionNoteList.querySelector('.section-title').innerText;
          const btnExpandSummary = sectionCurrentNote.querySelector('.container-summary > .btn-dropDown');
-         const { title, summary, content, dateOne } = noteState.getItem(noteId);
+         const { title, summary, content, lastModification } = noteState.getItem(noteId);
 
          btnExpandSummary.classList.remove('active');
 
@@ -374,21 +373,21 @@ const notesInit = ({ api, getCookies, loading, confirmDelete }) => {
          inputNoteTitle.value = title;
          summaryArea.value = summary;
 
-         const lastModification = sectionCurrentNote.querySelector('.last-modification strong');
+         const elementLastModification = sectionCurrentNote.querySelector('.last-modification strong');
          const noteContent = sectionCurrentNote.querySelector('.area-note-content');
 
-         lastModification.innerText = dateOne;
+         elementLastModification.innerText = lastModification;
          noteContent.innerHTML = content;
 
          this.resetToolBar();
       },
-      setNewModifications({ newDateOne, newTitle }) {
+      setNewModifications({ newLastModification, newTitle }) {
          const path = sectionCurrentNote.querySelector('.note-path');
          const lastModification = sectionCurrentNote.querySelector('.last-modification strong');
 
          const currentCategory = path.innerText.split(' > ')[0];
 
-         lastModification.innerText = newDateOne;
+         lastModification.innerText = newLastModification;
          path.innerText = `${currentCategory} > ${newTitle}`;
       },
       handleToggleDropDown(e) {
@@ -479,11 +478,11 @@ const notesInit = ({ api, getCookies, loading, confirmDelete }) => {
 
          sectionNoteList.classList.remove('hide');
       },
-      setDate(noteElement, { dateTwo }) {
+      setDate(noteElement, { dateCreated }) {
          const containerDate = noteElement.querySelector('.date');
          const noteDate = noteElement.querySelector('small');
 
-         noteDate.innerText = dateTwo;
+         noteDate.innerText = dateCreated;
          containerDate.classList.remove('loading');
       },
       updateListItem({ noteId, newTitle, newSummary }) {
