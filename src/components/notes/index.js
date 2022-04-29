@@ -1,6 +1,5 @@
 import api from '../../services/api.js';
-import { getCookies } from '../../services/cookie.js';
-import createAuthProvider from "../../auth/auth.js";
+import auth from "../../auth/auth.js";
 import categoryInit from "./category.js";
 import notesInit from "./notes.js";
 
@@ -128,13 +127,12 @@ const createConfirmDelete = () => {
 
 const loading = createLoading();
 const confirmDelete = createConfirmDelete();
-const auth = createAuthProvider();
 
 (async () => {
    const authenticated = await auth.verifyAuth();
 
    if (authenticated) {
-      const globalFunctions = { api, getCookies, loading, confirmDelete };
+      const globalFunctions = { api, loading, confirmDelete };
 
       const someFunctions = notesInit(globalFunctions);
       categoryInit({ ...globalFunctions, ...someFunctions });

@@ -1,5 +1,3 @@
-import createAuthProvider from "../../auth/auth.js";
-
-const auth = createAuthProvider();
+import auth from "../../auth/auth.js";
 
 auth.verifyAuth();

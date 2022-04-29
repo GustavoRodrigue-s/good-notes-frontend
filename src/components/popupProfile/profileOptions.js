@@ -1,7 +1,6 @@
 import { chooseErrors } from "./handleErrors.js";
 
-const initProfileOptions = ({ api, containerSuccessMessage, toggleLoading, deleteCookies }) => {
-
+const initProfileOptions = ({ api, containerSuccessMessage, toggleLoading, cookies }) => {
    const popupProfile = document.querySelector('.popup-profile'),
    popupDeleteAccount = document.querySelector('.popup-confirm-to-delete-account'),
    inputConfirm = document.querySelector('.input-confirm-delete'),
@@ -52,22 +51,14 @@ const initProfileOptions = ({ api, containerSuccessMessage, toggleLoading, delet
             toggleLoading();
 
             const [data, status] = await api.request({
-               method: "POST",
-               route: "updateUser",
-               body: updateCredentials,
+               auth: true, method: "POST", route: "updateUser", body: updateCredentials,
             });
 
-            if(data.newAccessToken) {
-               document.cookie = `accessToken = ${data.newAccessToken} ; path=/`;
-               
-               profileOptions['btn-update-credentials'](e);
-            } 
-
-            data.state === 'success' && status !== 100
+            data.state === 'success'
                ? setNewCredentials(data.newDatas) 
                : chooseErrors(data.reason);
 
-               toggleLoading();
+            toggleLoading();
 
          }catch(e) {
             toggleLoading();
@@ -89,9 +80,9 @@ const initProfileOptions = ({ api, containerSuccessMessage, toggleLoading, delet
          try {
             toggleLoading();
 
-            await api.request({route: "deleteUser"});
+            await api.request({ auth: true, route: "deleteUser" });
 
-            deleteCookies();
+            cookies.deleteCookies();
             window.open('./index.html', '_self');
 
          } catch(e) {

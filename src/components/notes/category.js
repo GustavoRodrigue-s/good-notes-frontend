@@ -1,4 +1,4 @@
-const categoryInit = ({ api, getCookies, loading, confirmDelete, ...noteFunctions }) => {
+const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
    const categoryList = document.querySelector('.category-list');
    const btnNewCategory = document.querySelector('.add-new-category');
    const inputSearchCategories = document.querySelector('.input-search-categories');
@@ -9,20 +9,13 @@ const categoryInit = ({ api, getCookies, loading, confirmDelete, ...noteFunction
 
    const requestTemplate = async configs => {
       try {
-         const { accessToken, refreshToken, apiKey } = getCookies();
+         const [data, status] = await api.request({ auth: true, ...configs });
 
-         api.headers["Authorization"] = `${accessToken};${refreshToken}`;
-         api.apiKey = `?key=${apiKey}`;
+         if (status === 401 || status === 403) {
+            throw 'the tokens is not valid...';
+         }
 
-         const [data, status] = await api.request(configs);
-
-         if (data.newAccessToken) {
-            document.cookie = `accessToken = ${data.newAccessToken} ; path=/`;
-            
-            requestTemplate(configs);
-         } 
-
-         if (status === 200) return data;
+         return data;
 
       } catch(e) {
          console.log(e)
@@ -174,12 +167,16 @@ const categoryInit = ({ api, getCookies, loading, confirmDelete, ...noteFunction
          const { currentCategory, currentInput } = UIcategoryActions['removeConfirmation']();
          const categoryId = currentCategory.dataset.id;
    
-         if (!categoryId) return
+         if (!categoryId) {
+            return
+         }
 
          const newCategoryName = currentInput.value.trim();
          const lastCategoryName = currentInput.getAttribute('value');
 
-         if (newCategoryName === lastCategoryName) return
+         if (newCategoryName === lastCategoryName) {
+            return
+         }
 
          CategoryActions.updateCategory({ currentInput, categoryId, newCategoryName });
       },
@@ -207,22 +204,23 @@ const categoryInit = ({ api, getCookies, loading, confirmDelete, ...noteFunction
          confirmDelete.showPopup('category');
       },
       selectItem(e) {
-         const currentCategory = e.target.parentElement.parentElement;
+         const categoryElement = e.target.parentElement.parentElement;
 
-         const alreadySelected = currentCategory.classList.contains('confirmation');
-         const id = currentCategory.dataset.id;
+         const alreadySelected = categoryElement.classList.contains('selected');
+         const isInTheConfirmationPhase = categoryElement.classList.contains('confirmation');
+         const id = categoryElement.dataset.id;
 
-         if (alreadySelected || !id) {
+         if (alreadySelected || !id || isInTheConfirmationPhase) {
             return
          }
 
          const lastSelectedLi = document.querySelector('.category-list > li.selected');
          lastSelectedLi && lastSelectedLi.classList.remove('selected');
 
-         currentCategory.classList.add('selected');
+         categoryElement.classList.add('selected');
 
-         const categoryId = currentCategory.dataset.id;
-         const categoryName = currentCategory.querySelector('input').value;
+         const categoryId = categoryElement.dataset.id;
+         const categoryName = categoryElement.querySelector('input').value;
 
          noteFunctions.shouldGetNotes({ categoryId, categoryName });
       },

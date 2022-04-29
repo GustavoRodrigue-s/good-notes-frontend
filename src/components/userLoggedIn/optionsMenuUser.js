@@ -1,6 +1,6 @@
 import initProfileOptions from '../popupProfile/profileOptions.js';
 
-const optionsMenuUser = ({ api, getCookies, deleteCookies }) => {
+const optionsMenuUser = ({ api, cookie }) => {
    const containerIsLoggedIn = document.querySelector('.container-isLoggedIn');
    const popupWrapper = document.querySelector('.popup-wrapper-profile');
    const btnDropDown = document.querySelector('.btn-dropDown-header-menu');
@@ -13,26 +13,14 @@ const optionsMenuUser = ({ api, getCookies, deleteCookies }) => {
 
    const logoutAccount = async () => {
       try {
-         const { accessToken, refreshToken, apiKey } = getCookies();
-
-         api.headers["Authorization"] = `${accessToken};${refreshToken}`;
-         api.apiKey = `?key=${apiKey}`;
-
          document.querySelector('body > .container-loading').classList.add('show');
 
-         const [data, status] = await api.request({route: "logout"});
+         await api.request({ auth: true, route: "logout" });
 
-         if(data.newAccessToken) {
-            document.cookie = `accessToken = ${data.newAccessToken} ; path=/`;
-
-            logoutAccount();
-
-         }else {
-            throw 'exiting...';
-         }
+         throw 'exiting...';
 
       } catch(e) {
-         deleteCookies();
+         cookie.deleteCookies();
 
          window.open('./index.html', '_self');
       }
@@ -94,18 +82,13 @@ const optionsMenuUser = ({ api, getCookies, deleteCookies }) => {
       try {
          toggleLoading();
 
-         const [data, status] = await api.request({route: "userCredentials"});
+         const [data, status] = await api.request({ auth: true, route: "userCredentials" });
 
-         if (data.newAccessToken) {
-            document.cookie = `accessToken = ${data.newAccessToken} ; path=/`;
-            
-            getUserCredentials();
-            
-         }else if (status !== 200) {
+         if (status !== 200) {
             throw 'The tokens is not valid.';
          }
 
-         status === 200 && setCredentials(data);
+         setCredentials(data);
 
          toggleLoading();
 
@@ -179,7 +162,7 @@ const optionsMenuUser = ({ api, getCookies, deleteCookies }) => {
 
    const tools = { 
       api,
-      deleteCookies,
+      cookie,
       toggleLoading,
       containerSuccessMessage: containerSuccessMessage
    }

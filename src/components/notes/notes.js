@@ -1,4 +1,4 @@
-const notesInit = ({ api, getCookies, loading, confirmDelete }) => {
+const notesInit = ({ api, loading, confirmDelete }) => {
    const notesList = document.querySelector('.notes-list');
    const sectionNoteList = document.querySelector('section.note-list');
    const sectionCurrentNote = document.querySelector('section.current-note');
@@ -26,7 +26,8 @@ const notesInit = ({ api, getCookies, loading, confirmDelete }) => {
             categoryId, 
             title: 'Nova Nota', 
             summary: 'O resumo da nova nota está aqui...',
-            content: 'O conteúdo da nova nota está aqui...' 
+            content: 'O conteúdo da nova nota está aqui...',
+            element: createNoteElement({ isItNewNote: true })
          }
 
          this.allNotes.unshift(newItem);
@@ -34,7 +35,14 @@ const notesInit = ({ api, getCookies, loading, confirmDelete }) => {
          return newItem;
       },
       setAllItems(notes) {
-         this.allNotes = [...notes, ...this.allNotes];
+         const definedNotes = notes.map(note => ({
+            ...note,
+            element: createNoteElement({ isItNewNote: false, ...note }) 
+         }));
+
+         this.allNotes = [...definedNotes, ...this.allNotes];
+
+         return definedNotes
       },
       getAllItems() {
          const { currentCategoryId, allNotes } = this;
@@ -50,10 +58,11 @@ const notesInit = ({ api, getCookies, loading, confirmDelete }) => {
 
          return currentNote
       },
-      deleteItem(noteId) {
+      deleteItem(currentCategoryId, noteId) {
          const { allNotes } = this;
 
-         const newNoteList = allNotes.filter(({ id }) => id !== +noteId);
+         const newNoteList = allNotes.filter(({ id, categoryId }) => 
+            id !== +noteId && currentCategoryId !== categoryId);
 
          this.allNotes = newNoteList;
       },
@@ -66,11 +75,9 @@ const notesInit = ({ api, getCookies, loading, confirmDelete }) => {
       },
       updateItem(noteDatas) {
          const { allNotes } = this;
-         const { noteId, categoryId, newTitle, newContent, newSummary, newLastModification } = noteDatas;
+         const { newTitle, newContent, newSummary, newLastModification } = noteDatas;
 
          const noteUpdated = {
-            id: +noteId,
-            categoryId: +categoryId,
             title: newTitle,
             content: newContent,
             summary: newSummary,
@@ -78,10 +85,19 @@ const notesInit = ({ api, getCookies, loading, confirmDelete }) => {
          };
 
          this.allNotes = allNotes.map(note => 
-            note.id === +noteId
-               ? note = { ...noteUpdated, dateCreated: note.dateCreated }
-               : note
-         );
+            note.id === noteUpdated.id ? { ...note ,...noteUpdated } : note);
+      },
+      insertItemFirst(noteId) {
+         const { allNotes } = this;
+
+         const updatedNoteIndex = allNotes.findIndex(({ id }) => id === +noteId);
+
+         if (updatedNoteIndex === -1) {
+            return
+         }
+
+         const updatedNoteRemoved = allNotes.splice(updatedNoteIndex, 1);
+         allNotes.unshift(updatedNoteRemoved);
       },
       alreadyRequested(categoryId) {
          const { pendingRequestQueue, queueAlreadyRequested } = this;
@@ -95,25 +111,14 @@ const notesInit = ({ api, getCookies, loading, confirmDelete }) => {
 
    const requestTemplate = async configs => {
       try {
-         const { accessToken, refreshToken, apiKey } = getCookies();
+         const [data, status] = await api.request({ auth: true, ...configs });
 
-         api.headers["Authorization"] = `${accessToken};${refreshToken}`;
-         api.apiKey = `?key=${apiKey}`;
-
-         const [data, status] = await api.request(configs);
-
-         if (data.newAccessToken) {
-            document.cookie = `accessToken = ${data.newAccessToken} ; path=/`;
-            
-            requestTemplate(configs);
-         } 
-
-         if (status === 200) {
-            return data;
-         } else {
+         if (status === 401 || status === 403) {
             throw { reason: data, status };
-         }
-
+         } 
+         
+         return data;
+         
       } catch(e) {
          console.log(e)
       }
@@ -169,10 +174,10 @@ const notesInit = ({ api, getCookies, loading, confirmDelete }) => {
          });
 
          if (notes) {
-            noteState.setAllItems(notes);
+            const definedNotes = noteState.setAllItems(notes);
 
             if (categoryId === noteState.currentCategoryId) {
-               UInotesListActions.renderAllItems(notes);
+               UInotesListActions.renderAllItems(definedNotes);
             }
          }
          
@@ -186,8 +191,8 @@ const notesInit = ({ api, getCookies, loading, confirmDelete }) => {
       async createNote({ currentCategoryId }) {
          const id = loading.showLoading();
 
-         const noteElement = UInotesListActions.renderNewItem();
          const newNote = noteState.setItem(currentCategoryId);
+         UInotesListActions.renderNewItem(newNote.element);
 
          const { noteData } = await requestTemplate({
             route: 'addNote',
@@ -199,13 +204,15 @@ const notesInit = ({ api, getCookies, loading, confirmDelete }) => {
          newNote.dateCreated = noteData.dateCreated;
          newNote.lastModification = noteData.lastModification;
 
-         noteElement.setAttribute('data-id', noteData.id);
-         UInotesListActions.setDate(noteElement, noteData);
+         newNote.element.setAttribute('data-id', noteData.id);
+         UInotesListActions.setDate(newNote.element, noteData);
 
          loading.shouldHideLoading(id);
       },
       async deleteNote({ currentCategoryId, currentNoteId }) {
          const id = loading.showLoading();
+
+         noteState.deleteItem(currentCategoryId, currentNoteId);
 
          const noteElement = notesList.querySelector(`[data-id="${currentNoteId}"]`);
          noteElement.remove();
@@ -218,12 +225,12 @@ const notesInit = ({ api, getCookies, loading, confirmDelete }) => {
             body: { categoryId: currentCategoryId, noteId: currentNoteId }
          })
 
-         noteState.deleteItem(currentNoteId);
-
          loading.shouldHideLoading(id);
       },
       async updateNote(noteDatas) {
          const id = loading.showLoading();
+
+         UInotesListActions.updateListItem(noteDatas);
 
          const { lastModification } = await requestTemplate({
             route: 'updateNote',
@@ -234,10 +241,8 @@ const notesInit = ({ api, getCookies, loading, confirmDelete }) => {
          noteDatas.newLastModification = lastModification;
 
          noteState.updateItem(noteDatas);
-
          UIcurrentNoteActions.setNewModifications(noteDatas);
-         UInotesListActions.updateListItem(noteDatas);
-
+         
          loading.shouldHideLoading(id);
       }
    }
@@ -272,6 +277,8 @@ const notesInit = ({ api, getCookies, loading, confirmDelete }) => {
 
          if (!currentIdAlreadyRequested) {
             containerLoading.classList.add('show');
+         } else {
+            containerLoading.classList.remove('show');
          }
 
          notesList.innerHTML = '';
@@ -431,24 +438,21 @@ const notesInit = ({ api, getCookies, loading, confirmDelete }) => {
          notesList.innerHTML = '';
          sectionNoteList.classList.add('hide');
       },
-      renderNewItem() {
-         const noteElement = createNoteElement({ isItNewNote: true });
-
+      renderNewItem(noteElement) {
          notesList.prepend(noteElement);
-
-         return noteElement;
       },
       renderAllItems(notes) {
          notesList.innerHTML = "";
 
-         notes.forEach(({ categoryId, ...props }) => {
-            const noteElement = createNoteElement({ 
-               isItNewNote: !props.hasOwnProperty('id'),
-               ...props 
-            });
-
-            notesList.append(noteElement);
+         notes.forEach(({ element }) => {
+            notesList.append(element);
          });
+
+         this.removeSelectedItem();
+      },
+      removeSelectedItem() {
+         const lastNoteClicked = notesList.querySelector('li.selected');
+         lastNoteClicked && lastNoteClicked.classList.remove('selected');
       },
       selectItem(elementClicked) {
          const noteElement = elementClicked.parentElement;
@@ -460,8 +464,7 @@ const notesInit = ({ api, getCookies, loading, confirmDelete }) => {
             return
          }
 
-         const lastNoteClicked = notesList.querySelector('li.selected');
-         lastNoteClicked && lastNoteClicked.classList.remove('selected');
+         this.removeSelectedItem();
 
          noteElement.classList.add('selected');
          
@@ -497,8 +500,9 @@ const notesInit = ({ api, getCookies, loading, confirmDelete }) => {
          const firstNoteElement = notesList.firstElementChild;
 
          notesList.insertBefore(noteElement, firstNoteElement);
-
          sectionNoteList.scrollTop = 0;
+
+         noteState.insertItemFirst(noteId);
       },
       updateSectionTitle(categoryName) {
          const sectionTitle = sectionNoteList.querySelector('.section-title');
@@ -518,7 +522,8 @@ const notesInit = ({ api, getCookies, loading, confirmDelete }) => {
 
    notesList.addEventListener('click', chooseAction);
    sectionCurrentNote.addEventListener('click', chooseAction);
-   btnAddNote.addEventListener('click', chooseAction);
+
+   btnAddNote.addEventListener('click', DispatchActions.shouldCreateNote);
 
    toolBar.addEventListener('click', UIcurrentNoteActions.btnTextEditor);
    toolBar.addEventListener('change', UIcurrentNoteActions.selectionsTextEditor);
