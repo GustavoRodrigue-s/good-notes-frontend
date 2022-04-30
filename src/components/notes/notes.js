@@ -233,8 +233,10 @@ const notesInit = ({ api, loading, confirmDelete }) => {
          });
 
          note.lastModification = lastModification;
-         
-         UIcurrentNoteActions.setNewModifications(lastModification);
+
+         if (note.id === +noteState.currentNoteId) {
+            UIcurrentNoteActions.setNewModifications(lastModification);
+         }
 
          loading.shouldHideLoading(id);
       }
