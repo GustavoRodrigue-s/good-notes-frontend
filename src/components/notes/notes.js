@@ -73,19 +73,10 @@ const notesInit = ({ api, loading, confirmDelete }) => {
 
          this.allNotes = newNoteList;
       },
-      updateItem(noteDatas) {
-         const { allNotes } = this;
-         const { newTitle, newContent, newSummary, newLastModification } = noteDatas;
-
-         const noteUpdated = {
-            title: newTitle,
-            content: newContent,
-            summary: newSummary,
-            lastModification: newLastModification
-         };
-
-         this.allNotes = allNotes.map(note => 
-            note.id === noteUpdated.id ? { ...note ,...noteUpdated } : note);
+      updateItem(note, { title, content, summary }) {
+         note.title = title;
+         note.content = content;
+         note.summary = summary;
       },
       insertItemFirst(noteId) {
          const { allNotes } = this;
@@ -96,7 +87,7 @@ const notesInit = ({ api, loading, confirmDelete }) => {
             return
          }
 
-         const updatedNoteRemoved = allNotes.splice(updatedNoteIndex, 1);
+         const [ updatedNoteRemoved ] = allNotes.splice(updatedNoteIndex, 1);
          allNotes.unshift(updatedNoteRemoved);
       },
       alreadyRequested(categoryId) {
@@ -227,22 +218,24 @@ const notesInit = ({ api, loading, confirmDelete }) => {
 
          loading.shouldHideLoading(id);
       },
-      async updateNote(noteDatas) {
+      async updateNote(note, newNoteValues) {
          const id = loading.showLoading();
 
-         UInotesListActions.updateListItem(noteDatas);
+         noteState.updateItem(note, newNoteValues);
+
+         UInotesListActions.updateListItem(newNoteValues);
+         UIcurrentNoteActions.updateNoteNameInPath(note.title);
 
          const { lastModification } = await requestTemplate({
             route: 'updateNote',
             method: 'POST',   
-            body: { ...noteDatas }
+            body: { ...newNoteValues }
          });
 
-         noteDatas.newLastModification = lastModification;
-
-         noteState.updateItem(noteDatas);
-         UIcurrentNoteActions.setNewModifications(noteDatas);
+         note.lastModification = lastModification;
          
+         UIcurrentNoteActions.setNewModifications(lastModification);
+
          loading.shouldHideLoading(id);
       }
    }
@@ -304,23 +297,36 @@ const notesInit = ({ api, loading, confirmDelete }) => {
       shouldUpdateNote() {
          document.querySelector('.container-more-currentNote > .btn-dropDown').classList.remove('active');
 
-         const { currentNoteId: noteId, currentCategoryId: categoryId } = noteState;
+         const { currentNoteId, currentCategoryId } = noteState;
 
-         if (!noteId || !categoryId) {
+         if (!currentNoteId || !currentCategoryId) {
             return
          }
 
-         const { title, content, summary } = noteState.getItem(noteId);
+         const note = noteState.getItem(currentNoteId);
 
-         const newTitle = sectionCurrentNote.querySelector('.input-note-title').value;
-         const newContent = sectionCurrentNote.querySelector('.area-note-content').innerHTML;
-         const newSummary = sectionCurrentNote.querySelector('.summaryArea').value;
-
-         if (title === newTitle && content === newContent && summary === newSummary) {
+         if (!note) {
             return
          }
 
-         NotesAction.updateNote({ noteId, categoryId, newTitle, newContent, newSummary });
+         const newNoteValues = {
+            title: sectionCurrentNote.querySelector('.input-note-title').value,
+            content: sectionCurrentNote.querySelector('.area-note-content').innerHTML,
+            summary: sectionCurrentNote.querySelector('.summaryArea').value,
+         }
+
+         const keysOfNewValues = Object.keys(newNoteValues);
+
+         const shouldUpdate = keysOfNewValues.every(key => newNoteValues[key] === note[key]);
+
+         if (shouldUpdate || !newNoteValues.title) {
+            return
+         }
+
+         newNoteValues.id = note.id;
+         newNoteValues.categoryId = note.categoryId;
+
+         NotesAction.updateNote(note, newNoteValues);
       },
       shouldHideNoteUIs(categoryId) {
          noteState.deleteAllItems();
@@ -333,7 +339,7 @@ const notesInit = ({ api, loading, confirmDelete }) => {
       shouldUpdatePath(categoryId, categoryName) {
          if (categoryId === noteState.currentCategoryId) {
             UInotesListActions.updateSectionTitle(categoryName);
-            UIcurrentNoteActions.updateSectionPath(categoryName);
+            UIcurrentNoteActions.updateSectionCategoryNameInPath(categoryName);
          }
       }
    }
@@ -388,14 +394,11 @@ const notesInit = ({ api, loading, confirmDelete }) => {
 
          this.resetToolBar();
       },
-      setNewModifications({ newLastModification, newTitle }) {
-         const path = sectionCurrentNote.querySelector('.note-path');
-         const lastModification = sectionCurrentNote.querySelector('.last-modification strong');
+      setNewModifications(lastModification) {
+         const noteLastModification = sectionCurrentNote.querySelector('.last-modification strong');
 
-         const currentCategory = path.innerText.split(' > ')[0];
-
-         lastModification.innerText = newLastModification;
-         path.innerText = `${currentCategory} > ${newTitle}`;
+         noteLastModification.innerText = lastModification;
+         
       },
       handleToggleDropDown(e) {
          const btnDropDown = e.target;
@@ -425,11 +428,17 @@ const notesInit = ({ api, loading, confirmDelete }) => {
 
          document.execCommand(command, false, value);
       },
-      updateSectionPath(categoryName) {
+      updateSectionCategoryNameInPath(categoryName) {
          const path = sectionCurrentNote.querySelector('.note-path');
          const currentNote = path.innerText.split(' > ')[1];
 
          path.innerText = `${categoryName} > ${currentNote}`;
+      },
+      updateNoteNameInPath(noteName) {
+         const path = sectionCurrentNote.querySelector('.note-path');
+         const currentCategory = path.innerText.split(' > ')[0];
+
+         path.innerText = `${currentCategory} > ${noteName}`;
       }
    }
 
@@ -488,27 +497,45 @@ const notesInit = ({ api, loading, confirmDelete }) => {
          noteDate.innerText = dateCreated;
          containerDate.classList.remove('loading');
       },
-      updateListItem({ noteId, newTitle, newSummary }) {
-         const noteElement = notesList.querySelector(`li[data-id="${noteId}"]`);
+      updateListItem({ id, title, summary }) {
+         const noteElement = notesList.querySelector(`li[data-id="${id}"]`);
 
-         const title = noteElement.querySelector('.title');
-         const summary = noteElement.querySelector('.summary');
+         const noteTitle = noteElement.querySelector('.title');
+         const noteSummary = noteElement.querySelector('.summary');
 
-         title.innerText = newTitle;
-         summary.innerText = newSummary;
+         noteTitle.innerText = title;
+         noteSummary.innerText = summary;
 
          const firstNoteElement = notesList.firstElementChild;
 
          notesList.insertBefore(noteElement, firstNoteElement);
          sectionNoteList.scrollTop = 0;
 
-         noteState.insertItemFirst(noteId);
+         noteState.insertItemFirst(id);
       },
       updateSectionTitle(categoryName) {
          const sectionTitle = sectionNoteList.querySelector('.section-title');
          sectionTitle.innerText = categoryName;
       }
    }
+
+   // this is a current note layer
+   const createAutoSaveListener = () => {
+      const state = {
+         autoSave: setTimeout,
+         setCurrentNote: document.querySelector('section.current-note')
+      }
+
+      const saveChanges = () => {
+         clearInterval(state.autoSave);
+
+         state.autoSave = setTimeout(DispatchActions.shouldUpdateNote, 4000);
+      }
+
+      state.setCurrentNote.addEventListener('input', saveChanges);
+   }
+
+   createAutoSaveListener();
 
    const chooseAction = e => {
       const dataJsOfThisElement = e.target.dataset.js; 
