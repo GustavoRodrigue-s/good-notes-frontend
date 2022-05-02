@@ -1,7 +1,9 @@
 const notesInit = ({ api, loading, confirmDelete }) => {
    const notesList = document.querySelector('.notes-list');
    const sectionNoteList = document.querySelector('section.note-list');
+
    const sectionCurrentNote = document.querySelector('section.current-note');
+   const currentNoteForm = sectionCurrentNote.querySelector('form');
 
    const toolBar = sectionCurrentNote.querySelector('.tool-bar');
    const btnAddNote = document.querySelector('.container-add-note > button');
@@ -311,10 +313,12 @@ const notesInit = ({ api, loading, confirmDelete }) => {
             return
          }
 
+         const { inputNoteTitle, textareaSummary } = currentNoteForm;
+
          const newNoteValues = {
-            title: sectionCurrentNote.querySelector('.input-note-title').value,
-            content: sectionCurrentNote.querySelector('.area-note-content').innerHTML,
-            summary: sectionCurrentNote.querySelector('.summaryArea').value,
+            title: inputNoteTitle.value,
+            summary: textareaSummary.value,
+            content: currentNoteForm.querySelector('.area-note-content').innerHTML,
          }
 
          const keysOfNewValues = Object.keys(newNoteValues);
@@ -540,6 +544,8 @@ const notesInit = ({ api, loading, confirmDelete }) => {
    createAutoSaveListener();
 
    const chooseAction = e => {
+      if (e.type === 'submit') e.preventDefault();
+
       const dataJsOfThisElement = e.target.dataset.js; 
       
       UInotesListActions[dataJsOfThisElement] && UInotesListActions[dataJsOfThisElement](e.target);
@@ -550,7 +556,9 @@ const notesInit = ({ api, loading, confirmDelete }) => {
    /* Trigger elements */ 
 
    notesList.addEventListener('click', chooseAction);
+   
    sectionCurrentNote.addEventListener('click', chooseAction);
+   sectionCurrentNote.addEventListener('submit', chooseAction);
 
    btnAddNote.addEventListener('click', DispatchActions.shouldCreateNote);
 

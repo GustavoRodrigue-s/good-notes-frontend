@@ -24,53 +24,55 @@ const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
 
    const createCategoryElement = ({ isItNewCategory, ...category }) => {
       const content = `
-      <div class="container-name">
-         <button class="btn-name btn-default" data-js="selectItem">
-            <svg width="25" height="20" viewBox="0 0 25 20" fill="#969696" xmlns="http://www.w3.org/2000/svg">
-               <path d="M0 5.33333H15.1661V8H0V5.33333ZM0 2.66667H15.1661V0H0V2.66667ZM0 13.3333H9.65118V10.6667H0V13.3333ZM20.6949 9.16L21.6738 8.21333C21.8013 8.08973 21.9529 7.99167 22.1196 7.92476C22.2864 7.85785 22.4652 7.82341 22.6458 7.82341C22.8264 7.82341 23.0052 7.85785 23.172 7.92476C23.3388 7.99167 23.4903 8.08973 23.6178 8.21333L24.5967 9.16C25.1344 9.68 25.1344 10.52 24.5967 11.04L23.6178 11.9867L20.6949 9.16ZM19.716 10.1067L12.4087 17.1733V20H15.3316L22.6389 12.9333L19.716 10.1067Z" fill="currentColor"/>
-            </svg>
-            <input placeholder="Nome da categoria" class="input-default" type="text" name="inputNameCategory" autocomplete="off" ${!isItNewCategory ? 'value="' + category.name + '"' : ''}/>
-         </button>
-      </div>
-      <div class="container-options">
-         <div class="${!isItNewCategory ? 'container-dropDown show' : 'container-dropDown'}">
-            <button class="btn-dropDown btn-wrapper-default center-flex" data-js="activateDropDown">
-               <svg xmlns="http://www.w3.org/2000/svg" height="35px" viewBox="0 0 24 24" width="35px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/>
-                  <path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+      <form class="category-form">
+         <div class="container-name">
+            <button class="btn-name btn-default" type="button" data-js="selectItem">
+               <svg width="25" height="20" viewBox="0 0 25 20" fill="#969696" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M0 5.33333H15.1661V8H0V5.33333ZM0 2.66667H15.1661V0H0V2.66667ZM0 13.3333H9.65118V10.6667H0V13.3333ZM20.6949 9.16L21.6738 8.21333C21.8013 8.08973 21.9529 7.99167 22.1196 7.92476C22.2864 7.85785 22.4652 7.82341 22.6458 7.82341C22.8264 7.82341 23.0052 7.85785 23.172 7.92476C23.3388 7.99167 23.4903 8.08973 23.6178 8.21333L24.5967 9.16C25.1344 9.68 25.1344 10.52 24.5967 11.04L23.6178 11.9867L20.6949 9.16ZM19.716 10.1067L12.4087 17.1733V20H15.3316L22.6389 12.9333L19.716 10.1067Z" fill="currentColor"/>
                </svg>
+               <input placeholder="Nome da categoria" class="input-default" type="text" name="inputCategoryName" autocomplete="off" ${!isItNewCategory ? 'value="' + category.name + '"' : ''}/>
             </button>
-            <ul class="list-dropDown">
-               <li>
-                  <button data-js="toggleDatasetForRenameItem">
-                     <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 0 24 24" width="30px" fill="#696969"><path d="M0 0h24v24H0V0z" fill="none"/>
-                        <path d="M14.06 9.02l.92.92L5.92 19H5v-.92l9.06-9.06M17.66 3c-.25 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29zm-3.6 3.19L3 17.25V21h3.75L17.81 9.94l-3.75-3.75z"/>
-                     </svg>
-                  </button>
-                  <span class="tooltip">Renomear</span>
-               </li>
-               <li class="delete-category">
-                  <button class="btn-delete-category" data-js="showPopupDelete">
-                     <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 0 24 24" width="30px" fill="#696969"><path d="M0 0h24v24H0V0z" fill="none"/>
-                        <path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/>
-                     </svg>
-                  </button>
-                  <span class="tooltip">Excluir</span>
-               </li>
-            </ul>
          </div>
-         <div class="${!isItNewCategory ? 'container-confirmation' : 'container-confirmation show'} center-flex">
-            <button class="btn-confirm-category btn-default center-flex" data-js="shouldCreateCategory">
-               <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#00dd6f"><path d="M0 0h24v24H0V0z" fill="none"/>
-                  <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
-               </svg>
-            </button>
-            <button class="btn-undo-category btn-default btn-wrapper-default center-flex" data-js="cancelItemAddition">
-               <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#f52500">
-                  <path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
-               </svg>
-            </button>
-         </div> 
-      </div>
+         <div class="container-options">
+            <div class="${!isItNewCategory ? 'container-dropDown show' : 'container-dropDown'}">
+               <button class="btn-dropDown btn-wrapper-default center-flex" name="btnDropDown" type="button" data-js="activateDropDown">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="35px" viewBox="0 0 24 24" width="35px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/>
+                     <path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                  </svg>
+               </button>
+               <ul class="list-dropDown">
+                  <li>
+                     <button type="button" data-js="toggleDatasetForRenameItem">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 0 24 24" width="30px" fill="#696969"><path d="M0 0h24v24H0V0z" fill="none"/>
+                           <path d="M14.06 9.02l.92.92L5.92 19H5v-.92l9.06-9.06M17.66 3c-.25 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29zm-3.6 3.19L3 17.25V21h3.75L17.81 9.94l-3.75-3.75z"/>
+                        </svg>
+                     </button>
+                     <span class="tooltip">Renomear</span>
+                  </li>
+                  <li class="delete-category">
+                     <button type="button" class="btn-delete-category" data-js="showPopupDelete">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 0 24 24" width="30px" fill="#696969"><path d="M0 0h24v24H0V0z" fill="none"/>
+                           <path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/>
+                        </svg>
+                     </button>
+                     <span class="tooltip">Excluir</span>
+                  </li>
+               </ul>
+            </div>
+            <div class="${!isItNewCategory ? 'container-confirmation' : 'container-confirmation show'} center-flex">
+               <button type="submit" class="btn-confirm-category btn-default center-flex" data-js="shouldCreateCategory">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#00dd6f"><path d="M0 0h24v24H0V0z" fill="none"/>
+                     <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+                  </svg>
+               </button>
+               <button type="reset" class="btn-undo-category btn-default btn-wrapper-default center-flex" data-js="cancelItemAddition">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#f52500">
+                     <path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
+                  </svg>
+               </button>
+            </div> 
+         </div>
+      </form>
       `;
 
       const categoryItem = document.createElement('li');
@@ -93,12 +95,11 @@ const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
    }
 
    const getCategoryBaseItems = path => {
-      const currentCategory = categoryList.querySelector(`li.${path}`);
-      const currentInput = currentCategory.querySelector('input');
-      const currentBtnDropDown = currentCategory.querySelector('.btn-dropDown');
-      const containers = currentCategory.querySelectorAll('.container-options > div');
+      const categoryElement = categoryList.querySelector(`li.${path}`);
+      const { inputCategoryName, btnDropDown } = categoryElement.querySelector('form');
+      const [containerDropDown, containerConfirmation] = categoryElement.querySelectorAll('.container-options > div');
 
-      return { currentCategory, currentInput, currentBtnDropDown, containers };
+      return { categoryElement, inputCategoryName, btnDropDown, containerDropDown, containerConfirmation };
    }
 
    const CategoryActions = {
@@ -114,7 +115,7 @@ const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
          categoryElement.setAttribute('data-id', categoryId);
          loading.shouldHideLoading(id);
       },
-      async updateCategory({ currentInput, categoryId, newCategoryName }) {
+      async updateCategory({ inputCategoryName, categoryId, newCategoryName }) {
          const id = loading.showLoading();
 
          await requestTemplate({
@@ -123,7 +124,7 @@ const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
             body: { categoryId, newCategoryName }
          })
          
-         currentInput.setAttribute('value', newCategoryName);
+         inputCategoryName.setAttribute('value', newCategoryName);
          loading.shouldHideLoading(id);
 
          noteFunctions.shouldUpdatePath(categoryId, newCategoryName);
@@ -156,29 +157,29 @@ const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
 
    const DispatchActions = {
       shouldCreateCategory() {
-         const { currentCategory, currentInput } = UIcategoryActions['removeConfirmation']();
-         const categoryName = currentInput.value.trim() || 'Nova Categoria';
+         const { categoryElement, inputCategoryName } = UIcategoryActions['removeConfirmation']();
+         const categoryName = inputCategoryName.value.trim() || 'Nova Categoria';
 
-         currentInput.setAttribute('value', categoryName);
+         inputCategoryName.setAttribute('value', categoryName);
 
-         CategoryActions.createCategory({ categoryElement: currentCategory, categoryName });
+         CategoryActions.createCategory({ categoryElement, categoryName });
       },
       shouldUpdateCategory() {
-         const { currentCategory, currentInput } = UIcategoryActions['removeConfirmation']();
-         const categoryId = currentCategory.dataset.id;
+         const { categoryElement, inputCategoryName } = UIcategoryActions['removeConfirmation']();
+         const categoryId = categoryElement.dataset.id;
    
          if (!categoryId) {
             return
          }
 
-         const newCategoryName = currentInput.value.trim();
-         const lastCategoryName = currentInput.getAttribute('value');
+         const newCategoryName = inputCategoryName.value.trim();
+         const lastCategoryName = inputCategoryName.getAttribute('value');
 
          if (newCategoryName === lastCategoryName) {
             return
          }
 
-         CategoryActions.updateCategory({ currentInput, categoryId, newCategoryName });
+         CategoryActions.updateCategory({ inputCategoryName, categoryId, newCategoryName });
       },
       shouldDeleteCategory() {
          const currentCategory = document.querySelector('.category-item.dropDown-active');
@@ -194,7 +195,7 @@ const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
 
    const UIcategoryActions = {
       activateDropDown(e) {
-         const [currentCategory, currentButton] = [e.target.parentElement.parentElement.parentElement, e.target];
+         const [currentCategory, currentButton] = [e.target.parentElement.parentElement.parentElement.parentElement, e.target];
 
          currentCategory.classList.toggle('dropDown-active');
          currentButton.classList.toggle('active');
@@ -204,7 +205,7 @@ const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
          confirmDelete.showPopup('category');
       },
       selectItem(e) {
-         const categoryElement = e.target.parentElement.parentElement;
+         const categoryElement = e.target.parentElement.parentElement.parentElement;
 
          const alreadySelected = categoryElement.classList.contains('selected');
          const isInTheConfirmationPhase = categoryElement.classList.contains('confirmation');
@@ -229,45 +230,38 @@ const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
 
          currentCategory.remove();
       },
-      resetItem() {
-         const { currentInput } = UIcategoryActions['removeConfirmation']();
-
-         currentInput.value = currentInput.getAttribute('value');
-      },
       removeConfirmation() {
-         const { currentCategory, currentInput, currentBtnDropDown, containers } = getCategoryBaseItems('confirmation');
-         const [containerDropDown, containerConfirmation] = containers;
+         const { categoryElement, inputCategoryName, btnDropDown, ...containers } = getCategoryBaseItems('confirmation');
          
-         containerConfirmation.classList.remove('show');   
-         containerDropDown.classList.add('show');
+         containers.containerConfirmation.classList.remove('show');   
+         containers.containerDropDown.classList.add('show');
 
-         currentCategory.classList.remove('confirmation', 'dropDown-active');
-         currentBtnDropDown.classList.remove('active');
+         categoryElement.classList.remove('confirmation', 'dropDown-active');
+         btnDropDown.classList.remove('active');
 
-         currentInput.setAttribute('readonly', 'readonly');
+         inputCategoryName.setAttribute('readonly', 'readonly');
 
-         return { currentCategory, currentInput };
+         return { categoryElement, inputCategoryName };
       },
       addConfirmation() {
-         const { currentCategory, currentInput, containers } = getCategoryBaseItems('dropDown-active');
-         const [containerDropDown, containerConfirmation] = containers;
+         const { categoryElement, inputCategoryName, btnDropDown, ...containers } = getCategoryBaseItems('dropDown-active');
          
-         containerConfirmation.classList.add('show');   
-         containerDropDown.classList.remove('show');
+         containers.containerConfirmation.classList.add('show');   
+         containers.containerDropDown.classList.remove('show');
 
-         currentCategory.classList.add('confirmation');
+         categoryElement.classList.add('confirmation');
 
-         currentInput.removeAttribute('readonly');
-         inputAutoFocus(currentInput);
+         inputCategoryName.removeAttribute('readonly');
+         inputAutoFocus(inputCategoryName);
 
-         return currentCategory;
+         return categoryElement;
       },
       toggleDatasetForRenameItem() {
          const currentCategory = UIcategoryActions['addConfirmation']();
          const [btnConfirm, btnCancel] = currentCategory.querySelectorAll('.container-confirmation > button');
 
          btnConfirm.setAttribute('data-js', 'shouldUpdateCategory');
-         btnCancel.setAttribute('data-js', 'resetItem');
+         btnCancel.setAttribute('data-js', 'removeConfirmation');
       },
       renderNewItem() {
          if (categoriesState.gettingCategories) return
@@ -312,6 +306,8 @@ const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
    }
 
    const chooseAction = e => {
+      if (e.type === 'submit') e.preventDefault();
+
       const dataJsOfThisElement = e.target.dataset.js;
 
       UIcategoryActions[dataJsOfThisElement] && UIcategoryActions[dataJsOfThisElement](e);
@@ -321,6 +317,7 @@ const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
    /* Trigger elements */ 
 
    categoryList.addEventListener('click', chooseAction);
+   categoryList.addEventListener('submit', chooseAction);
    btnNewCategory.addEventListener('click', UIcategoryActions.renderNewItem);
    inputSearchCategories.addEventListener('input', UIcategoryActions.searchItem);
 
