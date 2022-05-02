@@ -67,6 +67,10 @@ section.note-list {
    font: 1.6rem var(--fontDefault), sans-serif;
 }
 
+.container-add-note > button {
+   box-shadow: none;
+}
+
 /* Section Categories */
 
 .container-search, .category-item, .container-add-categorie, .container-category-loading li {
@@ -202,6 +206,7 @@ section.categories {
    background: none;
    color: var(--colorGray);
    transition: color 0.3s;
+   box-shadow: none;
    padding-left: 20px; 
    display: flex;
    align-items: center;
@@ -244,6 +249,7 @@ section.categories {
    flex: 1 1;
    height: 100%;
    background-color: transparent;
+   box-shadow: none;
    cursor: pointer;
 }
 
@@ -370,7 +376,7 @@ section.note-list {
 }
 
 .container-add-note > button {
-   background-color: #F9F9F9;
+   background-color: #F9F9F9; 
    color: var(--accentColor);
 }
 
@@ -755,6 +761,7 @@ section.current-note, .current-note-form {
    height: 40px;
    font-size: 1.5rem;
    font-weight: 500; 
+   box-shadow: none;
 }
 
 .btn-cancel-delete {

@@ -73,6 +73,7 @@ button svg, button div, button span, button img {
    transition: 0.3s;
    font: 400 1.6rem var(--fontDefault);
    background-color: var(--accentColor);
+   box-shadow: 0 0 10px #0066ff2a;
    color: #fff;
    border-radius: 8px;
 }

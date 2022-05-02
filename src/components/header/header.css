@@ -20,6 +20,7 @@ a.link-logo {
 .button-signIn {
    color: var(--colorGray);
    background: transparent;
+   box-shadow: none;
 }
 
 .button-signUp {
@@ -28,7 +29,7 @@ a.link-logo {
 }
 
 .button-signUp {
-   width: 100px;
+   width: 105px;
    height: 30px;
 }
 

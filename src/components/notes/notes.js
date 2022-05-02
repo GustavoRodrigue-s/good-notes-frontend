@@ -68,8 +68,8 @@ const notesInit = ({ api, loading, confirmDelete }) => {
 
          this.allNotes = newNoteList;
       },
-      deleteAllItems() {
-         const { allNotes, currentCategoryId } = this;
+      deleteAllItems(currentCategoryId) {
+         const { allNotes } = this;
 
          const newNoteList = allNotes.filter(({ categoryId }) => categoryId !== +currentCategoryId);
 
@@ -206,9 +206,7 @@ const notesInit = ({ api, loading, confirmDelete }) => {
          const id = loading.showLoading();
 
          noteState.deleteItem(currentCategoryId, currentNoteId);
-
-         const noteElement = notesList.querySelector(`[data-id="${currentNoteId}"]`);
-         noteElement.remove();
+         notesList.querySelector(`[data-id="${currentNoteId}"]`).remove();
 
          UIcurrentNoteActions.hideSection();
 
@@ -335,7 +333,7 @@ const notesInit = ({ api, loading, confirmDelete }) => {
          NotesAction.updateNote(note, newNoteValues);
       },
       shouldHideNoteUIs(categoryId) {
-         noteState.deleteAllItems();
+         noteState.deleteAllItems(categoryId);
 
          if (categoryId === noteState.currentCategoryId) {
             UInotesListActions.hideSection();
@@ -377,6 +375,8 @@ const notesInit = ({ api, loading, confirmDelete }) => {
          if (!noteId) {
             return
          }
+
+         console.log(noteId);
 
          const sectionNoteListTitle = sectionNoteList.querySelector('.section-title').innerText;
          const btnExpandSummary = sectionCurrentNote.querySelector('.container-summary > .btn-dropDown');
@@ -529,7 +529,7 @@ const notesInit = ({ api, loading, confirmDelete }) => {
    const createAutoSaveListener = () => {
       const state = {
          autoSave: setTimeout,
-         setCurrentNote: document.querySelector('section.current-note')
+         sectionCurrentNote: document.querySelector('section.current-note')
       }
 
       const saveChanges = () => {
@@ -538,7 +538,7 @@ const notesInit = ({ api, loading, confirmDelete }) => {
          state.autoSave = setTimeout(DispatchActions.shouldUpdateNote, 4000);
       }
 
-      state.setCurrentNote.addEventListener('input', saveChanges);
+      state.sectionCurrentNote.addEventListener('input', saveChanges);
    }
 
    createAutoSaveListener();
