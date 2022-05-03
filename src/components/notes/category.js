@@ -1,24 +1,17 @@
-const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
+const categoryInit = ({ api, loading, confirmDeletion, ...noteFunctions }) => {
  
    function createCategoryNetwork() {
       const state = {
-         observers: [],
          gettingCategories: true,
          loading: document.querySelector('.container-category-loading')
       }
 
-      const subscribe = observerFunction => {
-         state.observers.push(observerFunction);
-      }
-
-      const notifyAll = () => {
-         for (const observerFunction of state.observers) {
-            observerFunction();
-         }
-      }
-
       const isGettingCategories = () => {
          return state.gettingCategories
+      }
+
+      const setCategoryConfirmationDeletion = () => {
+         confirmDeletion.subscribe(dispatch.shouldDeleteCategory);
       }
 
       const networkTemplate = async configs => {
@@ -91,20 +84,18 @@ const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
       }
 
       const dispatch = {
-         shouldCreateCategory() {
-            const categoryElement = categoryList.getCategory('confirmation');
+         shouldCreateCategory(categoryElement) {
             const inputCategoryName = categoryElement.querySelector('input');
-
             const categoryName = inputCategoryName.value.trim() || 'Nova Categoria';
    
             inputCategoryName.setAttribute('value', categoryName);
    
             createCategory({ categoryElement, categoryName });
 
-            notifyAll();
+            categoryItem.removeConfirmation(categoryElement);
          },
-         shouldUpdateCategory() {
-            const categoryElement = categoryList.getCategory('confirmation');
+         shouldUpdateCategory(categoryElement) {
+            categoryItem.removeConfirmation(categoryElement);
             const inputCategoryName = categoryElement.querySelector('input');
 
             const categoryId = categoryElement.dataset.id;
@@ -121,13 +112,13 @@ const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
             }
    
             updateCategory({ inputCategoryName, categoryId, newCategoryName });
-
-            notifyAll();
          },
          shouldDeleteCategory() {
-            const categoryElement = categoryList.getCategory('dropDown-active');
+            const categoryElement = document.querySelector('.category-item.dropDown-active');
             const categoryId = categoryElement.dataset.id;
       
+            categoryItem.removeConfirmation(categoryElement);
+
             if (!categoryId) {
                return
             }
@@ -136,18 +127,21 @@ const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
          }
       }
 
-      const networkListener = ({ action }) => {
-         if (dispatch[action]) {
-            dispatch[action]()
+      const networkListener = ({ e, action, getCategory }) => {
+         const acceptedDispatch = dispatch[action]
+
+         if (acceptedDispatch) {
+            const categoryElement = getCategory(e);
+
+            dispatch[action](categoryElement)
          }
       }
 
       return { 
-         subscribe,
          networkListener,
          getCategories,
          isGettingCategories,
-         shouldDeleteCategory: dispatch.shouldDeleteCategory
+         setCategoryConfirmationDeletion
       }
    }
 
@@ -169,8 +163,10 @@ const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
          }
       }
 
-      const getCategory = path => {
-         const categoryElement = state.categoryList.querySelector(`li.${path}`);
+      const getCategory = e => {
+         const eventTargetPath = [...e.path];
+         
+         const categoryElement = eventTargetPath.find(element => element.classList.contains('category-item'));
 
          return categoryElement;
       }
@@ -179,7 +175,7 @@ const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
          const content = `
          <form class="category-form">
             <div class="container-name">
-               <button class="btn-name btn-default" type="button" data-js="selectItem">
+               <button class="btn-name btn-default" type="button" data-js="shouldSelectItem">
                   <svg width="25" height="20" viewBox="0 0 25 20" fill="#969696" xmlns="http://www.w3.org/2000/svg">
                      <path d="M0 5.33333H15.1661V8H0V5.33333ZM0 2.66667H15.1661V0H0V2.66667ZM0 13.3333H9.65118V10.6667H0V13.3333ZM20.6949 9.16L21.6738 8.21333C21.8013 8.08973 21.9529 7.99167 22.1196 7.92476C22.2864 7.85785 22.4652 7.82341 22.6458 7.82341C22.8264 7.82341 23.0052 7.85785 23.172 7.92476C23.3388 7.99167 23.4903 8.08973 23.6178 8.21333L24.5967 9.16C25.1344 9.68 25.1344 10.52 24.5967 11.04L23.6178 11.9867L20.6949 9.16ZM19.716 10.1067L12.4087 17.1733V20H15.3316L22.6389 12.9333L19.716 10.1067Z" fill="currentColor"/>
                   </svg>
@@ -260,7 +256,7 @@ const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
          const allCategoryElements = categories.map(([id, name]) => 
             createCategoryElement({ isItNewCategory: false, id, name }));
 
-         allCategoryElements.forEach(element => state.categoryList.prepend(element));
+         allCategoryElements.forEach(element => state.categoryList.append(element));
       }
 
       const renderCategory = () => {
@@ -269,16 +265,6 @@ const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
          state.categoryList.prepend(categoryElement);
 
          categoryElement.querySelector('input').focus();
-      }
-
-      const categoryListListener = e => {
-         if (e.type === 'submit') e.preventDefault();
-
-         // talvez obter o li aqui, e passar como parâmetro??
-
-         const action = e.target.dataset.js;
-   
-         notifyAll({ e, action });
       }
 
       const dispatch = {
@@ -308,6 +294,14 @@ const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
          }
       }
 
+      const categoryListListener = e => {
+         if (e.type === 'submit') e.preventDefault();
+
+         const action = e.target.dataset.js;
+   
+         notifyAll({ e, action, getCategory });
+      }
+
       state.categoryList.addEventListener('click', categoryListListener);
       state.categoryList.addEventListener('submit', categoryListListener);
 
@@ -316,20 +310,12 @@ const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
 
       return { 
          subscribe,
-         getCategory,
          renderAllCategories
       }
    }
 
    function createCategoryItem() {
       
-      const getConfirmationCategoryElements = path => {
-         const categoryElement = categoryList.getCategory(path);
-         const { inputCategoryName, btnDropDown } = categoryElement.querySelector('form');
-
-         return { categoryElement, inputCategoryName, btnDropDown }
-      }
-
       const changeContainersVisibility = ({ confirmation, dropDown, categoryElement }) => {
          const [containerDropDown, containerConfirmation] = categoryElement.querySelectorAll('.container-options > div');
    
@@ -344,20 +330,65 @@ const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
          currentInput.setSelectionRange(strLength, strLength);
       }
 
+      const addConfirmation = categoryElement => {
+         const { inputCategoryName } = categoryElement.querySelector('form');
+         
+         changeContainersVisibility({ confirmation: 'add', dropDown: 'remove', categoryElement });
+
+         categoryElement.classList.add('confirmation');
+
+         inputCategoryName.removeAttribute('readonly');
+         inputAutoFocus(inputCategoryName);
+      }
+
+      const removeConfirmation = categoryElement => {
+         const { inputCategoryName, btnDropDown } = categoryElement.querySelector('form');
+         
+         changeContainersVisibility({ confirmation: 'remove', dropDown: 'add', categoryElement });
+
+         categoryElement.classList.remove('confirmation', 'dropDown-active');
+         btnDropDown.classList.remove('active');
+
+         inputCategoryName.setAttribute('readonly', 'readonly');
+      }
+
       const acceptedCategoryActions = {
-         activateDropDown(e) {
-            const [currentCategory, currentButton] = [e.target.parentElement.parentElement.parentElement.parentElement, e.target];
+         activateDropDown(categoryElement) {
+            const btnDropDown = categoryElement.querySelector('.btn-dropDown');
    
-            currentCategory.classList.toggle('dropDown-active');
-            currentButton.classList.toggle('active');
+            categoryElement.classList.toggle('dropDown-active');
+            btnDropDown.classList.toggle('active');
          },
          showPopupDelete() {
-            confirmDelete.subscribe(categoryNetwork.shouldDeleteCategory);
-            confirmDelete.showPopup('category');
+            confirmDeletion.showPopup('category');
+            categoryNetwork.setCategoryConfirmationDeletion();
          },
-         selectItem(e) {
-            const categoryElement = e.target.parentElement.parentElement.parentElement;
+         selectItem(categoryElement) {
+            const lastSelectedLi = document.querySelector('.category-list > li.selected');
+            lastSelectedLi && lastSelectedLi.classList.remove('selected');
    
+            categoryElement.classList.add('selected');
+   
+            noteFunctions.shouldGetNotes(categoryElement);
+         },
+         cancelItemAddition(categoryElement) {
+            categoryElement.remove();
+         },
+         cancelRenameItem(categoryElement) {
+            removeConfirmation(categoryElement);
+         },
+         toggleDatasetForRenameItem(categoryElement) {
+            addConfirmation(categoryElement);
+
+            const [btnConfirm, btnCancel] = categoryElement.querySelectorAll('.container-confirmation > button');
+   
+            btnConfirm.setAttribute('data-js', 'shouldUpdateCategory');
+            btnCancel.setAttribute('data-js', 'cancelRenameItem');
+         }
+      }
+
+      const dispatch = {
+         shouldSelectItem(categoryElement) {
             const alreadySelected = categoryElement.classList.contains('selected');
             const isInTheConfirmationPhase = categoryElement.classList.contains('confirmation');
             const id = categoryElement.dataset.id;
@@ -365,65 +396,29 @@ const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
             if (alreadySelected || !id || isInTheConfirmationPhase) {
                return
             }
-   
-            const lastSelectedLi = document.querySelector('.category-list > li.selected');
-            lastSelectedLi && lastSelectedLi.classList.remove('selected');
-   
-            categoryElement.classList.add('selected');
-   
-            const categoryId = categoryElement.dataset.id;
-            const categoryName = categoryElement.querySelector('input').value;
-   
-            noteFunctions.shouldGetNotes({ categoryId, categoryName });
-         },
-         cancelItemAddition() {
-            const categoryElement = categoryList.getCategory('confirmation');
 
-            categoryElement.remove();
-         },
-         removeConfirmation() {
-            const { categoryElement, inputCategoryName, btnDropDown } = getConfirmationCategoryElements('confirmation');
-            
-            changeContainersVisibility({ confirmation: 'remove', dropDown: 'add', categoryElement });
-   
-            categoryElement.classList.remove('confirmation', 'dropDown-active');
-            btnDropDown.classList.remove('active');
-   
-            inputCategoryName.setAttribute('readonly', 'readonly');
-         },
-         addConfirmation() {
-            const { categoryElement, inputCategoryName } = getConfirmationCategoryElements('dropDown-active');
-            
-            changeContainersVisibility({ confirmation: 'add', dropDown: 'remove', categoryElement });
-   
-            categoryElement.classList.add('confirmation');
-   
-            inputCategoryName.removeAttribute('readonly');
-            inputAutoFocus(inputCategoryName);
-   
-            return categoryElement;
-         },
-         toggleDatasetForRenameItem() {
-            const currentCategory = this.addConfirmation();
-            const [btnConfirm, btnCancel] = currentCategory.querySelectorAll('.container-confirmation > button');
-   
-            btnConfirm.setAttribute('data-js', 'shouldUpdateCategory');
-            btnCancel.setAttribute('data-js', 'removeConfirmation');
+            acceptedCategoryActions.selectItem(categoryElement);
          }
       }
 
-      const categoryItemListener = ({ e, action }) => {
-         const acceptedAction = acceptedCategoryActions[action];
+      const categoryItemListener = ({ e, action, getCategory }) => {
+         const categoryElement = dispatch[action] || acceptedCategoryActions[action] 
+            ? getCategory(e) 
+            : '';
 
-         if (acceptedAction) {
-            acceptedCategoryActions[action](e);
+         if (dispatch[action]) {
+            dispatch[action](categoryElement);
+         }
+
+         if (acceptedCategoryActions[action]) {
+            acceptedCategoryActions[action](categoryElement);
          }
       }
 
       return { 
          categoryItemListener,
          inputAutoFocus,
-         removeConfirmation: acceptedCategoryActions.removeConfirmation
+         removeConfirmation
       }
    }
 
@@ -433,8 +428,6 @@ const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
 
    categoryList.subscribe(categoryNetwork.networkListener);
    categoryList.subscribe(categoryItem.categoryItemListener);
-
-   categoryNetwork.subscribe(categoryItem.removeConfirmation);
 
    categoryNetwork.getCategories();
 }

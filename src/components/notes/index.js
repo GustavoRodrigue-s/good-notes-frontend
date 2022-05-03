@@ -130,12 +130,12 @@ async function createNoteApp() {
    }
    
    const loading = createLoading();
-   const confirmDelete = createConfirmDelete();
+   const confirmDeletion = createConfirmDelete();
 
    const authenticated = await auth.verifyAuth();
 
    if (authenticated) {
-      const globalFunctions = { api, loading, confirmDelete };
+      const globalFunctions = { api, loading, confirmDeletion };
 
       const someFunctions = notesInit(globalFunctions);
       categoryInit({ ...globalFunctions, ...someFunctions });

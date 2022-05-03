@@ -1,4 +1,4 @@
-const notesInit = ({ api, loading, confirmDelete }) => {
+const notesInit = ({ api, loading, confirmDeletion }) => {
    const notesList = document.querySelector('.notes-list');
    const sectionNoteList = document.querySelector('section.note-list');
 
@@ -243,7 +243,10 @@ const notesInit = ({ api, loading, confirmDelete }) => {
    }
 
    const DispatchActions = {
-      shouldGetNotes({ categoryId, categoryName }) {
+      shouldGetNotes(categoryElement) {
+         const categoryId = categoryElement.dataset.id;
+         const categoryName = categoryElement.querySelector('input').value;
+
          sectionCurrentNote.classList.add('hide');
 
          if (!categoryId) {
@@ -359,8 +362,8 @@ const notesInit = ({ api, loading, confirmDelete }) => {
          sectionCurrentNote.classList.remove('hide');
       },
       showPopupDelete() {
-         confirmDelete.subscribe(DispatchActions.shouldDeleteNote);
-         confirmDelete.showPopup('note');
+         confirmDeletion.subscribe(DispatchActions.shouldDeleteNote);
+         confirmDeletion.showPopup('note');
       },
       resetToolBar() {
          const [
