@@ -1,6 +1,6 @@
 const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
  
-   const createCategoryNetwork = () => {
+   function createCategoryNetwork() {
       const state = {
          observers: [],
          gettingCategories: true,
@@ -12,7 +12,7 @@ const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
       }
 
       const notifyAll = () => {
-         for (const observerFunction in state.observers) {
+         for (const observerFunction of state.observers) {
             observerFunction();
          }
       }
@@ -83,7 +83,7 @@ const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
          const { categories } = await networkTemplate({ route: 'getCategories' });
          
          if (categories !== []) {
-            categoryList.renderAllItems(categories);
+            categoryList.renderAllCategories(categories);
          }
 
          state.loading.classList.remove('show');
@@ -92,18 +92,21 @@ const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
 
       const dispatch = {
          shouldCreateCategory() {
-            // talvez mudar isso para o categoryItem ?? UIcategoryActions['removeConfirmation']();
-            // usar o observer (com gerência de observer, change observerFunctions, etc) 
-            const { categoryElement, inputCategoryName } = UIcategoryActions['removeConfirmation']();
+            const categoryElement = categoryList.getCategory('confirmation');
+            const inputCategoryName = categoryElement.querySelector('input');
+
             const categoryName = inputCategoryName.value.trim() || 'Nova Categoria';
    
             inputCategoryName.setAttribute('value', categoryName);
    
             createCategory({ categoryElement, categoryName });
+
+            notifyAll();
          },
          shouldUpdateCategory() {
-            // usar o observer (com gerência de observer, change observerFunctions, etc) 
-            const { categoryElement, inputCategoryName } = UIcategoryActions['removeConfirmation']();
+            const categoryElement = categoryList.getCategory('confirmation');
+            const inputCategoryName = categoryElement.querySelector('input');
+
             const categoryId = categoryElement.dataset.id;
       
             if (!categoryId) {
@@ -118,22 +121,22 @@ const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
             }
    
             updateCategory({ inputCategoryName, categoryId, newCategoryName });
+
+            notifyAll();
          },
          shouldDeleteCategory() {
-            const currentCategory = document.querySelector('.category-item.dropDown-active');
-            const categoryId = currentCategory.dataset.id;
+            const categoryElement = categoryList.getCategory('dropDown-active');
+            const categoryId = categoryElement.dataset.id;
       
             if (!categoryId) {
                return
             }
    
-            deleteCategory({ categoryElement: currentCategory, categoryId });
+            deleteCategory({ categoryElement, categoryId });
          }
       }
 
       const networkListener = ({ action }) => {
-         console.log('network is notified!');
-
          if (dispatch[action]) {
             dispatch[action]()
          }
@@ -143,11 +146,12 @@ const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
          subscribe,
          networkListener,
          getCategories,
+         isGettingCategories,
          shouldDeleteCategory: dispatch.shouldDeleteCategory
       }
    }
 
-   const createCategoryList = () => {
+   function createCategoryList() {
       const state = {
          observers: [],
          categoryList: document.querySelector('.category-list'),
@@ -224,94 +228,113 @@ const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
          </form>
          `;
    
-         const categoryItem = document.createElement('li');
+         const categoryElement = document.createElement('li');
    
-         categoryItem.className = isItNewCategory ? 'category-item confirmation' : 'category-item';
-         categoryItem.innerHTML = content;
+         categoryElement.className = isItNewCategory ? 'category-item confirmation' : 'category-item';
+         categoryElement.innerHTML = content;
    
          if (!isItNewCategory) {
-            categoryItem.setAttribute('data-id', category.id);
+            categoryElement.setAttribute('data-id', category.id);
          }
    
-         return categoryItem
+         return categoryElement
       }
 
-      const searchItem = () => {
-         const { gettingCategories } = categoriesState;
-
-         if (gettingCategories) {
-            return
-         }
-
-         const allCategories = [...state.categoryList.children];
-
-         if (allCategories === []) {
-            return
-         } 
-
-         const valueInputSeach = inputSearchCategories.value.trim();
+      const searchCategory = categoryElements => {
+         const valueInputSeach = state.inputSearch.value.trim();
          const areTheSameTexts = new RegExp(valueInputSeach, 'i');
 
-         allCategories.forEach(element => {
-            const categoryName = element.querySelector('input').value.trim();
+         const showOrHideCategories = categoryElements.map(element => {
+            const name = element.querySelector('input').value.trim();
 
-            areTheSameTexts.test(categoryName) 
-               ? element.classList.remove('hide') 
-               : element.classList.add('hide');
-         })
-      }
+            const removeOrAdd = areTheSameTexts.test(name) ? 'remove' : 'add';
 
-      const renderAllItems = categories => {
-         categories.forEach(([id, name]) => {
-            const categoryElement = createCategoryElement({ isItNewCategory: false, id, name });
-
-            state.categoryList.append(categoryElement);
+            return { element, removeOrAdd }
          });
+
+         showOrHideCategories.forEach(({ element, removeOrAdd }) => 
+            element.classList[removeOrAdd]('hide'));
       }
 
-      const renderNewItem = () => {
-         if (categoriesState.gettingCategories) return
+      const renderAllCategories = categories => {
+         const allCategoryElements = categories.map(([id, name]) => 
+            createCategoryElement({ isItNewCategory: false, id, name }));
 
-         const categoryElement = createCategoryElement({ isItNewCategory: true });       
+         allCategoryElements.forEach(element => state.categoryList.prepend(element));
+      }
+
+      const renderCategory = () => {
+         const categoryElement = createCategoryElement({ isItNewCategory: true });     
 
          state.categoryList.prepend(categoryElement);
 
-         inputAutoFocus(categoryElement.querySelector('input'));
-      }
-
-      const removeItem = () => {
-         const currentCategory = categoryList.querySelector('li.confirmation');
-
-         currentCategory.remove();
+         categoryElement.querySelector('input').focus();
       }
 
       const categoryListListener = e => {
          if (e.type === 'submit') e.preventDefault();
+
+         // talvez obter o li aqui, e passar como parâmetro??
 
          const action = e.target.dataset.js;
    
          notifyAll({ e, action });
       }
 
+      const dispatch = {
+         shouldSearchItem() {
+            const isGettingCategories = categoryNetwork.isGettingCategories();
+
+            if (isGettingCategories) {
+               return
+            }
+
+            const categoryElements = [...state.categoryList.children];
+
+            if (categoryElements === []) {
+               return
+            }
+
+            searchCategory(categoryElements);
+         },
+         shouldCreateElement() {
+            const isGettingCategories = categoryNetwork.isGettingCategories();
+
+            if (isGettingCategories) {
+               return
+            }
+
+            renderCategory();
+         }
+      }
+
       state.categoryList.addEventListener('click', categoryListListener);
       state.categoryList.addEventListener('submit', categoryListListener);
-      state.btnAddCategory.addEventListener('click', renderNewItem);
-      state.inputSearch.addEventListener('input', searchItem);
+
+      state.btnAddCategory.addEventListener('click', dispatch.shouldCreateElement);
+      state.inputSearch.addEventListener('input', dispatch.shouldSearchItem);
 
       return { 
          subscribe,
          getCategory,
-         renderAllItems
+         renderAllCategories
       }
    }
 
-   const createCategoryItem = () => {
-
-      const getCategoryBaseItems = path => {
+   function createCategoryItem() {
+      
+      const getConfirmationCategoryElements = path => {
+         const categoryElement = categoryList.getCategory(path);
          const { inputCategoryName, btnDropDown } = categoryElement.querySelector('form');
+
+         return { categoryElement, inputCategoryName, btnDropDown }
+      }
+
+      const changeContainersVisibility = ({ confirmation, dropDown, categoryElement }) => {
          const [containerDropDown, containerConfirmation] = categoryElement.querySelectorAll('.container-options > div');
    
-         return { categoryElement, inputCategoryName, btnDropDown, containerDropDown, containerConfirmation };
+         containerConfirmation.classList[confirmation]('show');   
+         containerDropDown.classList[dropDown]('show');
       }
 
       const inputAutoFocus = currentInput => {
@@ -353,24 +376,25 @@ const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
    
             noteFunctions.shouldGetNotes({ categoryId, categoryName });
          },
+         cancelItemAddition() {
+            const categoryElement = categoryList.getCategory('confirmation');
+
+            categoryElement.remove();
+         },
          removeConfirmation() {
-            const { categoryElement, inputCategoryName, btnDropDown, ...containers } = getCategoryBaseItems('confirmation');
+            const { categoryElement, inputCategoryName, btnDropDown } = getConfirmationCategoryElements('confirmation');
             
-            containers.containerConfirmation.classList.remove('show');   
-            containers.containerDropDown.classList.add('show');
+            changeContainersVisibility({ confirmation: 'remove', dropDown: 'add', categoryElement });
    
             categoryElement.classList.remove('confirmation', 'dropDown-active');
             btnDropDown.classList.remove('active');
    
             inputCategoryName.setAttribute('readonly', 'readonly');
-   
-            return { categoryElement, inputCategoryName }
          },
          addConfirmation() {
-            const { categoryElement, inputCategoryName, btnDropDown, ...containers } = getCategoryBaseItems('dropDown-active');
+            const { categoryElement, inputCategoryName } = getConfirmationCategoryElements('dropDown-active');
             
-            containers.containerConfirmation.classList.add('show');   
-            containers.containerDropDown.classList.remove('show');
+            changeContainersVisibility({ confirmation: 'add', dropDown: 'remove', categoryElement });
    
             categoryElement.classList.add('confirmation');
    
@@ -380,7 +404,7 @@ const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
             return categoryElement;
          },
          toggleDatasetForRenameItem() {
-            const currentCategory = UIcategoryActions['addConfirmation']();
+            const currentCategory = this.addConfirmation();
             const [btnConfirm, btnCancel] = currentCategory.querySelectorAll('.container-confirmation > button');
    
             btnConfirm.setAttribute('data-js', 'shouldUpdateCategory');
@@ -389,25 +413,28 @@ const categoryInit = ({ api, loading, confirmDelete, ...noteFunctions }) => {
       }
 
       const categoryItemListener = ({ e, action }) => {
-         console.log('Category item notified!');
+         const acceptedAction = acceptedCategoryActions[action];
 
-         if (acceptedCategoryActions[action]) {
+         if (acceptedAction) {
             acceptedCategoryActions[action](e);
          }
       }
 
       return { 
-         categoryItemListener
+         categoryItemListener,
+         inputAutoFocus,
+         removeConfirmation: acceptedCategoryActions.removeConfirmation
       }
    }
-
 
    const categoryList = createCategoryList();
    const categoryNetwork = createCategoryNetwork();
    const categoryItem = createCategoryItem();
 
-   categoryList.subscribe(categoryItem.categoryItemListener);
    categoryList.subscribe(categoryNetwork.networkListener);
+   categoryList.subscribe(categoryItem.categoryItemListener);
+
+   categoryNetwork.subscribe(categoryItem.removeConfirmation);
 
    categoryNetwork.getCategories();
 }
