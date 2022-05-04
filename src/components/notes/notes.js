@@ -1,17 +1,12 @@
 const notesInit = ({ api, loading, confirmDeletion }) => {
-   const notesList = document.querySelector('.notes-list');
-   const sectionNoteList = document.querySelector('section.note-list');
-
-   const sectionCurrentNote = document.querySelector('section.current-note');
-   const currentNoteForm = sectionCurrentNote.querySelector('form');
-
-   const toolBar = sectionCurrentNote.querySelector('.tool-bar');
-   const btnAddNote = document.querySelector('.container-add-note > button');
-   const btnExpandSummary = sectionCurrentNote.querySelector('.container-summary > button');
-
    const containerLoading = document.querySelector('.container-noteList-loading');
 
    // criar camada separada para o containerLoading skeleton
+
+   function createNoteLoading() {
+
+      return {  }
+   }
 
    const noteState = {
       gettingNotes: false,
@@ -102,55 +97,24 @@ const notesInit = ({ api, loading, confirmDeletion }) => {
       }
    }
 
-   const requestTemplate = async configs => {
-      try {
-         const [data, status] = await api.request({ auth: true, ...configs });
+   function createNoteNetwork() {
 
-         if (status === 401 || status === 403) {
-            throw { reason: data, status };
-         } 
-         
-         return data;
-         
-      } catch(e) {
-         console.log(e)
-      }
-   }
-
-   const createNoteElement = ({ isItNewNote, ...note }) => {
-      const content = `
-      <button data-js="selectItem">
-         <div class="${isItNewNote ? 'date loading' : 'date'}">
-            <small>${isItNewNote ? '' : note.dateCreated}</small>
-            <div class="date-loading"></div>
-         </div>
-         <div class="note-texts">
-            <div>
-               <h2 class="title">${note.title || 'Nova Nota'}</h2>
-            </div>
-            <div>
-               <div class="summary">
-                  ${note.summary || 'O resumo da nova nota está aqui...'}
-               </div>
-            </div>
-         </div>
-      </button>
-      `;
-
-      const noteItem = document.createElement('li');
-
-      noteItem.className = 'note-item';
-      noteItem.innerHTML = content;
-
-      if (!isItNewNote) {
-         noteItem.setAttribute('data-id', note.id);
+      const networkTemplate = async configs => {
+         try {
+            const [data, status] = await api.request({ auth: true, ...configs });
+   
+            if (status === 401 || status === 403) {
+               throw { reason: data, status };
+            } 
+            
+            return data;
+            
+         } catch(e) {
+            console.log(e)
+         }
       }
 
-      return noteItem
-   }
-
-   const NotesAction = {
-      async getNotes({ categoryId }) {
+      const getNotes = async ({ categoryId }) => {
          if (categoryId === noteState.currentCategoryId) {
             containerLoading.classList.add('show');
          }
@@ -160,7 +124,7 @@ const notesInit = ({ api, loading, confirmDeletion }) => {
 
          noteState.pendingRequestQueue.push(categoryId);
 
-         const { notes } = await requestTemplate({
+         const { notes } = await networkTemplate({
             route: 'getNotes',
             method: 'POST',
             body: { categoryId }
@@ -180,14 +144,15 @@ const notesInit = ({ api, loading, confirmDeletion }) => {
          if (categoryId === noteState.currentCategoryId) {
             containerLoading.classList.remove('show');
          }
-      },
-      async createNote({ currentCategoryId }) {
+      }
+
+      const createNote = async ({ currentCategoryId }) => {
          const id = loading.showLoading();
 
          const newNote = noteState.setItem(currentCategoryId);
          UInotesListActions.renderNewItem(newNote.element);
 
-         const { noteData } = await requestTemplate({
+         const { noteData } = await networkTemplate({
             route: 'addNote',
             method: 'POST',
             body: { categoryId: currentCategoryId }
@@ -201,8 +166,9 @@ const notesInit = ({ api, loading, confirmDeletion }) => {
          UInotesListActions.setDate(newNote.element, noteData);
 
          loading.shouldHideLoading(id);
-      },
-      async deleteNote({ currentCategoryId, currentNoteId }) {
+      }
+
+      const deleteNote = async ({ currentCategoryId, currentNoteId }) => {
          const id = loading.showLoading();
 
          noteState.deleteItem(currentCategoryId, currentNoteId);
@@ -210,15 +176,16 @@ const notesInit = ({ api, loading, confirmDeletion }) => {
 
          UIcurrentNoteActions.hideSection();
 
-         await requestTemplate({
+         await networkTemplate({
             route: 'deleteNote',
             method: 'POST',
             body: { categoryId: currentCategoryId, noteId: currentNoteId }
          })
 
          loading.shouldHideLoading(id);
-      },
-      async updateNote(note, newNoteValues) {
+      }
+
+      const updateNote = async (note, newNoteValues) => {
          const id = loading.showLoading();
 
          noteState.updateItem(note, newNoteValues);
@@ -226,7 +193,7 @@ const notesInit = ({ api, loading, confirmDeletion }) => {
          UInotesListActions.updateListItem(newNoteValues);
          UIcurrentNoteActions.updateNoteNameInPath(note.title);
 
-         const { lastModification } = await requestTemplate({
+         const { lastModification } = await networkTemplate({
             route: 'updateNote',
             method: 'POST',   
             body: { ...newNoteValues }
@@ -240,101 +207,106 @@ const notesInit = ({ api, loading, confirmDeletion }) => {
 
          loading.shouldHideLoading(id);
       }
+
+      const dispatch = {
+         shouldGetNotes(categoryElement) {
+            const categoryId = categoryElement.dataset.id;
+            const categoryName = categoryElement.querySelector('input').value;
+   
+            sectionCurrentNote.classList.add('hide');
+   
+            if (!categoryId) {
+               return
+            }
+            
+            UInotesListActions.showSection({ categoryName });
+            noteState.currentCategoryId = categoryId;
+   
+            const hasNotes = noteState.getAllItems();
+   
+            if (hasNotes.length) {
+               UInotesListActions.renderAllItems(hasNotes);
+               containerLoading.classList.remove('show');
+   
+               return
+            }
+   
+            const { currentIdPendingRequest, currentIdAlreadyRequested } = noteState.alreadyRequested(categoryId);
+   
+            if (!currentIdPendingRequest) {
+               NotesAction.getNotes({ categoryId });
+   
+               return
+            } 
+   
+            if (!currentIdAlreadyRequested) {
+               containerLoading.classList.add('show');
+            } else {
+               containerLoading.classList.remove('show');
+            }
+   
+            notesList.innerHTML = '';
+         },
+         shouldCreateNote() {
+            const { currentCategoryId, gettingNotes } = noteState;
+   
+            if (!currentCategoryId || gettingNotes) {
+               return
+            }
+   
+            NotesAction.createNote({ currentCategoryId });
+         },
+         shouldDeleteNote() {
+            const { currentCategoryId, currentNoteId } = noteState;
+   
+            if (!currentCategoryId || !currentNoteId) {
+               return
+            }
+   
+            NotesAction.deleteNote({ currentCategoryId, currentNoteId });
+         },
+         shouldUpdateNote() {
+            document.querySelector('.container-more-currentNote > .btn-dropDown').classList.remove('active');
+   
+            const { currentNoteId, currentCategoryId } = noteState;
+   
+            if (!currentNoteId || !currentCategoryId) {
+               return
+            }
+   
+            const note = noteState.getItem(currentNoteId);
+   
+            if (!note) {
+               return
+            }
+   
+            const { inputNoteTitle, textareaSummary } = currentNoteForm;
+   
+            const newNoteValues = {
+               title: inputNoteTitle.value,
+               summary: textareaSummary.value,
+               content: currentNoteForm.querySelector('.area-note-content').innerHTML,
+            }
+   
+            const keysOfNewValues = Object.keys(newNoteValues);
+   
+            const shouldUpdate = keysOfNewValues.every(key => newNoteValues[key] === note[key]);
+   
+            if (shouldUpdate || !newNoteValues.title) {
+               return
+            }
+   
+            newNoteValues.id = note.id;
+            newNoteValues.categoryId = note.categoryId;
+   
+            NotesAction.updateNote(note, newNoteValues);
+         }
+      }
+
+      return {  }
    }
 
    const DispatchActions = {
-      shouldGetNotes(categoryElement) {
-         const categoryId = categoryElement.dataset.id;
-         const categoryName = categoryElement.querySelector('input').value;
-
-         sectionCurrentNote.classList.add('hide');
-
-         if (!categoryId) {
-            return
-         }
-         
-         UInotesListActions.showSection({ categoryName });
-         noteState.currentCategoryId = categoryId;
-
-         const hasNotes = noteState.getAllItems();
-
-         if (hasNotes.length) {
-            UInotesListActions.renderAllItems(hasNotes);
-            containerLoading.classList.remove('show');
-
-            return
-         }
-
-         const { currentIdPendingRequest, currentIdAlreadyRequested } = noteState.alreadyRequested(categoryId);
-
-         if (!currentIdPendingRequest) {
-            NotesAction.getNotes({ categoryId });
-
-            return
-         } 
-
-         if (!currentIdAlreadyRequested) {
-            containerLoading.classList.add('show');
-         } else {
-            containerLoading.classList.remove('show');
-         }
-
-         notesList.innerHTML = '';
-      },
-      shouldCreateNote() {
-         const { currentCategoryId, gettingNotes } = noteState;
-
-         if (!currentCategoryId || gettingNotes) {
-            return
-         }
-
-         NotesAction.createNote({ currentCategoryId });
-      },
-      shouldDeleteNote() {
-         const { currentCategoryId, currentNoteId } = noteState;
-
-         if (!currentCategoryId || !currentNoteId) {
-            return
-         }
-
-         NotesAction.deleteNote({ currentCategoryId, currentNoteId });
-      },
-      shouldUpdateNote() {
-         document.querySelector('.container-more-currentNote > .btn-dropDown').classList.remove('active');
-
-         const { currentNoteId, currentCategoryId } = noteState;
-
-         if (!currentNoteId || !currentCategoryId) {
-            return
-         }
-
-         const note = noteState.getItem(currentNoteId);
-
-         if (!note) {
-            return
-         }
-
-         const { inputNoteTitle, textareaSummary } = currentNoteForm;
-
-         const newNoteValues = {
-            title: inputNoteTitle.value,
-            summary: textareaSummary.value,
-            content: currentNoteForm.querySelector('.area-note-content').innerHTML,
-         }
-
-         const keysOfNewValues = Object.keys(newNoteValues);
-
-         const shouldUpdate = keysOfNewValues.every(key => newNoteValues[key] === note[key]);
-
-         if (shouldUpdate || !newNoteValues.title) {
-            return
-         }
-
-         newNoteValues.id = note.id;
-         newNoteValues.categoryId = note.categoryId;
-
-         NotesAction.updateNote(note, newNoteValues);
-      },
       shouldHideNoteUIs(categoryId) {
          noteState.deleteAllItems(categoryId);
 
@@ -351,21 +323,28 @@ const notesInit = ({ api, loading, confirmDeletion }) => {
       }
    }
 
-   const UIcurrentNoteActions = {
-      hideSection() {
-         const btnDropDown = sectionCurrentNote.querySelector('.btn-dropDown');
+   function createCurrentNote() {
+      const state = {
+         currentNote: document.querySelector('section.current-note'),
+         toolBar: this.currentNote.querySelector('.tool-bar')
+      }
 
-         sectionCurrentNote.classList.add('hide');
+      // const btnExpandSummary = sectionCurrentNote.querySelector('.container-summary > button');
+
+      const hideCurrentNote = () => {
+         const btnDropDown = state.currentNote.querySelector('.btn-dropDown');
+
+         state.currentNote.classList.add('hide');
          btnDropDown.classList.remove('active');
-      },
-      showSection() {
-         sectionCurrentNote.classList.remove('hide');
-      },
-      showPopupDelete() {
-         confirmDeletion.subscribe(DispatchActions.shouldDeleteNote);
-         confirmDeletion.showPopup('note');
-      },
-      resetToolBar() {
+      }
+
+      const showCurrentNote = () => {
+         state.currentNote.classList.remove('hide');
+      }
+
+      const resetToolBar = () => {
+         // pegar elementos com form
+
          const [
             selectFontSize, selectFontFamily, inputColor
          ] = sectionCurrentNote.querySelector('.select-group').children;
@@ -373,13 +352,18 @@ const notesInit = ({ api, loading, confirmDeletion }) => {
          selectFontSize.value = '3';
          selectFontFamily.value = 'arial';
          inputColor.value = '#000000';
-      },
-      setCurrentNote(noteId) {
+      }
+
+      const showPopupDelete = () => {
+         // alterar para camada network
+         confirmDeletion.subscribe(DispatchActions.shouldDeleteNote);
+         confirmDeletion.showPopup('note');
+      }
+
+      const setCurrentNote = noteId => {
          if (!noteId) {
             return
          }
-
-         console.log(noteId);
 
          const sectionNoteListTitle = sectionNoteList.querySelector('.section-title').innerText;
          const btnExpandSummary = sectionCurrentNote.querySelector('.container-summary > .btn-dropDown');
@@ -401,20 +385,22 @@ const notesInit = ({ api, loading, confirmDeletion }) => {
          elementLastModification.innerText = lastModification;
          noteContent.innerHTML = content;
 
-         this.resetToolBar();
-      },
-      setNewModifications(lastModification) {
-         const noteLastModification = sectionCurrentNote.querySelector('.last-modification strong');
+         resetToolBar();
+      }
+
+      const setNewModifications = lastModification => {
+         const noteLastModification = state.currentNote.querySelector('.last-modification strong');
 
          noteLastModification.innerText = lastModification;
-         
-      },
-      handleToggleDropDown(e) {
+      }
+
+      const handleToggleDropDown = e => {
          const btnDropDown = e.target;
 
          btnDropDown.classList.toggle('active');
-      },
-      btnTextEditor(e) {
+      }
+
+      const btnTextEditor = e => {
          const elementClicked = e.target;
 
          if (elementClicked.tagName !== 'BUTTON') {
@@ -424,8 +410,9 @@ const notesInit = ({ api, loading, confirmDeletion }) => {
          const command = elementClicked.dataset.action;
          
          document.execCommand(command);
-      },
-      selectionsTextEditor(e) {
+      }
+
+      const selectionsTextEditor = e => {
          const elementClicked = e.target;
 
          if (!elementClicked.dataset.action) {
@@ -436,78 +423,76 @@ const notesInit = ({ api, loading, confirmDeletion }) => {
          const value = elementClicked.value;
 
          document.execCommand(command, false, value);
-      },
-      updateSectionCategoryNameInPath(categoryName) {
+      }
+
+      const updateSectionCategoryNameInPath = categoryName => {
          const path = sectionCurrentNote.querySelector('.note-path');
          const currentNote = path.innerText.split(' > ')[1];
 
          path.innerText = `${categoryName} > ${currentNote}`;
-      },
-      updateNoteNameInPath(noteName) {
+      }
+
+      const updateNoteNameInPath = noteName => {
          const path = sectionCurrentNote.querySelector('.note-path');
          const currentCategory = path.innerText.split(' > ')[0];
 
          path.innerText = `${currentCategory} > ${noteName}`;
       }
+
+      return {  }
    }
 
-   const UInotesListActions = {
-      hideSection() {
-         notesList.innerHTML = '';
-         sectionNoteList.classList.add('hide');
-      },
-      renderNewItem(noteElement) {
-         notesList.prepend(noteElement);
-      },
-      renderAllItems(notes) {
-         notesList.innerHTML = "";
+   function createNoteList() {
+      const state = {
+         noteList: document.querySelector('section.note-list'),
+         btnAddNote: document.querySelector('.container-add-note > button')
+      }
 
-         notes.forEach(({ element }) => {
-            notesList.append(element);
-         });
+      const showNoteList = ({ categoryName }) => {
+         updateSectionTitle(categoryName)
 
-         this.removeSelectedItem();
-      },
-      removeSelectedItem() {
-         const lastNoteClicked = notesList.querySelector('li.selected');
-         lastNoteClicked && lastNoteClicked.classList.remove('selected');
-      },
-      selectItem(elementClicked) {
-         const noteElement = elementClicked.parentElement;
+         state.noteList.classList.remove('hide');
+      }
 
-         const alreadySelected = noteElement.classList.contains('selected');
-         const id = noteElement.dataset.id;
-
-         if (alreadySelected || !id) {
-            return
+      const createNoteElement = ({ isItNewNote, ...note }) => {
+         const content = `
+         <button data-js="selectItem">
+            <div class="${isItNewNote ? 'date loading' : 'date'}">
+               <small>${isItNewNote ? '' : note.dateCreated}</small>
+               <div class="date-loading"></div>
+            </div>
+            <div class="note-texts">
+               <div>
+                  <h2 class="title">${note.title || 'Nova Nota'}</h2>
+               </div>
+               <div>
+                  <div class="summary">
+                     ${note.summary || 'O resumo da nova nota está aqui...'}
+                  </div>
+               </div>
+            </div>
+         </button>
+         `;
+   
+         const noteItem = document.createElement('li');
+   
+         noteItem.className = 'note-item';
+         noteItem.innerHTML = content;
+   
+         if (!isItNewNote) {
+            noteItem.setAttribute('data-id', note.id);
          }
+   
+         return noteItem
+      }
 
-         this.removeSelectedItem();
+      const updateSectionTitle = categoryName => {
+         const title = state.noteList.querySelector('.section-title');
+         title.innerText = categoryName;
+      }
 
-         noteElement.classList.add('selected');
-         
-         const noteName = noteElement.querySelector('h2.title').innerText;
-         const noteId = noteElement.dataset.id;
-
-         noteState.currentNoteId = noteId;
-
-         UIcurrentNoteActions.showSection(noteName);
-         UIcurrentNoteActions.setCurrentNote(noteId);
-      },
-      showSection({ categoryName }) {
-         this.updateSectionTitle(categoryName)
-
-         sectionNoteList.classList.remove('hide');
-      },
-      setDate(noteElement, { dateCreated }) {
-         const containerDate = noteElement.querySelector('.date');
-         const noteDate = noteElement.querySelector('small');
-
-         noteDate.innerText = dateCreated;
-         containerDate.classList.remove('loading');
-      },
-      updateListItem({ id, title, summary }) {
-         const noteElement = notesList.querySelector(`li[data-id="${id}"]`);
+      const updateListItem = ({ id, title, summary }) => {
+         const noteElement = state.noteList.querySelector(`li[data-id="${id}"]`);
 
          const noteTitle = noteElement.querySelector('.title');
          const noteSummary = noteElement.querySelector('.summary');
@@ -521,15 +506,80 @@ const notesInit = ({ api, loading, confirmDeletion }) => {
          sectionNoteList.scrollTop = 0;
 
          noteState.insertItemFirst(id);
-      },
-      updateSectionTitle(categoryName) {
-         const sectionTitle = sectionNoteList.querySelector('.section-title');
-         sectionTitle.innerText = categoryName;
       }
+
+      const setDate = (noteElement, { dateCreated }) => {
+         const containerDate = noteElement.querySelector('.date');
+         const noteDate = noteElement.querySelector('small');
+
+         noteDate.innerText = dateCreated;
+         containerDate.classList.remove('loading');
+      }
+
+      const removeSelectedItem = () => {
+         const lastNoteClicked = notesList.querySelector('li.selected');
+         lastNoteClicked && lastNoteClicked.classList.remove('selected');
+      }
+
+      const renderAllItems = notes => {
+         notesList.innerHTML = "";
+
+         notes.forEach(({ element }) => {
+            notesList.append(element);
+         });
+
+         this.removeSelectedItem();
+      }
+
+      const renderNewItem = noteElement => {
+         notesList.prepend(noteElement);
+      }
+
+      const hideSection = () => {
+         notesList.innerHTML = '';
+         sectionNoteList.classList.add('hide');
+      }
+
+      const acceptedNoteActions = {
+         selectItem(elementClicked) {
+            const noteElement = elementClicked.parentElement;
+   
+            const alreadySelected = noteElement.classList.contains('selected');
+            const id = noteElement.dataset.id;
+   
+            if (alreadySelected || !id) {
+               return
+            }
+   
+            this.removeSelectedItem();
+   
+            noteElement.classList.add('selected');
+            
+            const noteName = noteElement.querySelector('h2.title').innerText;
+            const noteId = noteElement.dataset.id;
+   
+            noteState.currentNoteId = noteId;
+   
+            UIcurrentNoteActions.showSection(noteName);
+            UIcurrentNoteActions.setCurrentNote(noteId);
+         }
+      }
+
+      const noteListListener = e => {
+         const action = dataset.js;
+
+         if (acceptedNoteActions[action]) {
+            acceptedNoteActions[action](e.target);
+         }
+      }
+      
+      state.noteList.addEventListener('click', noteListListener);
+
+      return {  }
    }
 
-   // this is a current note layer
-   const createAutoSaveListener = () => {
+   // talvez colocar essa camada dentro do currentNote
+   function createAutoSaveListener() {
       const state = {
          autoSave: setTimeout,
          sectionCurrentNote: document.querySelector('section.current-note')
@@ -546,29 +596,19 @@ const notesInit = ({ api, loading, confirmDeletion }) => {
 
    createAutoSaveListener();
 
-   const chooseAction = e => {
-      if (e.type === 'submit') e.preventDefault();
+   const noteList = createNoteList();
 
-      const dataJsOfThisElement = e.target.dataset.js; 
+   // const chooseAction = e => {
+   //    if (e.type === 'submit') e.preventDefault();
+
+   //    const dataJsOfThisElement = e.target.dataset.js; 
       
-      UInotesListActions[dataJsOfThisElement] && UInotesListActions[dataJsOfThisElement](e.target);
-      UIcurrentNoteActions[dataJsOfThisElement] && UIcurrentNoteActions[dataJsOfThisElement](e);
-      DispatchActions[dataJsOfThisElement] && DispatchActions[dataJsOfThisElement]();
-   }
+   //    UInotesListActions[dataJsOfThisElement] && UInotesListActions[dataJsOfThisElement](e.target);
+   //    UIcurrentNoteActions[dataJsOfThisElement] && UIcurrentNoteActions[dataJsOfThisElement](e);
+   //    DispatchActions[dataJsOfThisElement] && DispatchActions[dataJsOfThisElement]();
+   // }
 
    /* Trigger elements */ 
-
-   notesList.addEventListener('click', chooseAction);
-   
-   sectionCurrentNote.addEventListener('click', chooseAction);
-   sectionCurrentNote.addEventListener('submit', chooseAction);
-
-   btnAddNote.addEventListener('click', DispatchActions.shouldCreateNote);
-
-   toolBar.addEventListener('click', UIcurrentNoteActions.btnTextEditor);
-   toolBar.addEventListener('change', UIcurrentNoteActions.selectionsTextEditor);
-
-   btnExpandSummary.addEventListener('click', UIcurrentNoteActions.handleToggleDropDown);
 
    return {
       shouldGetNotes: DispatchActions.shouldGetNotes,
