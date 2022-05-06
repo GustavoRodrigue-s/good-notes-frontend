@@ -1,6 +1,7 @@
 import api from '../../services/api.js';
 import { createCategoryNetwork, createCategoryList, createCategoryItem } from './category.js';
-import { createNoteList, createNoteItem, createCurrentNote, createNoteNetwork, createNoteRepository } from './notes.js';
+import { createNoteList, createNoteItem, createCurrentNote, createNoteNetwork } from './notes.js';
+import createRepository from './repository.js';
 
 function createNoteApp() {
 
@@ -86,23 +87,12 @@ function createNoteApp() {
    function createConfirmDelete() {
       const state = {
          popupWrapper: document.querySelector('.popup-wrapper-confirm-delete'),
-         observers: []
+         observers: [],
+         deletionTarget: null
       }
 
-      // alterar o observer para current deletion
-   
-      const subscribe = observerFunction => {
-         state.observers.push(observerFunction);
-      }
-   
-      const notifyAll = () => {
-         for (const observerFunction of state.observers) {
-            observerFunction();
-         }
-      }
-   
-      const resetObservers = () => {
-         state.observers = [];
+      const setTheDeleteTarget = targetFunction => {
+         state.deletionTarget = targetFunction;
       }
    
       const showPopup = targetMessage => {
@@ -112,13 +102,11 @@ function createNoteApp() {
    
       const hidePopup = () => {
          state.popupWrapper.classList.remove('show');
-   
-         resetObservers();
       }
    
       const dispatch = {
          shouldConfirmDeletion(targetClass) {
-            targetClass === 'btn-confirm-delete' && notifyAll();
+            targetClass === 'btn-confirm-delete' && state.deletionTarget();
          },
          shouldHideThePopup(targetClass) {
             const listOfRemovePopup = ['popup-overlay', 'btn-cancel-delete', 'btn-confirm-delete'];
@@ -139,32 +127,64 @@ function createNoteApp() {
    
       return {
          showPopup,
-         subscribe
+         setTheDeleteTarget
       }
    }
 
+   // core application
+   const repository = createRepository();
+
+   // layers
    const popupLoading = createLoading();
    const popupConfirmDeletion = createConfirmDelete();
    
    const categoryList = createCategoryList();
-   const categoryNetwork = createCategoryNetwork(networkTemplate);
+   const categoryNetwork = createCategoryNetwork({ networkTemplate, popupLoading });
    const categoryItem = createCategoryItem();
 
-   const noteRepository = createNoteRepository();
-   const noteList = createNoteList();
+   const noteList = createNoteList(repository);
    const noteItem = createNoteItem();
-   const currentNote = createCurrentNote();
-   const noteNetwork = createNoteNetwork(networkTemplate);
+   const currentNote = createCurrentNote(repository);
+   const noteNetwork = createNoteNetwork({ networkTemplate, popupLoading, repository, popupConfirmDeletion });
 
+   // Connecting layers
    categoryList.subscribe('click', categoryNetwork.networkListener);
    categoryList.subscribe('click', categoryItem.categoryItemListener);
 
    categoryNetwork.subscribe('obtainedCategories', categoryList.renderAllCategories);
-   categoryNetwork.subscribe('obtainedCategories', categoryList.setGettingCategories);
+   categoryNetwork.subscribe('verifyToCreateCategory', categoryItem.removeConfirmation);
+   categoryNetwork.subscribe('verifyToUpdateCategory', categoryItem.removeConfirmation);
+   categoryNetwork.subscribe('verifyToDeleteCategory', categoryItem.removeConfirmation);
+   categoryNetwork.subscribe('categoryUpdated', noteList.shouldUpdateCategoryName);
+   categoryNetwork.subscribe('categoryUpdated', currentNote.shouldUpdateCategoryName);
+   categoryNetwork.subscribe('setTheDeleteTarget', popupConfirmDeletion.setTheDeleteTarget);
 
+   categoryNetwork.subscribe('categoryRemoved', noteList.shouldHideNoteList);
+   categoryNetwork.subscribe('categoryRemoved', currentNote.shouldHideCurrentNote);
+
+   categoryItem.subscribe('categorySelected', repository.setSelectedCategoryId);
    categoryItem.subscribe('categorySelected', noteNetwork.shouldGetNotes);
-   categoryItem.subscribe('categorySelected', noteList.showSection);
    categoryItem.subscribe('categorySelected', currentNote.hideSection);
+   categoryItem.subscribe('categorySelected', noteList.showSection);
+
+   categoryItem.subscribe('showPopupDelete', popupConfirmDeletion.showPopup);
+   categoryItem.subscribe('showPopupDelete', categoryNetwork.setCategoryConfirmationDeletion);
+
+   noteNetwork.subscribe('haveNotesInTheRepository', noteList.renderAllItems);
+   noteNetwork.subscribe('thisCategoryDontHaveNotes', noteList.clearList);
+   noteNetwork.subscribe('obtainedNotes', noteList.renderAllItems);
+   noteNetwork.subscribe('creatingNote', noteList.renderNewItem);
+   noteNetwork.subscribe('noteCreated', noteList.setDate);
+
+   noteList.subscribe('noteListListener', noteItem.noteItemListener)
+   noteList.subscribe('noteListListener', noteNetwork.networkListener);
+
+   noteItem.subscribe('noteSelected', repository.setSelectedNoteId);
+   noteItem.subscribe('noteSelected', currentNote.showSection);
+
+   currentNote.subscribe('showPopupDelete', popupConfirmDeletion.showPopup);
+   currentNote.subscribe('showPopupDelete', noteNetwork.setNoteConfirmationDeletion);
+   currentNote.subscribe('click', noteNetwork.networkListener);
 
    categoryNetwork.getCategories();
 }

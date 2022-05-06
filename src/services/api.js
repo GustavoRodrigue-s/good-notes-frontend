@@ -2,7 +2,7 @@ import cookie from "../components/cookie/cookie.js";
 
 const createApiNetwork = () => {
    const state = {
-      baseUrl: 'http://192.168.0.2:5000/',
+      baseUrl: 'http://192.168.0.3:5000/',
       headers: {
          "Content-Type": "application/json"
       }
