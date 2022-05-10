@@ -1,6 +1,6 @@
 import cookie from "../components/cookie/cookie.js";
 
-const createApiNetwork = () => {
+function createApiNetwork() {
    const state = {
       baseUrl: 'http://192.168.0.3:5000/',
       headers: {
@@ -15,7 +15,7 @@ const createApiNetwork = () => {
       state.apiKey = `?key=${apiKey}`;
    }
 
-   const getData = async ({ auth, method, route, body }) => {
+   const requestTemplate = async ({ auth, method, route, body }) => {
       if (auth) {
          setAuthorization();
       }
@@ -41,20 +41,24 @@ const createApiNetwork = () => {
    }
 
    const request = async props => {
-      props.auth = !props.auth ? false : true;
+      const getData = async (res, rej) => {
+         const [data, status] = await requestTemplate(props);
 
-      const shouldGetDatas = async (resolve, reject) => {
-         const [data, status] = await getData(props);
-
-         if (!data.newAccessToken) {
-            resolve([data, status]);
-         } else {
-            cookie.setNewAccessToken(data.newAccessToken);
-            shouldGetDatas(resolve, reject)
-         }
+         dispatch.shouldGetTheDataAgain({ data, status, res, rej, getData });
       }
 
-      return new Promise(shouldGetDatas);
+      return new Promise(getData);
+   }
+
+   const dispatch = {
+      shouldGetTheDataAgain({ data, status, res, rej, getData }) {
+         if (!data.newAccessToken) {
+            res([data, status]);
+         } else {
+            cookie.setNewAccessToken(data.newAccessToken);
+            getData(res, rej);
+         }
+      }
    }
 
    return {

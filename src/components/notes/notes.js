@@ -1,4 +1,4 @@
-export function createNoteNetwork({ networkTemplate, repository, popupLoading, popupConfirmDeletion }) {
+export function createNoteNetwork({ networkTemplate, repository, popupLoading }) {
    const state = {
       observers: [],
       loading: document.querySelector('.container-noteList-loading'),
@@ -76,30 +76,31 @@ export function createNoteNetwork({ networkTemplate, repository, popupLoading, p
       popupLoading.shouldHideLoading(id);
    }
 
-   const deleteNote = async ({ currentCategoryId, currentNoteId }) => {
-      const id = loading.showLoading();
+   const deleteNote = async ({ selectedCategoryId, selectedNoteId }) => {
+      const id = popupLoading.showLoading();
 
-      noteState.deleteItem(currentCategoryId, currentNoteId);
-      notesList.querySelector(`[data-id="${currentNoteId}"]`).remove();
+      const note = repository.getItem(selectedNoteId);
+      note.element.remove();
 
-      UIcurrentNoteActions.hideSection();
+      repository.deleteItem(selectedCategoryId, selectedNoteId);
+
+      notifyAll('deletingNote');
 
       await networkTemplate({
          route: 'deleteNote',
          method: 'POST',
-         body: { categoryId: currentCategoryId, noteId: currentNoteId }
+         body: { categoryId: selectedCategoryId, noteId: selectedNoteId }
       })
 
-      loading.shouldHideLoading(id);
+      popupLoading.shouldHideLoading(id);
    }
 
    const updateNote = async (note, newNoteValues) => {
-      const id = loading.showLoading();
+      const id = popupLoading.showLoading();
 
-      noteState.updateItem(note, newNoteValues);
+      repository.updateItem(note, newNoteValues);
 
-      UInotesListActions.updateListItem(newNoteValues);
-      UIcurrentNoteActions.updateNoteNameInPath(note.title);
+      notifyAll('updatingNote', newNoteValues);
 
       const { lastModification } = await networkTemplate({
          route: 'updateNote',
@@ -109,11 +110,9 @@ export function createNoteNetwork({ networkTemplate, repository, popupLoading, p
 
       note.lastModification = lastModification;
 
-      if (note.id === +noteState.currentNoteId) {
-         UIcurrentNoteActions.setNewModifications(lastModification);
-      }
+      notifyAll('noteUpdated', { noteId: note.id, lastModification });
 
-      loading.shouldHideLoading(id);
+      popupLoading.shouldHideLoading(id);
    }
 
    const getAvailabilityToGetNotes = categoryId => {
@@ -126,7 +125,7 @@ export function createNoteNetwork({ networkTemplate, repository, popupLoading, p
    }
 
    const setNoteConfirmationDeletion = () => {
-      popupConfirmDeletion.setTheDeleteTarget = dispatch.shouldDeleteNote;
+      notifyAll('setTheDeleteTarget', dispatch.shouldDeleteNote);
    }
 
    const dispatch = {
@@ -174,24 +173,24 @@ export function createNoteNetwork({ networkTemplate, repository, popupLoading, p
          createNote({ selectedCategoryId });
       },
       shouldDeleteNote() {
-         const { currentCategoryId, currentNoteId } = noteState;
+         const selectedCategoryId = repository.getSelectedCategoryId();
+         const selectedNoteId = repository.getSelectedNoteId();
 
-         if (!currentCategoryId || !currentNoteId) {
+         if (!selectedCategoryId || !selectedNoteId) {
             return
          }
 
-         deleteNote({ currentCategoryId, currentNoteId });
+         deleteNote({ selectedCategoryId, selectedNoteId });
       },
-      shouldUpdateNote() {
-         document.querySelector('.container-more-currentNote > .btn-dropDown').classList.remove('active');
+      shouldUpdateNote({ currentNoteForm }) {
+         const selectedCategoryId = repository.getSelectedCategoryId();
+         const selectedNoteId = repository.getSelectedNoteId();
 
-         const { currentNoteId, currentCategoryId } = noteState;
-
-         if (!currentNoteId || !currentCategoryId) {
+         if (!selectedNoteId || !selectedCategoryId) {
             return
          }
 
-         const note = noteState.getItem(currentNoteId);
+         const note = repository.getItem(selectedNoteId);
 
          if (!note) {
             return
@@ -220,6 +219,7 @@ export function createNoteNetwork({ networkTemplate, repository, popupLoading, p
       }
    }
 
+   // talvez tirar esse listener?
    const networkListener = ({ action }) => {
       if (dispatch[action]) {
          dispatch[action]();
@@ -230,6 +230,7 @@ export function createNoteNetwork({ networkTemplate, repository, popupLoading, p
       subscribe,
       networkListener,
       shouldGetNotes: dispatch.shouldGetNotes,
+      shouldUpdateNote: dispatch.shouldUpdateNote,
       setNoteConfirmationDeletion
    }
 }
@@ -239,6 +240,7 @@ export function createCurrentNote(repository) {
       observers: [],
       autoSave: setTimeout,
       currentNote: document.querySelector('section.current-note'),
+      currentNoteForm: document.querySelector('.current-note .current-note-form'), 
       toolBar: document.querySelector('section.current-note .tool-bar')
    }
 
@@ -336,7 +338,7 @@ export function createCurrentNote(repository) {
 
    const updatePathName = ({ noteName, categoryName }) => {
       const path =  state.currentNote.querySelector('.note-path');
-      const [lastNoteName, lastCategoryName] = path.innerText.split(' > ');
+      const [lastCategoryName, lastNoteName] = path.innerText.split(' > ');
 
       const newNoteName = noteName || lastNoteName;
       const newCategoryName = categoryName || lastCategoryName;
@@ -347,7 +349,9 @@ export function createCurrentNote(repository) {
    const automaticallySaveChanges = () => {
       clearInterval(state.autoSave);
 
-      state.autoSave = setTimeout(noteNetwork.shouldGetNotes, 4000);
+      state.autoSave = setTimeout(() => {
+         notifyAll('updateNote', { currentNoteForm: state.currentNoteForm });
+      }, 4000);
    }
 
    const acceptedCurrentNoteActions = {
@@ -358,21 +362,31 @@ export function createCurrentNote(repository) {
       },
       showPopupDelete() {
          notifyAll('showPopupDelete', 'note');
+      },
+      updateNote() {
+         state.currentNote.querySelector('.header .btn-dropDown').classList.remove('active');
+
+         notifyAll('updateNote', { currentNoteForm: state.currentNoteForm });
       }
    }
 
    const dispatch = {
+      shouldSetNewLastModification({ noteId, lastModification }) {
+         const selectedCategoryId = repository.getSelectedCategoryId();
+
+         if (noteId === +selectedCategoryId) {
+            setNewModifications(lastModification);
+         }
+      },
       shouldSetCurrentNote({ noteElement, noteListTitle }) {
          const noteId = noteElement.dataset.id;
 
-         if (!noteId) {
-            return
+         if (noteId) {
+            setCurrentNote(noteId, noteListTitle);
          }
-
-         setCurrentNote(noteId, noteListTitle);
       },
       shouldHideCurrentNote({ categoryId }) {
-            const selectedCategoryId = repository.getSelectedCategoryId();
+         const selectedCategoryId = repository.getSelectedCategoryId();
 
          if (categoryId === selectedCategoryId) {
             hideSection();
@@ -384,6 +398,9 @@ export function createCurrentNote(repository) {
          if (categoryId === selectedCategoryId) {
             updatePathName({ noteName: false, categoryName: newCategoryName });
          }
+      },
+      shouldUpdateNoteName({ title }) {
+         updatePathName({ noteName: title, categoryName: false });
       }
    }
 
@@ -407,16 +424,18 @@ export function createCurrentNote(repository) {
       subscribe,
       hideSection,
       showSection,
+      shouldHideCurrentNote: dispatch.shouldHideCurrentNote,
       shouldUpdateCategoryName: dispatch.shouldUpdateCategoryName,
-      shouldHideCurrentNote: dispatch.shouldHideCurrentNote
+      shouldUpdateNoteName: dispatch.shouldUpdateNoteName,
+      shouldSetNewLastModification: dispatch.shouldSetNewLastModification
    }
 }
 
 export function createNoteList(repository) {
    const state = {
       observers: [],
-      sectionNoteList: document.querySelector('section.note-list'),
       noteList: document.querySelector('section.note-list ul.note-list'),
+      sectionNoteList: document.querySelector('section.note-list'),
       btnAddNote: document.querySelector('.container-add-note > button')
    }
 
@@ -501,9 +520,9 @@ export function createNoteList(repository) {
       noteTitle.innerText = title;
       noteSummary.innerText = summary;
 
-      const firstNoteElement = notesList.firstElementChild;
+      const firstNoteElement = state.noteList.firstElementChild;
 
-      notesList.insertBefore(noteElement, firstNoteElement);
+      state.noteList.insertBefore(noteElement, firstNoteElement);
       state.sectionNoteList.scrollTop = 0;
    }
 
@@ -519,12 +538,12 @@ export function createNoteList(repository) {
       state.noteList.innerHTML = "";
 
       notes.forEach(note => {
-         const element = !note.element 
+         note.element = !note.element 
             ? createNoteElement({ isItNewNote: false, ...note }) 
             : note.element;
 
-         element.classList.remove('selected');
-         state.noteList.append(element);
+         note.element.classList.remove('selected');
+         state.noteList.append(note.element);
       });
    }
 
@@ -555,7 +574,7 @@ export function createNoteList(repository) {
       const noteListTitle = state.sectionNoteList.querySelector('.section-title').innerText;
       const action = e.target.dataset.js;
 
-      notifyAll('noteListListener', { e, action, noteListTitle });
+      notifyAll('click', { e, action, noteListTitle });
    }
    
    state.noteList.addEventListener('click', noteListListener);
@@ -568,6 +587,7 @@ export function createNoteList(repository) {
       renderNewItem,
       clearList,
       setDate,
+      updateListItem,
       shouldUpdateCategoryName: dispatch.shouldUpdateCategoryName,
       shouldHideNoteList: dispatch.shouldHideNoteList
    }

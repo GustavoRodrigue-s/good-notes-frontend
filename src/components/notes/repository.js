@@ -96,7 +96,7 @@ export default function createNoteRepository() {
       note.content = content;
       note.summary = summary;
 
-      insertItemFirst(note.id)
+      insertItemFirst(note.id);
    }
 
    return { 

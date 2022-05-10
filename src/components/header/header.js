@@ -1,19 +1,38 @@
-import btnHamburguerInit from './hamburguer.js';
+function createHeader() {
+   const state = {
+      header: document.querySelector('header')
+   }
 
-const renderHeader = hasToken => {
-   const header = document.querySelector('header');
+   function createMenuHamburguer() {
+      const state = {
+         btnHamburguer: document.querySelector('.button-hamburguer'),
+         show: false
+      }
 
-   const userNotLoggedIn = `
-      <div class="container-buttonsToThePopup">
-         <button class="button-signIn btn-default" id="button-signIn" data-js="0" aria-expanded="false" aria-haspopup="true" aria-controls="menuAccount" aria-label="Abrir Menu">
-            Entrar
-         </button>
-         <button class="button-signUp btn-default btn-default-hover" data-js="1" id="button-signUp" aria-expanded="false" aria-haspopup="true" aria-controls="menuAccount" aria-label="Abrir Menu">
-            Registrar-se
-         </button>
-      </div>`;
+      const setAccessibilityProps = () => {
+         state.show = !state.show;
 
-   const loggedInUser = `
+         state.show
+            ? state.btnHamburguer.setAttribute('aria-label', 'Fechar Menu')
+            : state.btnHamburguer.setAttribute('aria-label', 'Abrir Menu');
+
+         state.btnHamburguer.setAttribute('aria-expanded', state.show);
+      }
+
+      const showAndHide = e => {
+         if (e.type === 'touchstart') e.preventDefault();
+
+         setAccessibilityProps();
+
+         state.btnHamburguer.classList.toggle('active');
+      } 
+
+      state.btnHamburguer.addEventListener('click', showAndHide);
+      state.btnHamburguer.addEventListener('touchstart', showAndHide);
+   }
+
+   const componentLoggedInUser = () => {
+      const template = `
       <div class="container-isLoggedIn container-dropDown">
          <button class="btn-dropDown btn-wrapper-default btn-dropDown-header-menu">
             <img src="../../../images/avatar_icon.svg" alt="ícone do avatar do usuário">
@@ -25,11 +44,31 @@ const renderHeader = hasToken => {
             <li class="user-edit" tabindex="0" aria-haspopup="true" aria-expanded="false" aria-label="Abrir caixa para editar perfil.">Editar perfil</li>
             <li class="user-exit" tabindex="0" aria-label="Sair da conta.">Sair</li>
          </ul>
-      </div>`;
+      </div>
+      `;
 
-   const stringAuth = hasToken ? loggedInUser : userNotLoggedIn;
+      return template
+   }
 
-   const headerContent = `
+   const componentNotLoggedInUser = () => {
+      const template = `
+      <div class="container-buttonsToThePopup">
+         <button class="button-signIn btn-default" id="button-signIn" data-js="showSignInForm" aria-expanded="false" aria-haspopup="true" aria-controls="menuAccount" aria-label="Abrir Menu">
+            Entrar
+         </button>
+         <button class="button-signUp btn-default btn-default-hover" data-js="showSignUpForm" id="button-signUp" aria-expanded="false" aria-haspopup="true" aria-controls="menuAccount" aria-label="Abrir Menu">
+            Registrar-se
+         </button>
+      </div>
+      `;
+
+      return template
+   }
+
+   const render = hasToken => {
+      const currentComponent = hasToken ? componentLoggedInUser() : componentNotLoggedInUser();
+
+      const headerTemplate = `
       <div class="container-header-flex">
          <a href="/" tabindex="0" class="link-logo">
             <div class="good-notes-logo">
@@ -75,14 +114,22 @@ const renderHeader = hasToken => {
                   </a>
                </nav>
                <hr class="line-hamburguer">
-               ${stringAuth}
+               ${currentComponent}
             </div>
          </div>
-      </div>`;
+      </div>
+      `;
 
-   header.innerHTML = headerContent;
+      state.header.innerHTML = headerTemplate;
 
-   btnHamburguerInit();
+      createMenuHamburguer();
+   }
+
+   return { 
+      render 
+   }
 }
 
-export default renderHeader;
+const header = createHeader();
+
+export default header;

@@ -1,4 +1,4 @@
-const createCookieHandler = () => {
+function createCookieHandler() {
    const state = {
       popupWrapper: document.querySelector('.popup-wrapper-cookie')
    }
@@ -80,7 +80,7 @@ const createCookieHandler = () => {
    const showPopup = () => {
       renderPopup();
 
-      setTimeout(() => state.popupWrapper.classList.add('show'), 0);
+      requestAnimationFrame(() => state.popupWrapper.classList.add('show'));
    }
 
    const popupActionListener = e => {

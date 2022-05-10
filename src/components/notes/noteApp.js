@@ -3,7 +3,7 @@ import { createCategoryNetwork, createCategoryList, createCategoryItem } from '.
 import { createNoteList, createNoteItem, createCurrentNote, createNoteNetwork } from './notes.js';
 import createRepository from './repository.js';
 
-function createNoteApp() {
+export default function createNoteApp() {
 
    const networkTemplate = async configs => {
       try {
@@ -145,7 +145,7 @@ function createNoteApp() {
    const noteList = createNoteList(repository);
    const noteItem = createNoteItem();
    const currentNote = createCurrentNote(repository);
-   const noteNetwork = createNoteNetwork({ networkTemplate, popupLoading, repository, popupConfirmDeletion });
+   const noteNetwork = createNoteNetwork({ networkTemplate, popupLoading, repository });
 
    // Connecting layers
    categoryList.subscribe('click', categoryNetwork.networkListener);
@@ -175,9 +175,17 @@ function createNoteApp() {
    noteNetwork.subscribe('obtainedNotes', noteList.renderAllItems);
    noteNetwork.subscribe('creatingNote', noteList.renderNewItem);
    noteNetwork.subscribe('noteCreated', noteList.setDate);
+   
+   noteNetwork.subscribe('updatingNote', noteList.updateListItem);
+   noteNetwork.subscribe('updatingNote', currentNote.shouldUpdateNoteName);
 
-   noteList.subscribe('noteListListener', noteItem.noteItemListener)
-   noteList.subscribe('noteListListener', noteNetwork.networkListener);
+   noteNetwork.subscribe('noteUpdated', currentNote.shouldSetNewLastModification);
+   noteNetwork.subscribe('setTheDeleteTarget', popupConfirmDeletion.setTheDeleteTarget);
+
+   noteNetwork.subscribe('deletingNote', currentNote.hideSection);
+
+   noteList.subscribe('click', noteItem.noteItemListener)
+   noteList.subscribe('click', noteNetwork.networkListener);
 
    noteItem.subscribe('noteSelected', repository.setSelectedNoteId);
    noteItem.subscribe('noteSelected', currentNote.showSection);
@@ -185,8 +193,7 @@ function createNoteApp() {
    currentNote.subscribe('showPopupDelete', popupConfirmDeletion.showPopup);
    currentNote.subscribe('showPopupDelete', noteNetwork.setNoteConfirmationDeletion);
    currentNote.subscribe('click', noteNetwork.networkListener);
+   currentNote.subscribe('updateNote', noteNetwork.shouldUpdateNote);
 
    categoryNetwork.getCategories();
 }
-
-export default createNoteApp

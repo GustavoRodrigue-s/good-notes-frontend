@@ -1,10 +1,10 @@
 import api from '../services/api.js';
 import cookie from '../components/cookie/cookie.js';
-import renderHeader from "../components/header/renderHeader.js";
-import renderPopupForms from "../components/popupForms/renderPopup.js";
+import header from "../components/header/header.js";
+import authPopupForms from '../components/popupForms/authPopupForms.js';
 import renderPopupEditProfile from '../components/popupProfile/renderPopup.js';
 
-const createAuthProvider = () => {
+function createAuthProvider() {
    const state = {
       authenticated: false,
       loading: document.querySelector('body > .container-loading')
@@ -14,18 +14,19 @@ const createAuthProvider = () => {
       setTimeout(() => state.loading.classList.remove('show'), 300);
    }
 
+   // trocar para observers
    const redirectUserAsLoggedOut = () => {
       cookie.deleteCookies();
    
-      renderHeader(false);
-      renderPopupForms({ api, cookie });
+      header.render(false);
+      authPopupForms.render({ api, cookie });
    
       cookie.shouldShowThePopup();
       removeLoading();
    }
 
    const redirectUserAsLoggedIn = () => {
-      renderHeader(true);
+      header.render(true);
       renderPopupEditProfile({ api, cookie });
    
       removeLoading();
@@ -77,6 +78,7 @@ const createAuthProvider = () => {
    }
 }
 
+// depois instacinar o provider no index, para usar o observer
 const auth = createAuthProvider();
 
 export default auth

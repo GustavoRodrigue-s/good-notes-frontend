@@ -314,7 +314,7 @@ export function createCategoryList() {
    }
 }
 
-export function createCategoryItem(repository) {
+export function createCategoryItem() {
    const state = {
       observers: []
    }
