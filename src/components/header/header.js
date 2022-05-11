@@ -31,18 +31,60 @@ function createHeader() {
       state.btnHamburguer.addEventListener('touchstart', showAndHide);
    }
 
+   function createMenuDropdown() {
+      const state = {
+         dropDown: document.querySelector('.container-isLoggedIn'),
+         loading: document.querySelector('body > .container-loading')
+      }
+
+      const acceptedMenuActions = {
+         showAndHideDropDown(e) {
+            e.target.classList.toggle('active');
+         },
+         logoutAccount() {
+            (async () => {
+               try {
+                  state.loading.classList.add('show');
+      
+                  await api.request({ auth: true, route: "logout" });
+      
+                  throw 'exiting...';
+      
+               } catch(e) {
+                  cookie.deleteCookies();
+      
+                  window.open('./index.html', '_self');
+               }
+            })();
+         }
+      }
+
+      const menuDropDownListener = e => {
+         if (e.type === 'touchstart') e.preventDefault();
+
+         const targetAction = e.target.dataset.action;
+
+         if (acceptedMenuActions[targetAction]) {
+            acceptedMenuActions[targetAction](e);
+         }
+      }
+
+      state.dropDown.addEventListener('mousedown', menuDropDownListener);
+      state.dropDown.addEventListener('touchstart', menuDropDownListener);
+   }
+
    const componentLoggedInUser = () => {
       const template = `
       <div class="container-isLoggedIn container-dropDown">
-         <button class="btn-dropDown btn-wrapper-default btn-dropDown-header-menu">
+         <button class="btn-dropDown btn-wrapper-default btn-dropDown-header-menu" data-action="showAndHideDropDown">
             <img src="../../../images/avatar_icon.svg" alt="ícone do avatar do usuário">
             <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 0 24 24" width="20px" fill="#000000">
                <path d="M24 24H0V0h24v24z" fill="none" opacity=".87"/><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6-1.41-1.41z"/>
             </svg>
          </button>
          <ul class="list-dropDown">
-            <li class="user-edit" tabindex="0" aria-haspopup="true" aria-expanded="false" aria-label="Abrir caixa para editar perfil.">Editar perfil</li>
-            <li class="user-exit" tabindex="0" aria-label="Sair da conta.">Sair</li>
+            <li class="user-edit" data-action="showPopupProfile" tabindex="0" aria-haspopup="true" aria-expanded="false" aria-label="Abrir caixa para editar perfil.">Editar perfil</li>
+            <li class="user-exit" data-action="logoutAccount" tabindex="0" aria-label="Sair da conta.">Sair</li>
          </ul>
       </div>
       `;
@@ -123,6 +165,7 @@ function createHeader() {
       state.header.innerHTML = headerTemplate;
 
       createMenuHamburguer();
+      hasToken && createMenuDropdown();
    }
 
    return { 

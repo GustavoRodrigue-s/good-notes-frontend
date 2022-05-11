@@ -9,6 +9,99 @@ function createPopupAuthForms() {
          formSignUp: document.querySelector('.form-signUp')
       }
 
+      const hideErrorMessage = (input, containerErrorAndInput) => {
+         const [genericErrorSignIn, genericErrorSignUp] = document.querySelectorAll('form > .generic-container')
+
+         input.addEventListener('keypress', () => {
+            containerErrorAndInput.classList.remove('error');
+
+            genericErrorSignIn.classList.remove('error');
+            genericErrorSignUp.classList.remove('error');
+         });
+      }
+
+      const showMessageError = (input, message) => {
+         const containerErrorAndInput = input.parentElement.parentElement;
+         const containerError = containerErrorAndInput.lastElementChild;
+      
+         const template = `
+            <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
+               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z">
+               </path>
+            </svg>
+            ${message}
+         `;
+      
+         containerError.innerHTML = message === '' ? '' : template;
+
+         containerErrorAndInput.classList.add('error');
+      
+         hideErrorMessage(input, containerErrorAndInput);
+      }
+      
+      const handleRequestError = (error, currentForm) => {
+         const acceptedErrors = {
+            "empty input"({ input }) {
+               const currentInput = state[currentForm][input];
+
+               showMessageError(currentInput, 'Preencha este campo!');
+            },
+            "empty inputs"() {
+               const { inputPassword, inputConfirmPassword } = state.formSignUp;
+      
+               showMessageError(inputPassword, 'Preencha os dois campos!');
+               showMessageError(inputConfirmPassword, 'Preencha os dois campos!');
+            },
+            "wrong credentials"() {
+               const { inputEmail, inputPassword } = state.formSignIn;
+      
+               showMessageError(inputEmail, '');
+               showMessageError(inputPassword, 'Email ou senha incorretos!');
+      
+               const removeError = () => {
+                  inputEmail.parentElement.parentElement.classList.remove('error');
+                  inputPassword.parentElement.parentElement.classList.remove('error');
+               }
+      
+               inputEmail.addEventListener('keydown', removeError);
+               inputPassword.addEventListener('keydown', removeError);
+            },
+            "invalid email"() {
+               showMessageError(state.formSignUp.inputEmail, 'Digite um e-mail válido!');
+            },
+            "username already exists"() {
+               showMessageError(state.formSignUp.inputUsername, 'Este nome já existe!');
+            },
+            "email already exists"() {
+               showMessageError(state.formSignUp.inputEmail, "Este email já existe!");
+            },
+            "differents passwords"() {
+               const { inputPassword, inputConfirmPassword } = state.formSignUp;
+      
+               showMessageError(inputPassword, 'Senhas diferentes!');
+               showMessageError(inputConfirmPassword, 'Senhas diferentes!');
+            },
+            "request error"() {
+               const genericError = state[currentForm].querySelector('.generic-container');
+               genericError.classList.add('error');
+            }
+         }
+      
+         error.forEach(data => {
+            acceptedErrors[data.reason] 
+               ? acceptedErrors[data.reason](data)
+               : acceptedErrors['request error']();
+         });
+      }
+   
+      state.formSignUp.inputEmail.addEventListener('invalid', e => {
+         e.preventDefault();
+   
+         if (e.target.validity.typeMismatch) {
+            handleRequestError([{ state: 'error', reason: 'invalid email' }]);
+         }
+      });
+
       const formsData = {
          getFormSignInDatas() {
             const { inputEmail, inputPassword, inputCheckbox } = state.formSignIn;
@@ -36,9 +129,12 @@ function createPopupAuthForms() {
          }
       }
 
-      const showAndHideLoading = index => {
-         document.querySelectorAll('.popup-content')[index].classList.toggle('hideToLoading');
-         document.querySelectorAll('.popup .container-loading')[index].classList.toggle('show');
+      const showAndHideLoading = currentForm => {
+         const content = document.querySelector(`.popup[data-form="${currentForm}"] .popup-content`);
+         const loading = document.querySelector(`.popup[data-form="${currentForm}"] .container-loading`);
+
+         content.classList.toggle('hideToLoading');
+         loading.classList.toggle('show');
       }
    
       const setUserSession = (data, keepConnected) => {
@@ -48,46 +144,33 @@ function createPopupAuthForms() {
          cookie.setCookies({ ...data.userData });
       }
 
-      const submitForm = async ({ route, index, body }) => {
+      const submitForm = async ({ route, currentForm, body }) => {
          try {
-            showAndHideLoading(index);
+            showAndHideLoading(currentForm);
    
             const [data, status] = await api.request({ method: "POST", route, body });
    
-            if (data.state !== 'success') {
-               chooseRequestMessage(data.errors, index);
+            if (status !== 200) {
+               handleRequestError(data.errors, currentForm);
+               showAndHideLoading(currentForm);
 
                return
             }
-
-            showAndHideLoading(index);
+            
             setUserSession(data, body.keepConnected)
    
          } catch (e) {
-            showAndHideLoading(index);
-            chooseRequestMessage([{ state: 'error', reason: 'request error' }], index);
+            showAndHideLoading(currentForm);
+            handleRequestError([{ state: 'error', reason: 'request error' }], currentForm);
          }
       }
-   
-      const { inputEmail } = state.formSignUp;
-   
-      // isso tinha que está aqui?? na camada handle errors?? (INVALID)??
-      inputEmail.addEventListener('invalid', e => {
-         e.preventDefault();
-   
-         const thisInput = e.target;
-   
-         thisInput.validity.typeMismatch && showMessageError(
-            thisInput, 'Digite um e-mail válido!'
-         );
-      });
    
       state.formSignIn.addEventListener('submit', e => {
          e.preventDefault();
 
          const datas = formsData.getFormSignInDatas();
    
-         submitForm({ route: 'login', index: 0, body: datas });
+         submitForm({ route: 'login', currentForm: 'formSignIn', body: datas });
       });
    
       state.formSignUp.addEventListener('submit', e => {
@@ -95,7 +178,7 @@ function createPopupAuthForms() {
    
          const datas = formsData.getFormSignUpDatas();
    
-         submitForm({ route: 'register', index: 1, body: datas });
+         submitForm({ route: 'register', currentForm: 'formSignUp', body: datas });
       });
    }
 
@@ -204,7 +287,7 @@ function createPopupAuthForms() {
          setTimeToOpen();
       }
 
-      const popupWrapperListener = e => {
+      const popupListener = e => {
          if (e.type === 'touchstart') e.preventDefault();
 
          dispatch.shouldSetOverlay(e);
@@ -243,15 +326,15 @@ function createPopupAuthForms() {
          }
       }
 
-      state.containerButtons.addEventListener('click', popupWrapperListener);
-      state.containerButtons.addEventListener('touchstart', popupWrapperListener);
-      state.popupWrapper.addEventListener('mousedown', popupWrapperListener);
+      state.containerButtons.addEventListener('click', popupListener);
+      state.containerButtons.addEventListener('touchstart', popupListener);
+      state.popupWrapper.addEventListener('mousedown', popupListener);
    }
 
    const render = someLayers => {
       const template = `
       <div class="popup-overlay overlay-signIn">
-         <div class="popup-signIn popup popup-forms">
+         <div class="popup-signIn popup popup-forms" data-form="formSignIn">
             <div class="container-loading center-flex">
                <div></div>
             </div>
@@ -323,7 +406,7 @@ function createPopupAuthForms() {
       </div>
    
       <div class="popup-overlay overlay-signUp">
-         <div class="popup-signUp popup popup-forms">
+         <div class="popup-signUp popup popup-forms" data-form="formSignUp">
             <div class="container-loading center-flex">
                <div></div>
             </div>
@@ -416,94 +499,6 @@ function createPopupAuthForms() {
    }
 }
 
-const authPopupForms = createPopupAuthForms();
+const popupAuthForms = createPopupAuthForms();
 
-export default authPopupForms
-
-/* --------------------------------------------------------------------------- */ 
-
-// descidir sobre criar uma camada para handleFormErros ou juntar à camada de form
-
-const showMessageError = (input, message) => {
-   const containerGenericError = document.querySelectorAll('form > .generic-container')
-
-   const containerErrorAndInput = input.parentElement.parentElement;
-   const containerError = containerErrorAndInput.lastElementChild;
-
-   const template = `
-      <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
-         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z">
-         </path>
-      </svg>
-      ${message}
-   `;
-
-   containerError.innerHTML = message === '' ? '' : template;
-
-   containerErrorAndInput.classList.add('error');
-
-   input.addEventListener('keydown', () => {
-      containerErrorAndInput.classList.remove('error');
-      containerGenericError.forEach(container => container.classList.remove('error'));
-   });
-}
-
-const chooseRequestMessage = (response, index) => {
-   const containerGenericError = document.querySelectorAll('form > .generic-container')
-
-   const formSignIn = document.querySelector('.form-signIn');
-   const formSignUp = document.querySelector('.form-signUp');
-
-   const acceptedErrors = {
-      "empty input"({ input }) {
-         console.log(input);
-
-         const thisForm = index === 0 ? 'form-signIn' : 'form-signUp';
-         const currentInput = document.querySelector(`.${thisForm} .${input}`);
-         
-         if(input === 'inputs-passwords') {
-            const { inputPassword, inputConfirmPassword } = formSignUp;
-
-            showMessageError(inputPassword, 'Preencha os dois campos!');
-            showMessageError(inputConfirmPassword, 'Preencha os dois campos!');
-         } else {
-            showMessageError(currentInput, 'Preencha este campo!');
-         }
-      },
-      "wrong credentials"() {
-         const { inputEmail, inputPassword } = formSignIn;
-
-         showMessageError(inputEmail, '');
-         showMessageError(inputPassword, 'Email ou senha incorretos!');
-
-         const removeError = () => {
-            inputEmail.parentElement.parentElement.classList.remove('error');
-            inputPassword.parentElement.parentElement.classList.remove('error');
-         }
-
-         inputEmail.addEventListener('keydown', removeError);
-         inputPassword.addEventListener('keydown', removeError);
-      },
-      "username already exists"() {
-         showMessageError(formSignUp.inputUsername, 'Este nome já existe!');
-      },
-      "email already exists"() {
-         showMessageError(formSignUp.inputEmail, "Este email já existe!");
-      },
-      "differents passwords"() {
-         const { inputPassword, inputConfirmPassword } = formSignUp;
-
-         showMessageError(inputPassword, 'Senhas diferentes!');
-         showMessageError(inputConfirmPassword, 'Senhas diferentes!');
-      },
-      "request error"() {
-         containerGenericError[index].classList.add('error');
-      }
-   }
-
-   response.forEach(data => {
-      acceptedErrors[data.reason] 
-         ? acceptedErrors[data.reason](data)
-         : acceptedErrors['request error']();
-   })
-}
+export default popupAuthForms

@@ -1,8 +1,8 @@
 import api from '../services/api.js';
 import cookie from '../components/cookie/cookie.js';
 import header from "../components/header/header.js";
-import authPopupForms from '../components/popupForms/authPopupForms.js';
-import renderPopupEditProfile from '../components/popupProfile/renderPopup.js';
+import popupAuthForms from '../components/popupForms/popupAuthForms.js';
+import popupProfile from '../components/popupProfile/popupProfile.js';
 
 function createAuthProvider() {
    const state = {
@@ -19,7 +19,7 @@ function createAuthProvider() {
       cookie.deleteCookies();
    
       header.render(false);
-      authPopupForms.render({ api, cookie });
+      popupAuthForms.render({ api, cookie });
    
       cookie.shouldShowThePopup();
       removeLoading();
@@ -27,7 +27,7 @@ function createAuthProvider() {
 
    const redirectUserAsLoggedIn = () => {
       header.render(true);
-      renderPopupEditProfile({ api, cookie });
+      popupProfile.render({ api, cookie });
    
       removeLoading();
    }

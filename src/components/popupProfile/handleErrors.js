@@ -12,7 +12,7 @@ export const showErrorMessage = (input, message) => {
    containerError.innerHTML = message ? template : "";
    containerInputAndMessage.classList.add('error');
 
-   input.addEventListener('keydown', () => 
+   input.addEventListener('keypress', () => 
       containerInputAndMessage.classList.remove('error'));
 }
 

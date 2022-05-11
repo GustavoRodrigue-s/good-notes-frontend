@@ -1,3 +1,4 @@
 import auth from "../../auth/auth.js";
+import createPopupProfile from '../popupProfile/popupProfile.js';
 
-auth.verifyAuth();
+await auth.verifyAuth();
