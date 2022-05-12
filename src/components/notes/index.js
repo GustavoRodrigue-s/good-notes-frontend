@@ -1,12 +1,12 @@
-import auth from "../../auth/auth.js";
+import createAuthProvider from "../../auth/auth.js";
 import createNoteApp from './noteApp.js';
 
 async function createNoteAuth() {
-   const authenticated = await auth.verifyAuth();
+   const auth = createAuthProvider();
 
-   if (authenticated) {
-      createNoteApp();
-   }
+   auth.subscribe('authenticated', createNoteApp);
+
+   await auth.verifyAuth();
 }
 
 createNoteAuth();

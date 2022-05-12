@@ -24,18 +24,18 @@ function createAuthProvider() {
       setTimeout(() => state.loading.classList.remove('show'), 300);
    }
 
-   const redirectUserAsLoggedOut = () => {
+   const unauthenticated = () => {
       cookie.deleteCookies();
    
-      notifyAll('redirectingUserAsLoggedOut', { api, cookie, authenticated: false });
+      notifyAll('unauthenticated', { api, cookie, authenticated: false });
    
       cookie.shouldShowThePopup();
 
       removeLoading();
    }
 
-   const redirectUserAsLoggedIn = () => {
-      notifyAll('redirectingUserAsLoggedIn', { api, cookie, authenticated: true });
+   const authenticated = () => {
+      notifyAll('authenticated', { api, cookie, authenticated: true });
 
       removeLoading();
    }
@@ -49,11 +49,11 @@ function createAuthProvider() {
          }
 
          state.authenticated = true;
-         redirectUserAsLoggedIn();
+         authenticated();
 
       } catch (e) {
          console.log(e);
-         redirectUserAsLoggedOut();
+         unauthenticated();
       }
    }
 
@@ -61,7 +61,7 @@ function createAuthProvider() {
       const shouldLog = dispatch.shouldLogTheUser();
 
       shouldLog
-         ? redirectUserAsLoggedOut()
+         ? unauthenticated()
          : await validateTokens();
 
       return state.authenticated 

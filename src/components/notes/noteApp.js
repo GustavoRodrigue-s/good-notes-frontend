@@ -1,9 +1,8 @@
-import api from '../../services/api.js';
 import { createCategoryNetwork, createCategoryList, createCategoryItem } from './category.js';
 import { createNoteList, createNoteItem, createCurrentNote, createNoteNetwork } from './notes.js';
 import createRepository from './repository.js';
 
-export default function createNoteApp() {
+export default function createNoteApp({ api }) {
 
    const networkTemplate = async configs => {
       try {

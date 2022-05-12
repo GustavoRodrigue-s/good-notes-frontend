@@ -8,10 +8,10 @@ const header = createHeader();
 const popupAuthForms = createPopupAuthForms();
 const popupProfile = createPopupProfile();
 
-auth.subscribe('redirectingUserAsLoggedOut', header.render);
-auth.subscribe('redirectingUserAsLoggedOut', popupAuthForms.render);
+auth.subscribe('unauthenticated', header.render);
+auth.subscribe('unauthenticated', popupAuthForms.render);
 
-auth.subscribe('redirectingUserAsLoggedIn', header.render);
-auth.subscribe('redirectingUserAsLoggedIn', popupProfile.render);
+auth.subscribe('authenticated', header.render);
+auth.subscribe('authenticated', popupProfile.render);
 
 auth.verifyAuth();
