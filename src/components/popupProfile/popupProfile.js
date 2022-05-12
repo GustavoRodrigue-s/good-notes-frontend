@@ -12,12 +12,60 @@ function createPopupProfile() {
       const toggleLoading = () => {
          state.loading.classList.toggle('show');
       }
+      
+      const hideErrorMessage = (input, containerInputAndMessage)  => {
+         input.addEventListener('keypress', () => 
+            containerInputAndMessage.classList.remove('error'));
+      }
 
-      const showAndHideSuccessMessage = () => {
+      const showErrorMessage = (input, message) => {
+         const containerInputAndMessage = input.parentElement.parentElement;
+         const containerError = containerInputAndMessage.lastElementChild;
+
+         const template = `
+            <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
+               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path>
+            </svg>
+            ${message}
+         `;
+
+         containerError.innerHTML = message ? template : "";
+
+         containerInputAndMessage.classList.add('error');
+
+         hideErrorMessage(input, containerInputAndMessage);
+      }
+
+      const handleRequestError = data => {
+         const acceptedErrors = {
+            "empty input"({ input }) {
+               const currentInput = state.profileForm[input];
+               showErrorMessage(currentInput, 'Preencha este campo!');
+            },
+            "email already exists"({ input }) {
+               const currentInput = state.profileForm[input];
+               showErrorMessage(currentInput, 'Este email já existe!');
+            },
+            "username already exists"({ input }) {
+               const currentInput = state.profileForm[input];
+               showErrorMessage(currentInput, 'Este nome já existe!');
+            },
+            "request error"() {
+               const errorMessage = state.profileForm.querySelector('.container-error-profile');
+               errorMessage.classList.add('show');
+            }
+         }
+
+         data.forEach(data => {
+            if (acceptedErrors[data.reason]) {
+               acceptedErrors[data.reason](data);
+            } 
+         });
+      }
+
+      const showSuccessMessage = () => {
          const successMessage = state.profileForm.querySelector('.container-success-profile');
          successMessage.classList.add('show');
-
-         setTimeout(() => successMessage.classList.remove('show'), 5000);
       }
 
       const setCredentials = ({ email, username }) => {
@@ -55,15 +103,11 @@ function createPopupProfile() {
             }
 
             saveCredentials(data);
-
             toggleLoading();
 
          }catch(e) {
-            console.log(e);
-
             toggleLoading();
-            // show generic error?? na layer handle errors??
-            containerError.classList.add('show');
+            handleRequestError([{ reason: 'request error' }]);
          }
       }
 
@@ -81,16 +125,17 @@ function createPopupProfile() {
             toggleLoading();
    
             if (status !== 200) {
-               chooseErrors(data.reason);
+               handleRequestError(data.reason);
 
                return
             }
 
             saveCredentials(data.newDatas);
-            showAndHideSuccessMessage();
+            showSuccessMessage();
    
          }catch(e) {
             toggleLoading();
+            handleRequestError([{ reason: 'request error' }]);
          }
       }
 
@@ -417,7 +462,7 @@ function createPopupProfile() {
                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z">
                            </path>
                         </svg> 
-                        Houve um erro, faça o login novamente!
+                        Houve um erro, tente novamente mais tarde!
                      </div>
                   </div>
                   <div class="container-buttons">
