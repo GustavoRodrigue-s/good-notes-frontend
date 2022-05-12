@@ -61,8 +61,8 @@ function createAuthProvider() {
       const shouldLog = dispatch.shouldLogTheUser();
 
       shouldLog
-         ? unauthenticated()
-         : await validateTokens();
+         ? await validateTokens()
+         : unauthenticated();
 
       return state.authenticated 
    }
@@ -78,7 +78,7 @@ function createAuthProvider() {
          const userFirstSession = itemSession && JSON.parse(itemSession);
 
          // if not has tokens and api key or is not first session of user and he doesn't want to keep connected...
-         return !accessToken && !refreshToken && !apiKey || !userFirstSession && !keepConnected
+         return accessToken && refreshToken && apiKey || userFirstSession && keepConnected
       }
    }
 

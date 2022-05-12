@@ -492,7 +492,9 @@ function createPopupProfile() {
       createPopup(forms, popupDeletion);
    }
 
-   return { render }
+   return { 
+      render
+   }
 } 
 
 export default createPopupProfile;
