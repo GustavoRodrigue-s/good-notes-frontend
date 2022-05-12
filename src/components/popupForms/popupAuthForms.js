@@ -331,7 +331,7 @@ function createPopupAuthForms() {
       state.popupWrapper.addEventListener('mousedown', popupListener);
    }
 
-   const render = someLayers => {
+   const render = someHooks => {
       const template = `
       <div class="popup-overlay overlay-signIn">
          <div class="popup-signIn popup popup-forms" data-form="formSignIn">
@@ -491,7 +491,7 @@ function createPopupAuthForms() {
       state.popupWrapper.innerHTML = template;
 
       createPopup();
-      createForm(someLayers);
+      createForm(someHooks);
    }
 
    return { 

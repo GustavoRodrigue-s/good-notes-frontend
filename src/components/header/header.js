@@ -31,7 +31,7 @@ function createHeader() {
       state.btnHamburguer.addEventListener('touchstart', showAndHide);
    }
 
-   function createMenuDropdown() {
+   function createMenuDropdown({ api, cookie }) {
       const state = {
          dropDown: document.querySelector('.container-isLoggedIn'),
          loading: document.querySelector('body > .container-loading')
@@ -107,7 +107,7 @@ function createHeader() {
       return template
    }
 
-   const render = hasToken => {
+   const render = (hasToken, someHooks) => {
       const currentComponent = hasToken ? componentLoggedInUser() : componentNotLoggedInUser();
 
       const headerTemplate = `
@@ -165,7 +165,7 @@ function createHeader() {
       state.header.innerHTML = headerTemplate;
 
       createMenuHamburguer();
-      hasToken && createMenuDropdown();
+      hasToken && createMenuDropdown(someHooks);
    }
 
    return { 

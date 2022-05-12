@@ -365,7 +365,7 @@ function createPopupProfile() {
       }
    }
 
-   const render = someLayers => {
+   const render = someHooks => {
       const template = `
       <div class="popup-overlay overlay-confirm-delete">
          <div class="popup-confirm-to-delete-account popup">
@@ -486,8 +486,8 @@ function createPopupProfile() {
 
       state.popupWrapper.innerHTML = template;
 
-      const forms = createForms(someLayers);
-      const popupDeletion = createPopupConfirmDeletion({ ...someLayers, ...forms });
+      const forms = createForms(someHooks);
+      const popupDeletion = createPopupConfirmDeletion({ ...someHooks, ...forms });
 
       createPopup(forms, popupDeletion);
    }

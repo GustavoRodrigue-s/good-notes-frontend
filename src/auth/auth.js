@@ -26,7 +26,7 @@ function createAuthProvider() {
    }
 
    const redirectUserAsLoggedIn = () => {
-      header.render(true);
+      header.render(true, { api, cookie });
       popupProfile.render({ api, cookie });
    
       removeLoading();
