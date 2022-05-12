@@ -182,14 +182,14 @@
    gap: 15px;
 }
 
-.controls > .buttons {
+.controls .buttons {
    margin-top: 20px;
    display: flex;
    justify-content: flex-end;
    gap: 10px;
 }
 
-.controls > .buttons button {
+.controls .buttons button {
    width: 100%;
    max-width: 110px;
    height: 35px;

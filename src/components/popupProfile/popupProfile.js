@@ -1,73 +1,7 @@
-function createPopupConfirmAccountDeletion() {
-   // adicionar formulário nesse popup
-   
-   const state = {
-      inputConfirmDeletion: document.querySelector('.input-confirm-delete')
-   }
-
-   const btnDeleteConfirm = document.querySelector('.btn-delete-confirm');
-   const popupDeleteAccount = document.querySelector('.popup-confirm-to-delete-account');
-
-   const resetPopupConfirmToDeleteAccount = () => {
-      inputConfirm.value = "";
-      btnDeleteConfirm.className = 'btn-default btn-delete-confirm';
-   }
-
-   // accepted popupDeleteion actions
-   const confirmToDeleteAccountOptions = {
-      async "btn-delete-confirm-active"() {
-         this["close-sub-popup-target"]();
-         
-         try {
-            toggleLoading();
-   
-            await api.request({ auth: true, route: "deleteAccount" });
-   
-            cookies.deleteCookies();
-            window.open('./index.html', '_self');
-   
-         } catch(e) {
-            toggleLoading();
-         }
-      },
-      "close-sub-popup-target"() {
-         // close popup deletion
-         popupDeleteAccount.parentElement.classList.remove('show');
-         resetPopupConfirmToDeleteAccount();
-         
-         setTimeout(() => 
-         popupDeleteAccount.parentElement.classList.add('show'), 300);
-      }
-   }
-
-   popupDeleteAccount.addEventListener('click', e => {
-      const firstClassOfTarget = e.target.classList[0];
-      confirmToDeleteAccountOptions[firstClassOfTarget] && confirmToDeleteAccountOptions[firstClassOfTarget](e);
-   });
-
-   const dispatch = {
-      shouldBeSetValidToDeleteTheAccount() {
-         const { username } = JSON.parse(sessionStorage.getItem('credentials'));
-   
-         // pq n usar classList???
-         btnDeleteConfirm.className = username === inputConfirm.value
-            ? 'btn-delete-confirm-active btn-default btn-delete-confirm'
-            : 'btn-default btn-delete-confirm';
-      }
-   } 
-
-   state.inputConfirmDeletion.addEventListener('input', dispatch.shouldBeSetValidToDeleteTheAccount);
-
-}
-
 function createPopupProfile() {
    const state = {
       popupWrapper: document.querySelector('.popup-wrapper-profile')
    }
-
-   // lembrar de adicionar um form para seção de envio de foto
-   // talvez separar uma camada chamada createForms (desacoplando um pouco as func)
-   // o hide do popup profile e deletion se repetem (ver isso)
 
    function createForms({ api }) {
       const state = {
@@ -191,11 +125,12 @@ function createPopupProfile() {
       state.profileForm.addEventListener('submit', dispatch.shouldUpdateCredentials);
 
       return { 
-         shouldRequestCredentials: dispatch.shouldRequestCredentials
+         shouldRequestCredentials: dispatch.shouldRequestCredentials,
+         toggleLoading
       }
    }
 
-   function createPopup(forms) {
+   function createPopup(forms, popupDeletion) {
       const state = {
          popupWrapper: document.querySelector('.popup-wrapper-profile'),
          btnShowPopup: document.querySelector('header .user-edit'),
@@ -203,20 +138,24 @@ function createPopupProfile() {
          show: false
       }
 
-      // já existe um show e hide popup (este será usado para outras camadas??)
-      const showPopup = () => {
-         const overlay = document.querySelector('.overlay-profile');
-         overlay.classList.add('show');
+      const hidePopup = () => {
+         const [overlayDeletion, overlayProfile] = state.popupWrapper.querySelectorAll('.popup-overlay');
+         
+         overlayProfile.classList.remove('show');
+         setTimeout(() => overlayDeletion.classList.add('show'), 300);
+
+         popupDeletion.resetPopup();
       }
 
-      const hidePopup = () => {
-         const overlay = document.querySelector('.overlay-profile');
-         overlay.classList.remove('show');
+      const showPopup = () => {
+         const overlayProfile = state.popupWrapper.querySelector('.overlay-profile');
+         overlayProfile.classList.add('show');
       }
 
       const resetPopup = () => {
          const [usernameMessage, emailMessage] = state.popupWrapper.querySelectorAll('.input-and-message');
          const [genericError, successMessage] = state.popupWrapper.querySelectorAll('.container-message');
+         const [overlayDeletion, overlayProfile] = state.popupWrapper.querySelectorAll('.popup-overlay');
 
          usernameMessage.classList.remove('error');
          emailMessage.classList.remove('error');
@@ -224,9 +163,8 @@ function createPopupProfile() {
          genericError.classList.remove('show');
          successMessage.classList.remove('show');
 
-         // ver se precisa remover o confirm deletion (talvez na camada de confirm deletion??)
-         state.popupWrapper.lastElementChild.classList.remove('show');
-         state.popupWrapper.firstElementChild.classList.remove('show');
+         overlayProfile.classList.remove('show');
+         overlayDeletion.classList.remove('show');
       }
 
       const setAccessibilityProps = () => {
@@ -248,7 +186,7 @@ function createPopupProfile() {
          }
       }
 
-      const showAndHidePopup = () => {
+      const showAndHidePopupWrapper = () => {
          resetPopup();
 
          setTimeToOpen();
@@ -256,26 +194,28 @@ function createPopupProfile() {
 
          state.popupWrapper.classList.toggle('show');
          
-         // acho que tem haver com popup confirm deletion (pq tá aqui??)
-         if(!state.popupWrapper.classList.contains('show')) {
-            return
+         if (state.popupWrapper.classList.contains('show')) {
+            showPopup();
          } 
-
-         // que código é esse??confirm deletion??
-         state.popupWrapper.lastElementChild.classList.toggle('show');
       }
 
       const dispatch = {
-         shouldShowOrHidePopup(targetClass) {
+         shouldShowOrHidePopupWrapper(targetClass) {
             if(!state.avalibleToOpen) return
 
             const listOfElementsToToggle = ['close-popup-target', 'popup-overlay', 'user-edit'];
             const shouldToggle = listOfElementsToToggle.includes(targetClass);
 
             if (shouldToggle) {
-               showAndHidePopup();
+               showAndHidePopupWrapper();
                forms.shouldRequestCredentials();
             }
+         },
+         shouldHidePopup(targetClass) {
+            const listToShowPopupDeletion = ['btn-delete'];
+            const shouldShowPopup = listToShowPopupDeletion.includes(targetClass);
+
+            shouldShowPopup && hidePopup();
          }
       }
 
@@ -284,24 +224,100 @@ function createPopupProfile() {
 
          const targetClass = e.target.classList[0];
 
-         dispatch.shouldShowOrHidePopup(targetClass);
+         dispatch.shouldShowOrHidePopupWrapper(targetClass);
+         dispatch.shouldHidePopup(targetClass);
       }
 
       state.popupWrapper.addEventListener('mousedown', popupListener);
       state.btnShowPopup.addEventListener('click', popupListener);
       state.btnShowPopup.addEventListener('touchstart', popupListener);
 
-      return { 
-         showPopup,
-         hidePopup
-      }
+      return {  }
    }
-   
-   const instantiateLayers = someLayers => {
-      const forms = createForms(someLayers);
-      const popup = createPopup(forms);
 
-      // createPopupConfirmAccountDeletion();
+   function createPopupConfirmDeletion({ api, cookie, toggleLoading }) {
+      const state = {
+         popupWrapper: document.querySelector('.popup-wrapper-profile'),
+         confirmDeletionForm: document.querySelector('.deletion-account-form'),
+         popup: document.querySelector('.popup-confirm-to-delete-account')
+      }
+   
+      const resetPopup = () => {
+         const { btnConfirm } = state.confirmDeletionForm;
+   
+         state.confirmDeletionForm.reset();
+         btnConfirm.classList.remove('btn-delete-confirm-active');
+      }
+   
+      const hidePopup = () => {
+         const [overlayDeletion, overlayProfile] = state.popupWrapper.querySelectorAll('.popup-overlay');
+         
+         overlayDeletion.classList.remove('show');
+         setTimeout(() => overlayProfile.classList.add('show'), 300);
+   
+         resetPopup();
+      }
+   
+      const confirmAccountDeletion = async () => {
+         hidePopup();
+            
+         try {
+            toggleLoading();
+   
+            await api.request({ auth: true, route: "deleteAccount" });
+   
+            cookie.deleteCookies();
+            window.open('./index.html', '_self');
+   
+         } catch(e) {
+            toggleLoading();
+         }
+      }
+   
+      const dispatch = {
+         shouldHidePopup(targetClass) {
+            const listToHidePopup = ['close-sub-popup-target'];
+            const shouldToHide = listToHidePopup.includes(targetClass);
+   
+            shouldToHide && hidePopup();
+         },
+         shouldActiveTheButton() {
+            const { username } = JSON.parse(sessionStorage.getItem('credentials'));
+            const { inputUsername, btnConfirm } = state.confirmDeletionForm; 
+   
+            const addOrRemove = username === inputUsername.value ? 'add' : 'remove';
+   
+            btnConfirm.classList[addOrRemove]('btn-delete-confirm-active');
+         },
+         shouldConfirmDeletion(e) {
+            e.preventDefault();
+   
+            const { btnConfirm } = state.confirmDeletionForm;
+   
+            const shouldDeleteAccount = btnConfirm.classList.contains('btn-delete-confirm-active');
+   
+            if (shouldDeleteAccount) {
+               confirmAccountDeletion();
+            }
+         }
+      } 
+   
+      const popupListener = e => {
+         if (e.type === 'touchstart') e.preventDefault();
+   
+         const targetClass = e.target.classList[0];
+   
+         dispatch.shouldHidePopup(targetClass);
+      }
+   
+      state.popup.addEventListener('click', popupListener);
+   
+      state.confirmDeletionForm.inputUsername.addEventListener('input', dispatch.shouldActiveTheButton);
+      state.confirmDeletionForm.addEventListener('submit', dispatch.shouldConfirmDeletion);
+   
+      return { 
+         resetPopup
+      }
    }
 
    const render = someLayers => {
@@ -327,13 +343,15 @@ function createPopupProfile() {
                      </p>
                   </div>
                   <div class="controls">
-                     <div class="container-input">
-                        <input type="text" name="input-username" class="input-confirm-delete input-default" autocomplete="off">
-                     </div>
-                     <div class="buttons">
-                        <button class="close-sub-popup-target btn-default btn-cancel-confirm">Cancelar</button>
-                        <button type="submit" class="btn-default btn-delete-confirm">Excluir Conta</button>
-                     </div>
+                     <form class="deletion-account-form">
+                        <div class="container-input">
+                           <input type="text" name="inputUsername" class="input-confirm-delete input-default" autocomplete="off">
+                        </div>
+                        <div class="buttons">
+                           <button type="reset" class="close-sub-popup-target btn-default btn-cancel-confirm">Cancelar</button>
+                           <button type="submit" name="btnConfirm" class="btn-delete-confirm btn-default">Excluir Conta</button>
+                        </div>
+                     </form>
                   </div>
                </div>
             </div>
@@ -423,7 +441,10 @@ function createPopupProfile() {
 
       state.popupWrapper.innerHTML = template;
 
-      instantiateLayers(someLayers);
+      const forms = createForms(someLayers);
+      const popupDeletion = createPopupConfirmDeletion({ ...someLayers, ...forms });
+
+      createPopup(forms, popupDeletion);
    }
 
    return { render }
@@ -432,18 +453,3 @@ function createPopupProfile() {
 const popupProfile = createPopupProfile();
 
 export default popupProfile;
-
-/* ---------------------------------------- */
-
-// const tools = { 
-//    api,
-//    cookie,
-//    toggleLoading,
-//    containerSuccessMessage: containerSuccessMessage
-// }
-
-// initProfileOptions(tools);
-
-// const initProfileOptions = ({ api, containerSuccessMessage, toggleLoading, cookies }) => {
-   
-// }
