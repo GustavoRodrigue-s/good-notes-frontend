@@ -499,6 +499,4 @@ function createPopupAuthForms() {
    }
 }
 
-const popupAuthForms = createPopupAuthForms();
-
-export default popupAuthForms
+export default createPopupAuthForms

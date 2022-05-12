@@ -1,34 +1,42 @@
 import api from '../services/api.js';
 import cookie from '../components/cookie/cookie.js';
-import header from "../components/header/header.js";
-import popupAuthForms from '../components/popupForms/popupAuthForms.js';
-import popupProfile from '../components/popupProfile/popupProfile.js';
 
 function createAuthProvider() {
    const state = {
+      observers: [],
       authenticated: false,
       loading: document.querySelector('body > .container-loading')
+   }
+
+   const subscribe = (event, listener) => {
+      state.observers.push({ event, listener });
+   }
+
+   const notifyAll = (event, data) => {
+      const listeners = state.observers.filter(observer => observer.event === event);
+
+      for (const { listener } of listeners) {
+         listener(data);
+      }
    }
 
    const removeLoading = () => {
       setTimeout(() => state.loading.classList.remove('show'), 300);
    }
 
-   // trocar para observers
    const redirectUserAsLoggedOut = () => {
       cookie.deleteCookies();
    
-      header.render(false);
-      popupAuthForms.render({ api, cookie });
+      notifyAll('redirectingUserAsLoggedOut', { api, cookie, authenticated: false });
    
       cookie.shouldShowThePopup();
+
       removeLoading();
    }
 
    const redirectUserAsLoggedIn = () => {
-      header.render(true, { api, cookie });
-      popupProfile.render({ api, cookie });
-   
+      notifyAll('redirectingUserAsLoggedIn', { api, cookie, authenticated: true });
+
       removeLoading();
    }
 
@@ -44,6 +52,7 @@ function createAuthProvider() {
          redirectUserAsLoggedIn();
 
       } catch (e) {
+         console.log(e);
          redirectUserAsLoggedOut();
       }
    }
@@ -74,11 +83,9 @@ function createAuthProvider() {
    }
 
    return {
+      subscribe,
       verifyAuth
    }
 }
 
-// depois instacinar o provider no index, para usar o observer
-const auth = createAuthProvider();
-
-export default auth
+export default createAuthProvider

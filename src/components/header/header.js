@@ -107,8 +107,8 @@ function createHeader() {
       return template
    }
 
-   const render = (hasToken, someHooks) => {
-      const currentComponent = hasToken ? componentLoggedInUser() : componentNotLoggedInUser();
+   const render = ({ authenticated, api, cookie }) => {
+      const currentComponent = authenticated ? componentLoggedInUser() : componentNotLoggedInUser();
 
       const headerTemplate = `
       <div class="container-header-flex">
@@ -165,7 +165,7 @@ function createHeader() {
       state.header.innerHTML = headerTemplate;
 
       createMenuHamburguer();
-      hasToken && createMenuDropdown(someHooks);
+      authenticated && createMenuDropdown({ api, cookie });
    }
 
    return { 
@@ -173,6 +173,4 @@ function createHeader() {
    }
 }
 
-const header = createHeader();
-
-export default header;
+export default createHeader;

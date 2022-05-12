@@ -495,6 +495,4 @@ function createPopupProfile() {
    return { render }
 } 
 
-const popupProfile = createPopupProfile();
-
-export default popupProfile;
+export default createPopupProfile;
