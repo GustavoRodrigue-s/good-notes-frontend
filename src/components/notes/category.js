@@ -271,9 +271,7 @@ export function createCategoryList() {
 
    const dispatch = {
       shouldSearchItem() {
-         const isGettingCategories = categoryNetwork.isGettingCategories();
-
-         if (isGettingCategories) {
+         if (state.gettingCategories) {
             return
          }
 

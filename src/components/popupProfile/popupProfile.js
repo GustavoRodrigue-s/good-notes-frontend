@@ -309,7 +309,7 @@ function createPopupProfile() {
          try {
             toggleLoading();
    
-            await api.request({ auth: true, route: "deleteAccount" });
+            await api.request({ auth: true, method: 'DELETE', route: "deleteAccount" });
    
             cookie.deleteCookies();
             window.open('./index.html', '_self');
