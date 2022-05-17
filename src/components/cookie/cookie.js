@@ -7,8 +7,7 @@ function createCookieHandler() {
       document.cookie = `accessToken = ${newToken} ; path=/`;
    }
 
-   const setCookies = ({ accessToken, refreshToken, apiKey }) => {
-      document.cookie = `apiKey = ${apiKey} ; path=/`;
+   const setCookies = ({ accessToken, refreshToken }) => {
       document.cookie = `accessToken = ${accessToken} ; path=/`;
       document.cookie = `refreshToken = ${refreshToken} ; path=/`;
    
@@ -20,15 +19,13 @@ function createCookieHandler() {
    
       const accessToken = cookies[cookies.indexOf('accessToken') + 1];
       const refreshToken = cookies[cookies.indexOf('refreshToken') + 1];
-      const apiKey = '' || cookies[cookies.indexOf('apiKey') + 1];
    
-      return { accessToken, refreshToken, apiKey }
+      return { accessToken, refreshToken }
    }
 
    const deleteCookies = () => {
       document.cookie = `accessToken = ; Path=/ ; Expires=Thu, 01 Jan 1970 00:00:00 GMT`;
       document.cookie = `refreshToken = ; Path=/ ; Expires=Thu, 01 Jan 1970 00:00:00 GMT`;
-      document.cookie = `apiKey = ; Path=/ ; Expires=Thu, 01 Jan 1970 00:00:00 GMT`;
 
       localStorage.removeItem('keepConnected');
       sessionStorage.clear();

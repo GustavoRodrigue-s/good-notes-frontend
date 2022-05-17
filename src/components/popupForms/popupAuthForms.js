@@ -12,7 +12,7 @@ function createPopupAuthForms() {
       const hideErrorMessage = (input, containerErrorAndInput) => {
          const [genericErrorSignIn, genericErrorSignUp] = document.querySelectorAll('form > .generic-container')
 
-         input.addEventListener('keypress', () => {
+         input.addEventListener('keydown', () => {
             containerErrorAndInput.classList.remove('error');
 
             genericErrorSignIn.classList.remove('error');
@@ -120,10 +120,8 @@ function createPopupAuthForms() {
             return {
                username: inputUsername.value.trim(),
                email: inputEmail.value.trim(),
-               password: [
-                  inputPassword.value.trim(),
-                  inputConfirmPassword.value.trim()
-               ],
+               password: inputPassword.value.trim(),
+               confirmPassword:  inputConfirmPassword.value.trim(),
                keepConnected: false
             }
          }
@@ -150,6 +148,8 @@ function createPopupAuthForms() {
    
             const [data, status] = await api.request({ method: "POST", route, body });
    
+            console.log(data, status);
+
             if (status !== 200) {
                handleRequestError(data.errors, currentForm);
                showAndHideLoading(currentForm);

@@ -69,7 +69,7 @@ function createAuthProvider() {
 
    const dispatch = {
       shouldLogTheUser() {
-         const { accessToken, refreshToken, apiKey } = cookie.getCookies();
+         const { accessToken, refreshToken } = cookie.getCookies();
       
          const itemConnected = localStorage.getItem('keepConnected');
          const keepConnected = itemConnected && JSON.parse(itemConnected);
@@ -77,8 +77,10 @@ function createAuthProvider() {
          const itemSession = sessionStorage.getItem('USER_FIRST_SESSION');
          const userFirstSession = itemSession && JSON.parse(itemSession);
 
-         // if not has tokens and api key or is not first session of user and he doesn't want to keep connected...
-         return accessToken && refreshToken && apiKey || userFirstSession && keepConnected
+         // rever essa regra de negócio
+         const shouldLog = accessToken && refreshToken || userFirstSession && keepConnected
+
+         return shouldLog
       }
    }
 

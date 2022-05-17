@@ -9,10 +9,9 @@ function createApiNetwork() {
    }
 
    const setAuthorization = () => {
-      const { accessToken, refreshToken, apiKey } = cookie.getCookies();
+      const { accessToken, refreshToken } = cookie.getCookies();
    
       state.headers["Authorization"] = `${accessToken};${refreshToken}`;
-      state.apiKey = `?key=${apiKey}`;
    }
 
    const requestTemplate = async ({ auth, method, route, body }) => {
@@ -20,7 +19,7 @@ function createApiNetwork() {
          setAuthorization();
       }
 
-      const currentUrl = `${state.baseUrl}${route}${state.apiKey ? state.apiKey : ''}`;
+      const currentUrl = `${state.baseUrl}${route}`;
 
       const options = {
          method: method || "GET",
