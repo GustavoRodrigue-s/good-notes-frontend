@@ -36,7 +36,7 @@ function createPopupProfile() {
          hideErrorMessage(input, containerInputAndMessage);
       }
 
-      const handleRequestError = data => {
+      const handleRequestError = errors => {
          const acceptedErrors = {
             "empty input"({ input }) {
                const currentInput = state.profileForm[input];
@@ -56,10 +56,10 @@ function createPopupProfile() {
             }
          }
 
-         data.forEach(data => {
-            if (acceptedErrors[data.reason]) {
-               acceptedErrors[data.reason](data);
-            } 
+         errors.forEach(data => {
+            acceptedErrors[data.reason]
+               ? acceptedErrors[data.reason](data)
+               : acceptedErrors['request error']();
          });
       }
 

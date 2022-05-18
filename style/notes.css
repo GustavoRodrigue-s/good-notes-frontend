@@ -140,6 +140,7 @@ section.categories {
    -webkit-animation: slideUp 0.3s ease;
    -moz-animation: slideUp 0.3s ease;
    -o-animation: slideUp 0.3s ease;
+   transition: 0.3s;
 }
 
 .category-item.hide {

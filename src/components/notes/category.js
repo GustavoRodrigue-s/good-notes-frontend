@@ -89,6 +89,8 @@ export function createCategoryNetwork({ networkTemplate, popupLoading }) {
          const categoryId = categoryElement.dataset.id;
    
          if (!categoryId) {
+            inputCategoryName.value = inputCategoryName.getAttribute('value');
+
             return
          }
 
