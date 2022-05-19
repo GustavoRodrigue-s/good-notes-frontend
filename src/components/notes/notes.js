@@ -407,9 +407,9 @@ export function createCurrentNote(repository) {
 
    const dispatch = {
       shouldSetNewLastModification({ noteId, lastModification }) {
-         const selectedCategoryId = repository.getSelectedCategoryId();
+         const selectedNoteId = repository.getSelectedNoteId();
 
-         if (noteId === +selectedCategoryId) {
+         if (noteId === +selectedNoteId) {
             setNewModifications(lastModification);
          }
       },
@@ -448,6 +448,8 @@ export function createCurrentNote(repository) {
 
       notifyAll('click', { action });
    }
+
+   state.currentNoteForm.addEventListener('submit', e => e.preventDefault());
 
    state.currentNote.addEventListener('click', currentNoteListener);
    state.currentNote.addEventListener('input', automaticallySaveChanges);

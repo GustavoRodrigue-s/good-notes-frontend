@@ -905,3 +905,64 @@ font[size="7"] {
    border-color: #000;
    border-top-color: #fff;
 }
+
+/* Popup cloud error */
+
+.popup-cloud-error {
+   max-width: 450px;
+   text-align: center;
+   padding: 30px 30px !important;
+}
+
+.popup-cloud-error .container-img {
+   width: 100%;
+}
+
+.popup-cloud-error .container-img > img {
+   object-fit: cover;
+}
+
+.popup-cloud-error .container-texts {
+   margin: auto;
+   max-width: 389px;
+}
+
+.popup-cloud-error p {
+   color: var(--colorGray);
+   margin-top: 10px;
+}
+
+.popup-cloud-error .btn-confirm-error {
+   display: inline-flex;
+   gap: 3px;
+   width: 120px;
+   height: 40px;
+   margin-top: 20px;
+   background: transparent;
+   box-shadow: none;
+   font-weight: 600;
+   color: var(--accentColor);
+}
+
+.popup-cloud-error .btn-confirm-error > img {
+   width: 20px;
+   transition: transform 0.2s;
+}
+
+.popup-cloud-error .btn-confirm-error:hover {
+   background-color: #e2f0fe;
+}
+
+.popup-cloud-error .btn-confirm-error:hover > img {
+   transform: translateX(4px);
+}
+
+@media (max-width: 430px) {
+   .popup-cloud-error {
+      padding: 30px 20px !important;
+   }
+
+   .popup-cloud-error h1 {
+      font-size: 2.5rem;
+   }
+}

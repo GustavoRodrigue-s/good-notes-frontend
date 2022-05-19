@@ -15,7 +15,7 @@ export default function createNoteApp({ api }) {
          return data;
          
       } catch(e) {
-         console.log(e);
+         cloudError.showPopup();
 
          throw e
       }
@@ -132,12 +132,53 @@ export default function createNoteApp({ api }) {
       }
    }
 
+   function createCloudError() {
+      const state = {
+         popupWrapper: document.querySelector('.popup-wrapper-cloud-error')
+      }
+
+      const showPopup = () => {
+         state.popupWrapper.classList.add('show');
+      }
+
+      const hidePopup = () => {
+         state.popupWrapper.classList.remove('show');
+      }
+
+      const dispatch = {
+         shouldHideThePopup(targetClass) {
+            const listOfHidePopup = ['close-popup-target', 'btn-confirm-error'];
+            const shouldHide = listOfHidePopup.includes(targetClass);
+
+            if (shouldHide) {
+               hidePopup();
+            }
+         }
+      }
+
+      const popupListener = e => {
+         if (e.type === 'touchstart') e.preventDefault();
+
+         const targetClass = e.target.classList[0];
+
+         dispatch.shouldHideThePopup(targetClass);
+      }
+
+      state.popupWrapper.addEventListener('click', popupListener);
+      state.popupWrapper.addEventListener('touchstart', popupListener);
+
+      return {
+         showPopup
+      }
+   }
+
    // core application
    const repository = createRepository();
 
    // layers
    const popupLoading = createLoading();
    const popupConfirmDeletion = createConfirmDelete();
+   const cloudError = createCloudError();
    
    const categoryList = createCategoryList();
    const categoryNetwork = createCategoryNetwork({ networkTemplate, popupLoading });
