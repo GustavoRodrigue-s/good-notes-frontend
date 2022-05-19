@@ -16,49 +16,74 @@ export function createCategoryNetwork({ networkTemplate, popupLoading }) {
       }
    }
 
-   const setCategoryConfirmationDeletion = () => {
-      notifyAll('setTheDeleteTarget', dispatch.shouldDeleteCategory);
+   const handleErrors = {
+      create(categoryElement) {
+         categoryElement.remove();
+      },
+      update(inputCategoryName) {
+         inputCategoryName.value = inputCategoryName.getAttribute('value');
+      },
+      delete(categoryElement) {
+         notifyAll('restoreCategory', categoryElement);
+      }
    }
 
    const createCategory = async ({ categoryElement, categoryName }) => {
       const id = popupLoading.showLoading();
 
-      const { categoryId } = await networkTemplate({
-         route: "addCategory",
-         method: "POST",
-         body: { 'categoryName': categoryName }
-      });
-         
-      categoryElement.setAttribute('data-id', categoryId);
+      try {
+         const { categoryId } = await networkTemplate({
+            route: "addCategory",
+            method: "POST",
+            body: { 'categoryName': categoryName }
+         });
+            
+         categoryElement.setAttribute('data-id', categoryId);
+      } catch (e) {
+         handleErrors.create(categoryElement);
+      }
+
       popupLoading.shouldHideLoading(id);
    }
 
    const updateCategory = async ({ inputCategoryName, categoryId, newCategoryName }) => {
       const id = popupLoading.showLoading();
 
-      await networkTemplate({
-         route: 'updateCategory',
-         method: 'POST',
-         body: { categoryId, newCategoryName }
-      })
-      
-      inputCategoryName.setAttribute('value', newCategoryName);
-      popupLoading.shouldHideLoading(id);
+      try {
+         await networkTemplate({
+            route: 'updateCategory',
+            method: 'POST',
+            body: { categoryId, newCategoryName }
+         })
+         
+         inputCategoryName.setAttribute('value', newCategoryName);
+   
+         notifyAll('categoryUpdated', { categoryId, newCategoryName });
+      } catch(e) {
+         handleErrors.update(inputCategoryName);
+      }
 
-      notifyAll('categoryUpdated', { categoryId, newCategoryName });
+      popupLoading.shouldHideLoading(id);
    }
 
    const deleteCategory = async ({ categoryElement, categoryId }) => {
       const id = popupLoading.showLoading();
+      const categoryClone = categoryElement.cloneNode(true);
 
-      categoryElement.remove();
-      notifyAll('categoryRemoved', { categoryId });
+      try {
+         categoryElement.remove();
 
-      await networkTemplate({
-         route: 'deleteCategory',
-         method: 'POST',
-         body: { categoryId }
-      })
+         notifyAll('categoryRemoved', { categoryId });
+
+         await networkTemplate({
+            route: 'deleteCategory',
+            method: 'POST',
+            body: { categoryId }
+         })
+
+      } catch (e) {
+         handleErrors.delete(categoryClone);
+      }
 
       popupLoading.shouldHideLoading(id);
    }
@@ -69,6 +94,10 @@ export function createCategoryNetwork({ networkTemplate, popupLoading }) {
       notifyAll('obtainedCategories', categories);
 
       state.loading.classList.remove('show');
+   }
+
+   const setCategoryConfirmationDeletion = () => {
+      notifyAll('setTheDeleteTarget', dispatch.shouldDeleteCategory);
    }
 
    const dispatch = {
@@ -158,11 +187,17 @@ export function createCategoryList() {
    }
 
    const getCategory = e => {
-      const eventTargetPath = [...e.path];
-      
-      const categoryElement = eventTargetPath.find(element => element.classList.contains('category-item'));
+      let currentParentElement = e.target.parentElement;
 
-      return categoryElement;
+      while (!currentParentElement.classList.contains('category-item')) {
+         currentParentElement = currentParentElement.parentElement;
+
+         if (currentParentElement === state.categoryList) {
+            break
+         }
+      }
+
+      return currentParentElement;
    }
 
    const createCategoryElement = ({ isItNewCategory, ...category }) => {
@@ -259,16 +294,20 @@ export function createCategoryList() {
       state.gettingCategories = false;
    }
 
-   const renderCategory = () => {
+   const renderNewCategory = () => {
       state.availableToAddCategory = false;
 
       const categoryElement = createCategoryElement({ isItNewCategory: true });     
 
-      state.categoryList.prepend(categoryElement);
+      renderCategory(categoryElement);
 
       categoryElement.querySelector('input').focus();
 
       setTimeout(() => state.availableToAddCategory = true, 400);
+   }
+
+   const renderCategory = categoryElement => {
+      state.categoryList.prepend(categoryElement);
    }
 
    const dispatch = {
@@ -290,7 +329,7 @@ export function createCategoryList() {
             return
          }
 
-         renderCategory();
+         renderNewCategory();
       }
    }
 
@@ -310,7 +349,8 @@ export function createCategoryList() {
 
    return { 
       subscribe,
-      renderAllCategories
+      renderAllCategories,
+      renderCategory
    }
 }
 
@@ -329,14 +369,6 @@ export function createCategoryItem() {
       for (const { listener } of listeners) {
          listener(data);
       }
-   }
-
-   const getCurrentCategoryId = () => {
-      return state.currentCategoryId;
-   }
-
-   const setCurrentCategoryId = id => {
-      state.currentCategoryId = id;
    }
 
    const changeContainersVisibility = ({ confirmation, dropDown, categoryElement }) => {
@@ -380,34 +412,35 @@ export function createCategoryItem() {
       lastSelectedLi && lastSelectedLi.classList.remove('selected');
    }
 
-   // talvez adicionar currentCategoryElement dentro desse obj, assim eliminando a syntax de parâmetros
    const acceptedCategoryActions = {
-      activateDropDown(categoryElement) {
-         const btnDropDown = categoryElement.querySelector('.btn-dropDown');
+      categoryElement: null,
 
-         categoryElement.classList.toggle('dropDown-active');
+      activateDropDown() {
+         const btnDropDown = this.categoryElement.querySelector('.btn-dropDown');
+
+         this.categoryElement.classList.toggle('dropDown-active');
          btnDropDown.classList.toggle('active');
       },
       showPopupDelete() {
          notifyAll('showPopupDelete', 'category');
       },
-      selectItem(categoryElement) {
+      selectItem() {
          removeSelectedItem();
 
-         categoryElement.classList.add('selected');
+         this.categoryElement.classList.add('selected');
 
-         notifyAll('categorySelected', categoryElement);
+         notifyAll('categorySelected', this.categoryElement);
       },
-      cancelItemAddition(categoryElement) {
-         categoryElement.remove();
+      cancelItemAddition() {
+         this.categoryElement.remove();
       },
-      cancelRenameItem(categoryElement) {
-         removeConfirmation(categoryElement);
+      cancelRenameItem() {
+         removeConfirmation(this.categoryElement);
       },
-      toggleDatasetForRenameItem(categoryElement) {
-         addConfirmation(categoryElement);
+      toggleDatasetForRenameItem() {
+         addConfirmation(this.categoryElement);
 
-         const [btnConfirm, btnCancel] = categoryElement.querySelectorAll('.container-confirmation > button');
+         const [btnConfirm, btnCancel] = this.categoryElement.querySelectorAll('.container-confirmation > button');
 
          btnConfirm.setAttribute('data-js', 'shouldUpdateCategory');
          btnCancel.setAttribute('data-js', 'cancelRenameItem');
@@ -424,21 +457,20 @@ export function createCategoryItem() {
             return
          }
 
-         acceptedCategoryActions.selectItem(categoryElement);
+         acceptedCategoryActions.categoryElement = categoryElement;
+         acceptedCategoryActions.selectItem();
       }
    }
 
    const categoryItemListener = ({ e, action, getCategory }) => {
-      const categoryElement = dispatch[action] || acceptedCategoryActions[action] 
-         ? getCategory(e) 
-         : '';
-
       if (dispatch[action]) {
-         dispatch[action](categoryElement);
+         dispatch[action](getCategory(e));
       }
 
       if (acceptedCategoryActions[action]) {
-         acceptedCategoryActions[action](categoryElement);
+         acceptedCategoryActions.categoryElement = getCategory(e) ;
+
+         acceptedCategoryActions[action]();
       }
    }
 
@@ -446,8 +478,6 @@ export function createCategoryItem() {
       subscribe,
       categoryItemListener,
       inputAutoFocus,
-      removeConfirmation,
-      getCurrentCategoryId,
-      setCurrentCategoryId
+      removeConfirmation
    }
 }

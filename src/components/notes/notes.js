@@ -219,7 +219,6 @@ export function createNoteNetwork({ networkTemplate, repository, popupLoading })
       }
    }
 
-   // talvez tirar esse listener?
    const networkListener = ({ action }) => {
       if (dispatch[action]) {
          dispatch[action]();
@@ -270,11 +269,7 @@ export function createCurrentNote(repository) {
    }
 
    const resetToolBar = () => {
-      // pegar elementos com form
-
-      const [
-         selectFontSize, selectFontFamily, inputColor
-      ] = state.currentNote.querySelector('.select-group').children;
+      const { selectFontSize, selectFontFamily, inputColor } = state.currentNoteForm
 
       selectFontSize.value = '3';
       selectFontFamily.value = 'arial';
@@ -282,19 +277,16 @@ export function createCurrentNote(repository) {
    }
 
    const setCurrentNote = (noteId, noteListTitle) => {
-      // usar o form aqui
-      const btnExpandSummary = state.currentNote.querySelector('.container-summary > .btn-dropDown');
       const { title, summary, content, lastModification } = repository.getItem(noteId);
+      const { inputNoteTitle, textareaSummary, btnExpandSummary } = state.currentNoteForm;
 
       btnExpandSummary.classList.remove('active');
 
       const path = state.currentNote.querySelector('.note-path');
-      const inputNoteTitle = state.currentNote.querySelector('.title-note input');
-      const summaryArea = state.currentNote.querySelector('.summaryArea');
 
       path.innerText = `${noteListTitle} > ${title}`;
       inputNoteTitle.value = title;
-      summaryArea.value = summary;
+      textareaSummary.value = summary;
 
       const elementLastModification = state.currentNote.querySelector('.last-modification strong');
       const noteContent = state.currentNote.querySelector('.area-note-content');
@@ -337,8 +329,8 @@ export function createCurrentNote(repository) {
    }
 
    const updatePathName = ({ noteName, categoryName }) => {
-      const path =  state.currentNote.querySelector('.note-path');
-      const [lastCategoryName, lastNoteName] = path.innerText.split(' > ');
+      const path = state.currentNote.querySelector('.note-path');
+      const [ lastCategoryName, lastNoteName ] = path.innerText.split(' > ');
 
       const newNoteName = noteName || lastNoteName;
       const newCategoryName = categoryName || lastCategoryName;

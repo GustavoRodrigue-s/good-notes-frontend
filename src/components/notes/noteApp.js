@@ -15,7 +15,9 @@ export default function createNoteApp({ api }) {
          return data;
          
       } catch(e) {
-         console.log(e)
+         console.log(e);
+
+         throw e
       }
    }
 
@@ -161,6 +163,8 @@ export default function createNoteApp({ api }) {
    categoryNetwork.subscribe('categoryRemoved', noteList.shouldHideNoteList);
    categoryNetwork.subscribe('categoryRemoved', currentNote.shouldHideCurrentNote);
 
+   categoryNetwork.subscribe('restoreCategory', categoryList.renderCategory);
+
    categoryItem.subscribe('categorySelected', repository.setSelectedCategoryId);
    categoryItem.subscribe('categorySelected', noteNetwork.shouldGetNotes);
    categoryItem.subscribe('categorySelected', currentNote.hideSection);
@@ -184,7 +188,6 @@ export default function createNoteApp({ api }) {
    noteNetwork.subscribe('deletingNote', currentNote.hideSection);
 
    noteList.subscribe('click', noteItem.noteItemListener)
-   noteList.subscribe('click', noteNetwork.networkListener);
 
    noteItem.subscribe('noteSelected', repository.setSelectedNoteId);
    noteItem.subscribe('noteSelected', currentNote.showSection);
