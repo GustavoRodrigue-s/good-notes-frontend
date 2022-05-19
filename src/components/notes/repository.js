@@ -8,6 +8,24 @@ export default function createNoteRepository() {
       }
    }
 
+   const handleErrors = {
+      create() {
+         const { notes } = state.storage;
+
+         const newNoteList = notes.filter(note => 'id' in note);
+
+         state.storage.notes = newNoteList;
+      },
+      delete(note) {
+         note.element.classList.remove('selected');
+
+         state.storage.notes.unshift(note);
+      },
+      update(note, noteClone) {
+         updateItem(note, noteClone);
+      }
+   }
+
    const insertItemFirst = noteId => {
       const { notes } = state.storage;
 
@@ -110,6 +128,7 @@ export default function createNoteRepository() {
       getSelectedCategoryId,
       setSelectedCategoryId,
       getSelectedNoteId,
-      setSelectedNoteId
+      setSelectedNoteId,
+      handleErrors: handleErrors
    }
 }

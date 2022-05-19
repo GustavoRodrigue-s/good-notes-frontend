@@ -186,8 +186,12 @@ export default function createNoteApp({ api }) {
    noteNetwork.subscribe('setTheDeleteTarget', popupConfirmDeletion.setTheDeleteTarget);
 
    noteNetwork.subscribe('deletingNote', currentNote.hideSection);
+   noteNetwork.subscribe('restoreNote', noteList.renderItem);
+   noteNetwork.subscribe('restoreUpdate', noteList.updateListItem);
+   noteNetwork.subscribe('restoreUpdate', currentNote.setCurrentNoteDatas);
 
-   noteList.subscribe('click', noteItem.noteItemListener)
+   noteList.subscribe('click', noteItem.noteItemListener);
+   noteList.subscribe('click', noteNetwork.networkListener);
 
    noteItem.subscribe('noteSelected', repository.setSelectedNoteId);
    noteItem.subscribe('noteSelected', currentNote.showSection);

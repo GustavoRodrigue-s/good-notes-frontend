@@ -22,12 +22,22 @@ export function createNoteNetwork({ networkTemplate, repository, popupLoading })
       }
    }
 
-   const setNoteDatas = (newNote, noteData) => {
-      newNote.id = noteData.id;
-      newNote.dateCreated = noteData.dateCreated;
-      newNote.lastModification = noteData.lastModification;
+   const handleErrors = {
+      create(note) {
+         if ('element' in note) {
+            note.element.remove();
+         }
 
-      newNote.element.setAttribute('data-id', noteData.id);
+         repository.handleErrors.create();
+      },
+      delete(note) {
+         repository.handleErrors.delete(note);
+         notifyAll('restoreNote', note);
+      },
+      update(note, noteClone) {
+         repository.handleErrors.update(note, noteClone);
+         notifyAll('restoreUpdate', noteClone);
+      }
    }
 
    const getNotes = async ({ categoryId }) => {
@@ -62,16 +72,22 @@ export function createNoteNetwork({ networkTemplate, repository, popupLoading })
       const id = popupLoading.showLoading();
 
       const newNote = repository.setItem(selectedCategoryId);
-      notifyAll('creatingNote', newNote);
 
-      const { noteData } = await networkTemplate({
-         route: 'addNote',
-         method: 'POST',
-         body: { categoryId: selectedCategoryId }
-      });
+      try {
+         notifyAll('creatingNote', newNote);
 
-      setNoteDatas(newNote, noteData);
-      notifyAll('noteCreated', { newNote, noteData });
+         const { noteData } = await networkTemplate({
+            route: 'addNote',
+            method: 'POST',
+            body: { categoryId: selectedCategoryId }
+         });
+
+         setNoteDatas(newNote, noteData);
+         notifyAll('noteCreated', { newNote, noteData });
+
+      } catch (e) {
+         handleErrors.create(newNote);
+      }
 
       popupLoading.shouldHideLoading(id);
    }
@@ -80,17 +96,23 @@ export function createNoteNetwork({ networkTemplate, repository, popupLoading })
       const id = popupLoading.showLoading();
 
       const note = repository.getItem(selectedNoteId);
-      note.element.remove();
+      
+      try {
+         note.element.remove();
 
-      repository.deleteItem(selectedCategoryId, selectedNoteId);
+         repository.deleteItem(selectedCategoryId, selectedNoteId);
 
-      notifyAll('deletingNote');
+         notifyAll('deletingNote');
 
-      await networkTemplate({
-         route: 'deleteNote',
-         method: 'POST',
-         body: { categoryId: selectedCategoryId, noteId: selectedNoteId }
-      })
+         await networkTemplate({
+            route: 'deleteNote',
+            method: 'POST',
+            body: { categoryId: selectedCategoryId, noteId: selectedNoteId }
+         })
+
+      } catch (e) {
+         handleErrors.delete(note);
+      }
 
       popupLoading.shouldHideLoading(id);
    }
@@ -98,21 +120,36 @@ export function createNoteNetwork({ networkTemplate, repository, popupLoading })
    const updateNote = async (note, newNoteValues) => {
       const id = popupLoading.showLoading();
 
-      repository.updateItem(note, newNoteValues);
+      const noteClone = { ...note };
 
-      notifyAll('updatingNote', newNoteValues);
+      try {
+         repository.updateItem(note, newNoteValues);
 
-      const { lastModification } = await networkTemplate({
-         route: 'updateNote',
-         method: 'POST',   
-         body: { ...newNoteValues }
-      });
+         notifyAll('updatingNote', newNoteValues);
 
-      note.lastModification = lastModification;
+         const { lastModification } = await networkTemplate({
+            route: 'updateNote',
+            method: 'POST',   
+            body: { ...newNoteValues }
+         });
 
-      notifyAll('noteUpdated', { noteId: note.id, lastModification });
+         note.lastModification = lastModification;
+
+         notifyAll('noteUpdated', { noteId: note.id, lastModification }); 
+
+      } catch (e) {
+         handleErrors.update(note, noteClone);
+      }
 
       popupLoading.shouldHideLoading(id);
+   }
+
+   const setNoteDatas = (newNote, noteData) => {
+      newNote.id = noteData.id;
+      newNote.dateCreated = noteData.dateCreated;
+      newNote.lastModification = noteData.lastModification;
+
+      newNote.element.setAttribute('data-id', noteData.id);
    }
 
    const getAvailabilityToGetNotes = categoryId => {
@@ -276,15 +313,13 @@ export function createCurrentNote(repository) {
       inputColor.value = '#000000';
    }
 
-   const setCurrentNote = (noteId, noteListTitle) => {
-      const { title, summary, content, lastModification } = repository.getItem(noteId);
+   const setCurrentNoteDatas = ({ title, summary, content, lastModification }) => {
       const { inputNoteTitle, textareaSummary, btnExpandSummary } = state.currentNoteForm;
+
+      updatePathName({ noteName: title, categoryName: false });
 
       btnExpandSummary.classList.remove('active');
 
-      const path = state.currentNote.querySelector('.note-path');
-
-      path.innerText = `${noteListTitle} > ${title}`;
       inputNoteTitle.value = title;
       textareaSummary.value = summary;
 
@@ -293,6 +328,14 @@ export function createCurrentNote(repository) {
 
       elementLastModification.innerText = lastModification;
       noteContent.innerHTML = content;
+   }
+
+   const setCurrentNote = (noteId, noteListTitle) => {
+      const note = repository.getItem(noteId);
+
+      setCurrentNoteDatas(note);
+
+      updatePathName({ noteName: note.title, categoryName: noteListTitle });
 
       resetToolBar();
    }
@@ -416,6 +459,7 @@ export function createCurrentNote(repository) {
       subscribe,
       hideSection,
       showSection,
+      setCurrentNoteDatas,
       shouldHideCurrentNote: dispatch.shouldHideCurrentNote,
       shouldUpdateCategoryName: dispatch.shouldUpdateCategoryName,
       shouldUpdateNoteName: dispatch.shouldUpdateNoteName,
@@ -526,6 +570,10 @@ export function createNoteList(repository) {
       containerDate.classList.remove('loading');
    }
 
+   const renderItem = note => {
+      state.noteList.prepend(note.element);
+   }
+
    const renderAllItems = notes => {
       state.noteList.innerHTML = "";
 
@@ -542,7 +590,7 @@ export function createNoteList(repository) {
    const renderNewItem = note => {
       note.element = createNoteElement({ isItNewNote: true });
 
-      state.noteList.prepend(note.element);
+      renderItem(note);
    }
 
    const dispatch = {
@@ -577,6 +625,7 @@ export function createNoteList(repository) {
       showSection,
       renderAllItems,
       renderNewItem,
+      renderItem,
       clearList,
       setDate,
       updateListItem,
