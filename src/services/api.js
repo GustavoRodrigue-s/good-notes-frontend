@@ -41,9 +41,14 @@ function createApiNetwork() {
 
    const request = async props => {
       const getData = async (res, rej) => {
-         const [data, status] = await requestTemplate(props);
+         try {
+            const [data, status] = await requestTemplate(props);
 
-         dispatch.shouldGetTheDataAgain({ data, status, res, rej, getData });
+            dispatch.shouldGetTheDataAgain({ data, status, res, rej, getData });
+
+         } catch (e) {
+            rej(e);
+         }
       }
 
       return new Promise(getData);
