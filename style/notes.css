@@ -401,7 +401,7 @@ section.note-list {
    position: relative;
 }
 
-.container-notes ul > li:not(.container-notes ul > li:first-child) {
+.note-list > li:not(.note-list > li:first-child) {
    margin-top: 20px;
 }
 
