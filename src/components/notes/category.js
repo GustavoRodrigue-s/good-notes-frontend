@@ -71,7 +71,8 @@ export function createCategoryNetwork({ networkTemplate, popupLoading }) {
       const categoryClone = categoryElement.cloneNode(true);
 
       try {
-         categoryElement.remove();
+         // categoryElement.remove();
+         notifyAll('removeItem', { item: categoryElement, list: categoryElement.parentElement, action: 'remove' });
 
          notifyAll('categoryRemoved', { categoryId });
 
@@ -294,16 +295,21 @@ export function createCategoryList() {
       state.gettingCategories = false;
    }
 
-   const renderNewCategory = () => {
+   const resetAvailableToAddCategory = () => {
       state.availableToAddCategory = false;
+
+      setTimeout(() => state.availableToAddCategory = true, 400);
+   }
+
+   const renderNewCategory = () => {
+      resetAvailableToAddCategory();
 
       const categoryElement = createCategoryElement({ isItNewCategory: true });     
 
-      renderCategory(categoryElement);
+      notifyAll('renderItem', { item: categoryElement, list: state.categoryList, action: 'add' });
+      // renderCategory(categoryElement);
 
       categoryElement.querySelector('input').focus();
-
-      setTimeout(() => state.availableToAddCategory = true, 400);
    }
 
    const renderCategory = categoryElement => {
@@ -350,7 +356,8 @@ export function createCategoryList() {
    return { 
       subscribe,
       renderAllCategories,
-      renderCategory
+      renderCategory,
+      resetAvailableToAddCategory
    }
 }
 
@@ -432,7 +439,11 @@ export function createCategoryItem() {
          notifyAll('categorySelected', this.categoryElement);
       },
       cancelItemAddition() {
-         this.categoryElement.remove();
+         notifyAll('cancelAddition', { 
+            item: this.categoryElement,
+            list: this.categoryElement.parentElement,
+            action: 'remove' 
+         });
       },
       cancelRenameItem() {
          removeConfirmation(this.categoryElement);

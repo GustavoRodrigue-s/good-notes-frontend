@@ -1,6 +1,7 @@
 import { createCategoryNetwork, createCategoryList, createCategoryItem } from './category.js';
 import { createNoteList, createNoteItem, createCurrentNote, createNoteNetwork } from './notes.js';
 import createRepository from './repository.js';
+import createAnimation from './animations.js';
 
 export default function createNoteApp({ api }) {
 
@@ -179,6 +180,7 @@ export default function createNoteApp({ api }) {
    const popupLoading = createLoading();
    const popupConfirmDeletion = createConfirmDelete();
    const cloudError = createCloudError();
+   const animation = createAnimation();
    
    const categoryList = createCategoryList();
    const categoryNetwork = createCategoryNetwork({ networkTemplate, popupLoading });
@@ -193,6 +195,8 @@ export default function createNoteApp({ api }) {
    categoryList.subscribe('click', categoryNetwork.networkListener);
    categoryList.subscribe('click', categoryItem.categoryItemListener);
 
+   categoryList.subscribe('renderItem', animation.animationListener);
+
    categoryNetwork.subscribe('obtainedCategories', categoryList.renderAllCategories);
    categoryNetwork.subscribe('verifyToCreateCategory', categoryItem.removeConfirmation);
    categoryNetwork.subscribe('verifyToUpdateCategory', categoryItem.removeConfirmation);
@@ -206,6 +210,8 @@ export default function createNoteApp({ api }) {
 
    categoryNetwork.subscribe('restoreCategory', categoryList.renderCategory);
 
+   categoryNetwork.subscribe('removeItem', animation.animationListener);
+
    categoryItem.subscribe('categorySelected', repository.setSelectedCategoryId);
    categoryItem.subscribe('categorySelected', noteNetwork.shouldGetNotes);
    categoryItem.subscribe('categorySelected', currentNote.hideSection);
@@ -213,6 +219,9 @@ export default function createNoteApp({ api }) {
 
    categoryItem.subscribe('showPopupDelete', popupConfirmDeletion.showPopup);
    categoryItem.subscribe('showPopupDelete', categoryNetwork.setCategoryConfirmationDeletion);
+
+   categoryItem.subscribe('cancelAddition', animation.animationListener);
+   categoryItem.subscribe('cancelAddition', categoryList.resetAvailableToAddCategory);
 
    noteNetwork.subscribe('haveNotesInTheRepository', noteList.renderAllItems);
    noteNetwork.subscribe('thisCategoryDontHaveNotes', noteList.clearList);
@@ -231,8 +240,13 @@ export default function createNoteApp({ api }) {
    noteNetwork.subscribe('restoreUpdate', noteList.updateListItem);
    noteNetwork.subscribe('restoreUpdate', currentNote.setCurrentNoteDatas);
 
+   noteNetwork.subscribe('removeItem', animation.animationListener);
+
    noteList.subscribe('click', noteItem.noteItemListener);
    noteList.subscribe('click', noteNetwork.networkListener);
+   
+   noteList.subscribe('renderItem', animation.animationListener);
+   noteList.subscribe('updateItem', animation.animationListener);
 
    noteItem.subscribe('noteSelected', repository.setSelectedNoteId);
    noteItem.subscribe('noteSelected', currentNote.showSection);

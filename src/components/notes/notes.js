@@ -2,6 +2,7 @@ export function createNoteNetwork({ networkTemplate, repository, popupLoading })
    const state = {
       observers: [],
       loading: document.querySelector('.container-noteList-loading'),
+      availableToAddNote: true,
 
       networkData : {
          gettingNotes: false,
@@ -98,7 +99,8 @@ export function createNoteNetwork({ networkTemplate, repository, popupLoading })
       const note = repository.getItem(selectedNoteId);
       
       try {
-         note.element.remove();
+         // note.element.remove();
+         notifyAll('removeItem', { item: note.element, list: note.element.parentElement, action: 'remove' });
 
          repository.deleteItem(selectedCategoryId, selectedNoteId);
 
@@ -165,6 +167,12 @@ export function createNoteNetwork({ networkTemplate, repository, popupLoading })
       notifyAll('setTheDeleteTarget', dispatch.shouldDeleteNote);
    }
 
+   const resetAvailableToAddNote = () => {
+      state.availableToAddNote = false;
+
+      setTimeout(() => state.availableToAddNote = true, 400);
+   }
+
    const dispatch = {
       shouldGetNotes(categoryElement) {
          const categoryId = categoryElement.dataset.id;
@@ -203,9 +211,11 @@ export function createNoteNetwork({ networkTemplate, repository, popupLoading })
          const selectedCategoryId = repository.getSelectedCategoryId();
          const isGettingCategoris = state.networkData.gettingNotes;
 
-         if (!selectedCategoryId || isGettingCategoris) {
+         if (!selectedCategoryId || isGettingCategoris || !state.availableToAddNote) {
             return
          }
+
+         resetAvailableToAddNote();
 
          createNote({ selectedCategoryId });
       },
@@ -558,9 +568,11 @@ export function createNoteList(repository) {
       noteTitle.innerText = title;
       noteSummary.innerText = summary;
 
-      const firstNoteElement = state.noteList.firstElementChild;
+      // const firstNoteElement = state.noteList.firstElementChild;
 
-      state.noteList.insertBefore(noteElement, firstNoteElement);
+      // state.noteList.insertBefore(noteElement, firstNoteElement);
+      notifyAll('updateItem', { item: noteElement, list: state.noteList, action: 'update' });
+
       state.sectionNoteList.scrollTop = 0;
    }
 
@@ -592,7 +604,8 @@ export function createNoteList(repository) {
    const renderNewItem = note => {
       note.element = createNoteElement({ isItNewNote: true });
 
-      renderItem(note);
+      notifyAll('renderItem', { item: note.element, list: state.noteList, action: 'add' });
+      // renderItem(note);
    }
 
    const dispatch = {

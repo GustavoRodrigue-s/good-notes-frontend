@@ -71,6 +71,30 @@ section.note-list {
    box-shadow: none;
 }
 
+/* ---------------------- Animations ------------------------------- */
+
+@keyframes slideIn {
+   from { transform: translateY(-40px); opacity: 0; }
+   to { transform: translateY(0); opacity: 1; }
+}
+
+.category-item, .note-item {
+   animation: slideIn 0.3s ease 1;
+}
+
+.category-item.remove, .note-item.remove {
+   position: absolute;
+}
+
+.animation .category-item, .animation .note-item {
+   transition: 0.3s ease;
+}
+
+.animation .category-item.remove, .animation .note-item.remove {
+   opacity: 0;
+}
+
+
 /* Section Categories */
 
 .container-search, .category-item, .container-add-categorie, .container-category-loading li {
@@ -120,10 +144,10 @@ section.categories {
    margin-top: 50px;
 }
 
-.container-categories-list ul.category-list {
-   display: flex;
-   flex-direction: column;
-   gap: 10px;
+.container-categories-list ul.category-list > li:not(
+   .container-categories-list ul.category-list > li:first-child
+) {
+   margin-top: 10px;
 }
 
 /* CATEGORY CARDS */
@@ -136,21 +160,11 @@ section.categories {
 .category-item {
    width: 100%;
    background-color: #F9F9F9;
-   animation: slideUp 0.3s ease;
-   -webkit-animation: slideUp 0.3s ease;
-   -moz-animation: slideUp 0.3s ease;
-   -o-animation: slideUp 0.3s ease;
-   transition: 0.3s;
+   transition: background-color 0.3s;
 }
 
 .category-item.hide {
    display: none;
-
-   /* animation future */
-
-   /* position: absolute !important;
-   opacity: 0 !important;
-   visibility: hidden; */
 }
 
 .category-item.confirmation {
@@ -387,10 +401,8 @@ section.note-list {
    position: relative;
 }
 
-.container-notes ul {
-   display: flex;
-   flex-direction: column;
-   gap: 20px;
+.container-notes ul > li:not(.container-notes ul > li:first-child) {
+   margin-top: 20px;
 }
 
 .note-item {
@@ -399,7 +411,6 @@ section.note-list {
    border-radius: 8px;
    background-color: #F9F9F9;
    overflow: hidden;
-   animation: slideUp 0.3s ease;
 }
 
 .note-item > button {
