@@ -53,12 +53,15 @@ export function createNoteNetwork({ networkTemplate, repository, popupLoading })
 
       const selectedCategoryId = repository.getSelectedCategoryId();
 
-      if (notes) {
+      // pq n colocar essa regra de negócio no render list das notas??
+      if (notes.length) {
          repository.setAllItems(notes);
 
          if (categoryId === selectedCategoryId) {
             notifyAll('obtainedNotes', notes);
          }
+      } else {
+         notifyAll('noNotesFound', { categoryId });
       }
       
       state.networkData.gettingNotes = false;
@@ -180,6 +183,8 @@ export function createNoteNetwork({ networkTemplate, repository, popupLoading })
          if (!categoryId) {
             return
          }
+
+         notifyAll('isGettingNotes');
 
          state.loading.classList.add('show');
 
@@ -483,6 +488,7 @@ export function createNoteList(repository) {
    const state = {
       observers: [],
       noteList: document.querySelector('section.note-list ul.note-list'),
+      messageDontHaveNotes: document.querySelector('.container-notes-not-found'),
       sectionNoteList: document.querySelector('section.note-list'),
       btnAddNote: document.querySelector('.container-add-note > button')
    }
@@ -519,8 +525,17 @@ export function createNoteList(repository) {
       state.sectionNoteList.classList.add('hide');
    }
 
+   const showMessageNoNotesFound = () => {
+      state.messageDontHaveNotes.classList.add('show');
+   }
+
+   const removeMessageNoNotesFound = () => {
+      state.messageDontHaveNotes.classList.remove('show');
+   }
+
    const clearList = () => {
       state.noteList.innerHTML = "";
+      showMessageNoNotesFound();
    }
 
    const createNoteElement = ({ isItNewNote, ...note }) => {
@@ -590,6 +605,7 @@ export function createNoteList(repository) {
    }
 
    const renderAllItems = notes => {
+      removeMessageNoNotesFound();
       state.noteList.innerHTML = "";
 
       notes.forEach(note => {
@@ -610,6 +626,13 @@ export function createNoteList(repository) {
    }
 
    const dispatch = {
+      shouldShowMessageNoNotesFound({ categoryId }) {
+         const selectedCategoryId = repository.getSelectedCategoryId();
+
+         if (categoryId === +selectedCategoryId) {
+            showMessageNoNotesFound();
+         }
+      },
       shouldHideNoteList({ categoryId }) {
          const selectedCategoryId = repository.getSelectedCategoryId();
 
@@ -645,6 +668,8 @@ export function createNoteList(repository) {
       clearList,
       setDate,
       updateListItem,
+      removeMessageNoNotesFound,
+      shouldShowMessageNoNotesFound: dispatch.shouldShowMessageNoNotesFound,
       shouldUpdateCategoryName: dispatch.shouldUpdateCategoryName,
       shouldHideNoteList: dispatch.shouldHideNoteList
    }

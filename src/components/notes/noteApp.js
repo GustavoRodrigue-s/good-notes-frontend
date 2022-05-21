@@ -242,6 +242,10 @@ export default function createNoteApp({ api }) {
 
    noteNetwork.subscribe('removeItem', animation.animationListener);
 
+   noteNetwork.subscribe('noNotesFound', noteList.shouldShowMessageNoNotesFound);
+   noteNetwork.subscribe('isGettingNotes', noteList.removeMessageNoNotesFound);
+   noteNetwork.subscribe('isGettingNotes', noteList.clearList);
+
    noteList.subscribe('click', noteItem.noteItemListener);
    noteList.subscribe('click', noteNetwork.networkListener);
    
@@ -257,4 +261,6 @@ export default function createNoteApp({ api }) {
    currentNote.subscribe('updateNote', noteNetwork.shouldUpdateNote);
 
    categoryNetwork.getCategories();
+
+   document.querySelector('.container-not-selected').classList.remove('hide');
 }
