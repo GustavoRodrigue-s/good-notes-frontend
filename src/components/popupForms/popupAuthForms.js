@@ -252,7 +252,7 @@ function createPopupAuthForms() {
          });
       }
 
-      const setTimeToOpen = () => {
+      const resetTimeToOpen = () => {
          state.avalibleToOpen = false;
 
          if (!state.avalibleToOpen) {
@@ -284,7 +284,7 @@ function createPopupAuthForms() {
          
          state.popupWrapper.classList.toggle('show');
 
-         setTimeToOpen();
+         resetTimeToOpen();
       }
 
       const popupListener = e => {
@@ -323,8 +323,20 @@ function createPopupAuthForms() {
             if (targetElement.classList.contains('btn-eyes')) {
                togglePasswordEye(targetElement);
             }
+         },
+         shouldShowSignInPopup() {
+            const shouldShowThePopup = localStorage.getItem('unauthorized');
+
+            if (shouldShowThePopup) {
+               localStorage.removeItem('unauthorized');
+
+               showAndHidePopup();
+               setCurrentOverlay('showSignInForm');
+            }
          }
       }
+
+      dispatch.shouldShowSignInPopup();
 
       state.containerButtons.addEventListener('click', popupListener);
       state.containerButtons.addEventListener('touchstart', popupListener);

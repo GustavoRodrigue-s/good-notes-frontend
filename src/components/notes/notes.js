@@ -509,6 +509,7 @@ export function createNoteList(repository) {
       updateSectionTitle(categoryName)
 
       state.sectionNoteList.classList.remove('hide');
+      document.querySelector('.container-not-selected').classList.add('hide');
 
       scrollTop();
    }
