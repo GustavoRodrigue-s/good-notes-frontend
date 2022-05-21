@@ -24,7 +24,10 @@ export function createCategoryNetwork({ networkTemplate, popupLoading }) {
          inputCategoryName.value = inputCategoryName.getAttribute('value');
       },
       delete(categoryElement) {
+         categoryElement.classList.remove('selected');
          notifyAll('restoreCategory', categoryElement);
+
+         document.querySelector('.container-not-selected').classList.remove('hide');
       }
    }
 
@@ -83,7 +86,9 @@ export function createCategoryNetwork({ networkTemplate, popupLoading }) {
          })
 
       } catch (e) {
-         handleErrors.delete(categoryClone);
+         setTimeout(() => {
+            handleErrors.delete(categoryClone);
+         }, 300);
       }
 
       popupLoading.shouldHideLoading(id);

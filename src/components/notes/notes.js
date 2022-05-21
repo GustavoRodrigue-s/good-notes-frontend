@@ -32,6 +32,8 @@ export function createNoteNetwork({ networkTemplate, repository, popupLoading })
          repository.handleErrors.create();
       },
       delete(note) {
+         note.element.classList.remove('remove');
+
          repository.handleErrors.delete(note);
          notifyAll('restoreNote', note);
       },
@@ -90,7 +92,9 @@ export function createNoteNetwork({ networkTemplate, repository, popupLoading })
          notifyAll('noteCreated', { newNote, noteData });
 
       } catch (e) {
-         handleErrors.create(newNote);
+         setTimeout(() => {
+            handleErrors.create(newNote);
+         }, 150);
       }
 
       popupLoading.shouldHideLoading(id);

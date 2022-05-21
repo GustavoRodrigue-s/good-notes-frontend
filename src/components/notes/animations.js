@@ -38,7 +38,7 @@ export default function createAnimation() {
    const endAnimation = (item, action) => {
       state.currentList.classList.remove('animation');
 
-      if (action === 'remove') {
+      if (action === 'remove' && item.classList.contains('remove')) {
          item.remove();
       }
    }
