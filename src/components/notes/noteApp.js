@@ -213,7 +213,7 @@ export default function createNoteApp({ api }) {
    categoryNetwork.subscribe('removeItem', animation.animationListener);
 
    categoryItem.subscribe('categorySelected', repository.setSelectedCategoryId);
-   categoryItem.subscribe('categorySelected', noteNetwork.shouldGetNotes);
+   categoryItem.subscribe('categorySelected', noteList.resetNoteList);
    categoryItem.subscribe('categorySelected', currentNote.hideSection);
    categoryItem.subscribe('categorySelected', noteList.showSection);
 
@@ -223,9 +223,6 @@ export default function createNoteApp({ api }) {
    categoryItem.subscribe('cancelAddition', animation.animationListener);
    categoryItem.subscribe('cancelAddition', categoryList.resetAvailableToAddCategory);
 
-   noteNetwork.subscribe('haveNotesInTheRepository', noteList.renderAllItems);
-   noteNetwork.subscribe('thisCategoryDontHaveNotes', noteList.clearList);
-   noteNetwork.subscribe('obtainedNotes', noteList.renderAllItems);
    noteNetwork.subscribe('creatingNote', noteList.renderNewItem);
    noteNetwork.subscribe('noteCreated', noteList.setDate);
    
@@ -236,21 +233,20 @@ export default function createNoteApp({ api }) {
    noteNetwork.subscribe('setTheDeleteTarget', popupConfirmDeletion.setTheDeleteTarget);
 
    noteNetwork.subscribe('deletingNote', currentNote.hideSection);
-   noteNetwork.subscribe('restoreNote', noteList.renderItem);
+   noteNetwork.subscribe('deletingNote', animation.animationListener);
    noteNetwork.subscribe('restoreUpdate', noteList.updateListItem);
    noteNetwork.subscribe('restoreUpdate', currentNote.setCurrentNoteDatas);
-
-   noteNetwork.subscribe('removeItem', animation.animationListener);
-
-   noteNetwork.subscribe('noNotesFound', noteList.shouldShowMessageNoNotesFound);
-   noteNetwork.subscribe('isGettingNotes', noteList.removeMessageNoNotesFound);
-   noteNetwork.subscribe('isGettingNotes', noteList.clearList);
+   
+   noteNetwork.subscribe('restoreNote', animation.animationListener);
+   noteNetwork.subscribe('obtainedNotes', noteList.shouldRenderNotes);
 
    noteList.subscribe('click', noteItem.noteItemListener);
    noteList.subscribe('click', noteNetwork.networkListener);
    
    noteList.subscribe('renderItem', animation.animationListener);
    noteList.subscribe('updateItem', animation.animationListener);
+
+   noteList.subscribe('noNotesFoundInRepository', noteNetwork.shouldGetNotes);
 
    noteItem.subscribe('noteSelected', repository.setSelectedNoteId);
    noteItem.subscribe('noteSelected', currentNote.showSection);

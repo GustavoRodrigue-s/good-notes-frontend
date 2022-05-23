@@ -2,13 +2,11 @@ export function createNoteNetwork({ networkTemplate, repository, popupLoading })
    const state = {
       observers: [],
       loading: document.querySelector('.container-noteList-loading'),
+      messageDontHaveNotes: document.querySelector('.container-notes-not-found'),
       availableToAddNote: true,
 
-      networkData : {
-         gettingNotes: false,
-         queueWaitingForNotes: [],
-         queueHasArrivedNotes: []
-      }
+      gettingNotes: false,
+      categoriesData: []
    }
 
    const subscribe = (event, listener) => {
@@ -35,7 +33,12 @@ export function createNoteNetwork({ networkTemplate, repository, popupLoading })
          note.element.classList.remove('remove');
 
          repository.handleErrors.delete(note);
-         notifyAll('restoreNote', note);
+
+         notifyAll('restoreNote', { 
+            item: note.element,
+            list: document.querySelector('section.note-list ul.note-list'),
+            action: 'add' 
+         });
       },
       update(note, noteClone) {
          repository.handleErrors.update(note, noteClone);
@@ -43,35 +46,28 @@ export function createNoteNetwork({ networkTemplate, repository, popupLoading })
       }
    }
 
-   const getNotes = async ({ categoryId }) => {
-      state.networkData.gettingNotes = true;
-      state.networkData.queueWaitingForNotes.push(categoryId);
+   const getNotes = async ({ category }) => {
+      state.gettingNotes = true;
+      state.loading.classList.add('show');
+
+      category.waitingForNotes = true;
 
       const { notes } = await networkTemplate({
          route: 'getNotes',
          method: 'POST',
-         body: { categoryId }
+         body: { categoryId: category.id }
       });
 
-      const selectedCategoryId = repository.getSelectedCategoryId();
+      notes && repository.setAllItems(notes);
 
-      // pq n colocar essa regra de negócio no render list das notas??
-      if (notes.length) {
-         repository.setAllItems(notes);
+      category.notesReceived = true;
+      category.waitingForNotes = false;
 
-         if (categoryId === selectedCategoryId) {
-            notifyAll('obtainedNotes', notes);
-         }
-      } else {
-         notifyAll('noNotesFound', { categoryId });
-      }
-      
-      state.networkData.gettingNotes = false;
-      state.networkData.queueHasArrivedNotes.push(categoryId);
+      state.gettingNotes = false;
 
-      if (categoryId === selectedCategoryId) {
-         state.loading.classList.remove('show');
-      }
+      dispatch.shouldHideLoading({ id: category.id });
+
+      notifyAll('obtainedNotes', { categoryId: category.id });
    }
 
    const createNote = async ({ selectedCategoryId }) => {
@@ -94,7 +90,7 @@ export function createNoteNetwork({ networkTemplate, repository, popupLoading })
       } catch (e) {
          setTimeout(() => {
             handleErrors.create(newNote);
-         }, 150);
+         }, 300);
       }
 
       popupLoading.shouldHideLoading(id);
@@ -106,12 +102,9 @@ export function createNoteNetwork({ networkTemplate, repository, popupLoading })
       const note = repository.getItem(selectedNoteId);
       
       try {
-         // note.element.remove();
-         notifyAll('removeItem', { item: note.element, list: note.element.parentElement, action: 'remove' });
+         notifyAll('deletingNote', { item: note.element, list: note.element.parentElement, action: 'remove' });
 
          repository.deleteItem(selectedCategoryId, selectedNoteId);
-
-         notifyAll('deletingNote');
 
          await networkTemplate({
             route: 'deleteNote',
@@ -120,7 +113,9 @@ export function createNoteNetwork({ networkTemplate, repository, popupLoading })
          })
 
       } catch (e) {
-         handleErrors.delete(note);
+         setTimeout(() => {
+            handleErrors.delete(note);
+         }, 300);
       }
 
       popupLoading.shouldHideLoading(id);
@@ -161,15 +156,6 @@ export function createNoteNetwork({ networkTemplate, repository, popupLoading })
       newNote.element.setAttribute('data-id', noteData.id);
    }
 
-   const getAvailabilityToGetNotes = categoryId => {
-      const { queueWaitingForNotes, queueHasArrivedNotes } = state.networkData;
-
-      const waitingForNotes = queueWaitingForNotes.find(id => id === categoryId);
-      const receivedTheNotes = queueHasArrivedNotes.find(id => id === categoryId);
-
-      return { waitingForNotes, receivedTheNotes };
-   }
-
    const setNoteConfirmationDeletion = () => {
       notifyAll('setTheDeleteTarget', dispatch.shouldDeleteNote);
    }
@@ -180,47 +166,36 @@ export function createNoteNetwork({ networkTemplate, repository, popupLoading })
       setTimeout(() => state.availableToAddNote = true, 400);
    }
 
+   const createCategoryData = categoryId => {
+      const newCategoryData = { id: categoryId, waitingForNotes: false, notesReceived: false };
+
+      state.categoriesData.push(newCategoryData);
+
+      return newCategoryData
+   }
+
    const dispatch = {
-      shouldGetNotes(categoryElement) {
-         const categoryId = categoryElement.dataset.id;
+      shouldGetNotes({ categoryId }) {
 
-         if (!categoryId) {
-            return
-         }
-
-         notifyAll('isGettingNotes');
-
-         state.loading.classList.add('show');
-
-         const hasNotes = repository.getAllItems(categoryId);
-
-         if (hasNotes.length) {
-            notifyAll('haveNotesInTheRepository', hasNotes);
-            state.loading.classList.remove('show');
-
-            return
-         }
-
-         const { waitingForNotes, receivedTheNotes } = getAvailabilityToGetNotes(categoryId);
+         const category = state.categoriesData.find(({ id }) => id === categoryId) || createCategoryData(categoryId);
          
-         if (receivedTheNotes) {
-            notifyAll('thisCategoryDontHaveNotes');
-            state.loading.classList.remove('show');
-
+         if (category.notesReceived) {
+            state.messageDontHaveNotes.classList.add('show');
             return
          }
 
-         if (waitingForNotes) {
+         if (category.waitingForNotes) {
+            state.loading.classList.add('show');
             return
-         }  
+         }
 
-         getNotes({ categoryId });
+         getNotes({ category });
       },
       shouldCreateNote() {
          const selectedCategoryId = repository.getSelectedCategoryId();
-         const isGettingCategoris = state.networkData.gettingNotes;
+         const isGettingCategories = state.gettingNotes;
 
-         if (!selectedCategoryId || isGettingCategoris || !state.availableToAddNote) {
+         if (!selectedCategoryId || isGettingCategories || !state.availableToAddNote) {
             return
          }
 
@@ -272,6 +247,13 @@ export function createNoteNetwork({ networkTemplate, repository, popupLoading })
          newNoteValues.categoryId = note.categoryId;
 
          updateNote(note, newNoteValues);
+      },
+      shouldHideLoading({ id }) {
+         const selectedCategoryId = repository.getSelectedCategoryId();
+
+         if (id === selectedCategoryId) {
+            state.loading.classList.remove('show');
+         }
       }
    }
 
@@ -492,7 +474,6 @@ export function createNoteList(repository) {
    const state = {
       observers: [],
       noteList: document.querySelector('section.note-list ul.note-list'),
-      messageDontHaveNotes: document.querySelector('.container-notes-not-found'),
       sectionNoteList: document.querySelector('section.note-list'),
       btnAddNote: document.querySelector('.container-add-note > button')
    }
@@ -527,19 +508,6 @@ export function createNoteList(repository) {
    const hideSection = () => {
       state.noteList.innerHTML = '';
       state.sectionNoteList.classList.add('hide');
-   }
-
-   const showMessageNoNotesFound = () => {
-      state.messageDontHaveNotes.classList.add('show');
-   }
-
-   const removeMessageNoNotesFound = () => {
-      state.messageDontHaveNotes.classList.remove('show');
-   }
-
-   const clearList = () => {
-      state.noteList.innerHTML = "";
-      showMessageNoNotesFound();
    }
 
    const createNoteElement = ({ isItNewNote, ...note }) => {
@@ -604,18 +572,11 @@ export function createNoteList(repository) {
       containerDate.classList.remove('loading');
    }
 
-   const renderItem = note => {
-      state.noteList.prepend(note.element);
-   }
-
    const renderAllItems = notes => {
-      removeMessageNoNotesFound();
-      state.noteList.innerHTML = "";
-
       notes.forEach(note => {
-         note.element = !note.element 
-            ? createNoteElement({ isItNewNote: false, ...note }) 
-            : note.element;
+         if (!note.element) {
+            note.element = createNoteElement({ isItNewNote: false, ...note });
+         }
 
          note.element.classList.remove('selected');
          state.noteList.append(note.element);
@@ -625,17 +586,33 @@ export function createNoteList(repository) {
    const renderNewItem = note => {
       note.element = createNoteElement({ isItNewNote: true });
 
+      document.querySelector('.container-notes-not-found').classList.remove('show');
+
       notifyAll('renderItem', { item: note.element, list: state.noteList, action: 'add' });
-      // renderItem(note);
+   }
+
+   const resetNoteList = categoryElement => {
+      document.querySelector('.container-notes-not-found').classList.remove('show');
+      document.querySelector('.container-noteList-loading').classList.remove('show');
+
+      state.noteList.innerHTML = "";
+
+      dispatch.shouldRenderNotes({ categoryId: categoryElement.dataset.id });
    }
 
    const dispatch = {
-      shouldShowMessageNoNotesFound({ categoryId }) {
+      shouldRenderNotes({ categoryId }) {
          const selectedCategoryId = repository.getSelectedCategoryId();
 
-         if (categoryId === +selectedCategoryId) {
-            showMessageNoNotesFound();
+         if (!categoryId || categoryId !== selectedCategoryId) {
+            return
          }
+
+         const hasNotes = repository.getAllItems(categoryId);
+
+         hasNotes.length
+            ? renderAllItems(hasNotes)
+            : notifyAll('noNotesFoundInRepository', { categoryId });
       },
       shouldHideNoteList({ categoryId }) {
          const selectedCategoryId = repository.getSelectedCategoryId();
@@ -658,7 +635,15 @@ export function createNoteList(repository) {
       const action = e.target.dataset.js;
 
       notifyAll('click', { e, action, noteListTitle });
+
    }
+
+   // assim reduzimos a quantidade de functions retornadas
+   // const dispatchListener = ({ data, action }) => {
+   //    if (dispatch[action]) {
+   //       dispatch[action](data);
+   //    }
+   // }
    
    state.noteList.addEventListener('click', noteListListener);
    state.btnAddNote.addEventListener('click', noteListListener);
@@ -666,14 +651,12 @@ export function createNoteList(repository) {
    return { 
       subscribe,
       showSection,
-      renderAllItems,
       renderNewItem,
-      renderItem,
-      clearList,
       setDate,
       updateListItem,
-      removeMessageNoNotesFound,
-      shouldShowMessageNoNotesFound: dispatch.shouldShowMessageNoNotesFound,
+      resetNoteList,
+      //talvez adicionar um listener??
+      shouldRenderNotes: dispatch.shouldRenderNotes,
       shouldUpdateCategoryName: dispatch.shouldUpdateCategoryName,
       shouldHideNoteList: dispatch.shouldHideNoteList
    }
