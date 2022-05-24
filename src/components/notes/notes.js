@@ -1,10 +1,11 @@
-export function createNoteNetwork({ networkTemplate, repository, popupLoading }) {
+export function createNoteNetwork({ networkTemplate, repository }) {
    const state = {
       observers: [],
       loading: document.querySelector('.container-noteList-loading'),
       messageDontHaveNotes: document.querySelector('.container-notes-not-found'),
       availableToAddNote: true,
 
+      currentRequestId: 0,
       gettingNotes: false,
       categoriesData: []
    }
@@ -19,6 +20,12 @@ export function createNoteNetwork({ networkTemplate, repository, popupLoading })
       for (const { listener } of listeners) {
          listener(data);
       }
+   }
+
+   const setRequestId = () => {
+      notifyAll('startingRequest', id => state.currentRequestId = id);
+
+      return state.currentRequestId;
    }
 
    const handleErrors = {
@@ -71,7 +78,7 @@ export function createNoteNetwork({ networkTemplate, repository, popupLoading })
    }
 
    const createNote = async ({ selectedCategoryId }) => {
-      const id = popupLoading.showLoading();
+      const id = setRequestId();
 
       const newNote = repository.setItem(selectedCategoryId);
 
@@ -93,16 +100,20 @@ export function createNoteNetwork({ networkTemplate, repository, popupLoading })
          }, 300);
       }
 
-      popupLoading.shouldHideLoading(id);
+      notifyAll('endingRequest', id);
    }
 
    const deleteNote = async ({ selectedCategoryId, selectedNoteId }) => {
-      const id = popupLoading.showLoading();
+      const id = setRequestId();
 
       const note = repository.getItem(selectedNoteId);
       
       try {
-         notifyAll('deletingNote', { item: note.element, list: note.element.parentElement, action: 'remove' });
+         notifyAll('deletingNote', { 
+            item: note.element, 
+            list: note.element.parentElement, 
+            action: 'remove'
+         });
 
          repository.deleteItem(selectedCategoryId, selectedNoteId);
 
@@ -118,11 +129,11 @@ export function createNoteNetwork({ networkTemplate, repository, popupLoading })
          }, 300);
       }
 
-      popupLoading.shouldHideLoading(id);
+      notifyAll('endingRequest', id);
    }
 
    const updateNote = async (note, newNoteValues) => {
-      const id = popupLoading.showLoading();
+      const id = setRequestId();
 
       const noteClone = { ...note };
 
@@ -145,7 +156,7 @@ export function createNoteNetwork({ networkTemplate, repository, popupLoading })
          handleErrors.update(note, noteClone);
       }
 
-      popupLoading.shouldHideLoading(id);
+      notifyAll('endingRequest', id);
    }
 
    const setNoteDatas = (newNote, noteData) => {
@@ -317,7 +328,7 @@ export function createCurrentNote(repository) {
    const setCurrentNoteDatas = ({ title, summary, content, lastModification }) => {
       const { inputNoteTitle, textareaSummary, btnExpandSummary } = state.currentNoteForm;
 
-      updatePathName({ noteName: title, categoryName: false });
+      updatePathName({ noteName: title });
 
       btnExpandSummary.classList.remove('active');
 
@@ -432,11 +443,11 @@ export function createCurrentNote(repository) {
          const selectedCategoryId = repository.getSelectedCategoryId();
 
          if (categoryId === selectedCategoryId) {
-            updatePathName({ noteName: false, categoryName: newCategoryName });
+            updatePathName({ categoryName: newCategoryName });
          }
       },
       shouldUpdateNoteName({ title }) {
-         updatePathName({ noteName: title, categoryName: false });
+         updatePathName({ noteName: title });
       }
    }
 
@@ -495,6 +506,8 @@ export function createNoteList(repository) {
    }
 
    const showSection = categoryElement => {
+      resetNoteList(categoryElement);
+
       const categoryName = categoryElement.querySelector('input').value;
 
       updateSectionTitle(categoryName)
@@ -654,7 +667,6 @@ export function createNoteList(repository) {
       renderNewItem,
       setDate,
       updateListItem,
-      resetNoteList,
       //talvez adicionar um listener??
       shouldRenderNotes: dispatch.shouldRenderNotes,
       shouldUpdateCategoryName: dispatch.shouldUpdateCategoryName,

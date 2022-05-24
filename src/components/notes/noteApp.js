@@ -25,15 +25,15 @@ export default function createNoteApp({ api }) {
    function createLoading() {
       const state = {
          loading: document.querySelector('.container-auto-save'),
-         queueLength: 0
+         idQueue: 0
       }
    
       const incrementQueue = () => {
-         state.queueLength++;
+         state.idQueue++;
       }
    
       const resetQueue = () => {
-         state.queueLength = 0;
+         state.idQueue = 0;
       }
    
       const resetLoadingAnimation = () => {
@@ -51,7 +51,7 @@ export default function createNoteApp({ api }) {
          state.loading.classList[addOrRemove]('success');
       }
    
-      const showLoading = () => {
+      const showLoading = setId => {
          toggleSuccessMessage('remove');
          resetLoadingAnimation();
          incrementQueue();
@@ -59,7 +59,7 @@ export default function createNoteApp({ api }) {
          state.loading.classList.remove('hide');
          state.loading.classList.add('show');
    
-         return state.queueLength;
+         setId(state.idQueue);
       }
    
       const hideLoading = () => {
@@ -72,11 +72,9 @@ export default function createNoteApp({ api }) {
    
       const dispatch = {
          shouldHideLoading(id) {
-            const lastQueueNumber = state.queueLength; 
+            const lastId = state.idQueue; 
       
-            const someId = lastQueueNumber === id;
-            
-            someId && hideLoading();
+            lastId === id && hideLoading();
          }
       }
    
@@ -89,7 +87,6 @@ export default function createNoteApp({ api }) {
    function createConfirmDelete() {
       const state = {
          popupWrapper: document.querySelector('.popup-wrapper-confirm-delete'),
-         observers: [],
          deletionTarget: null
       }
 
@@ -151,9 +148,7 @@ export default function createNoteApp({ api }) {
             const listOfHidePopup = ['close-popup-target', 'btn-confirm-error'];
             const shouldHide = listOfHidePopup.includes(targetClass);
 
-            if (shouldHide) {
-               hidePopup();
-            }
+            shouldHide && hidePopup();
          }
       }
 
@@ -183,37 +178,36 @@ export default function createNoteApp({ api }) {
    const animation = createAnimation();
    
    const categoryList = createCategoryList();
-   const categoryNetwork = createCategoryNetwork({ networkTemplate, popupLoading });
+   const categoryNetwork = createCategoryNetwork({ networkTemplate });
    const categoryItem = createCategoryItem();
 
    const noteList = createNoteList(repository);
    const noteItem = createNoteItem();
    const currentNote = createCurrentNote(repository);
-   const noteNetwork = createNoteNetwork({ networkTemplate, popupLoading, repository });
+   const noteNetwork = createNoteNetwork({ networkTemplate, repository });
 
    // Connecting layers
    categoryList.subscribe('click', categoryNetwork.networkListener);
    categoryList.subscribe('click', categoryItem.categoryItemListener);
 
-   categoryList.subscribe('renderItem', animation.animationListener);
+   categoryList.subscribe('creatingNewCategory', animation.animationListener);
 
-   categoryNetwork.subscribe('obtainedCategories', categoryList.renderAllCategories);
-   categoryNetwork.subscribe('verifyToCreateCategory', categoryItem.removeConfirmation);
-   categoryNetwork.subscribe('verifyToUpdateCategory', categoryItem.removeConfirmation);
-   categoryNetwork.subscribe('verifyToDeleteCategory', categoryItem.removeConfirmation);
-   categoryNetwork.subscribe('categoryUpdated', noteList.shouldUpdateCategoryName);
-   categoryNetwork.subscribe('categoryUpdated', currentNote.shouldUpdateCategoryName);
-   categoryNetwork.subscribe('setTheDeleteTarget', popupConfirmDeletion.setTheDeleteTarget);
+   categoryNetwork.subscribe('obtainedCategories', categoryList.renderCategories);
+   categoryNetwork.subscribe('dispatchCalled', categoryItem.removeConfirmation);
 
-   categoryNetwork.subscribe('categoryRemoved', noteList.shouldHideNoteList);
-   categoryNetwork.subscribe('categoryRemoved', currentNote.shouldHideCurrentNote);
+   categoryNetwork.subscribe('update', noteList.shouldUpdateCategoryName);
+   categoryNetwork.subscribe('update', currentNote.shouldUpdateCategoryName);
 
-   categoryNetwork.subscribe('restoreCategory', categoryList.renderCategory);
+   categoryNetwork.subscribe('delete', noteList.shouldHideNoteList);
+   categoryNetwork.subscribe('delete', currentNote.shouldHideCurrentNote);
+   categoryNetwork.subscribe('delete', animation.animationListener);
+   categoryNetwork.subscribe('setDeletion', popupConfirmDeletion.setTheDeleteTarget);
+   categoryNetwork.subscribe('deletionError', animation.animationListener);
 
-   categoryNetwork.subscribe('removeItem', animation.animationListener);
+   categoryNetwork.subscribe('startingRequest', popupLoading.showLoading);
+   categoryNetwork.subscribe('endingRequest', popupLoading.shouldHideLoading);
 
    categoryItem.subscribe('categorySelected', repository.setSelectedCategoryId);
-   categoryItem.subscribe('categorySelected', noteList.resetNoteList);
    categoryItem.subscribe('categorySelected', currentNote.hideSection);
    categoryItem.subscribe('categorySelected', noteList.showSection);
 
@@ -239,6 +233,9 @@ export default function createNoteApp({ api }) {
    
    noteNetwork.subscribe('restoreNote', animation.animationListener);
    noteNetwork.subscribe('obtainedNotes', noteList.shouldRenderNotes);
+
+   noteNetwork.subscribe('startingRequest', popupLoading.showLoading);
+   noteNetwork.subscribe('endingRequest', popupLoading.shouldHideLoading);
 
    noteList.subscribe('click', noteItem.noteItemListener);
    noteList.subscribe('click', noteNetwork.networkListener);

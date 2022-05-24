@@ -384,6 +384,9 @@ section.note-list {
 
 .note-list h1 {
    font: 400 4rem var(--fontDefault), sans-serif;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
 }
 
 .container-add-note {
@@ -550,7 +553,12 @@ section.current-note, .current-note-form {
 }
 
 .note-path {
+   padding-right: 20px;
+   flex: 1 1;
    color: var(--accentColor);
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
 }
 
 .current-note > .header {

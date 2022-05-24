@@ -1,6 +1,7 @@
-export function createCategoryNetwork({ networkTemplate, popupLoading }) {
+export function createCategoryNetwork({ networkTemplate }) {
    const state = {
       observers: [],
+      currentRequestId: 0,
       loading: document.querySelector('.container-category-loading')
    }
 
@@ -16,68 +17,80 @@ export function createCategoryNetwork({ networkTemplate, popupLoading }) {
       }
    }
 
+   const setRequestId = () => {
+      notifyAll('startingRequest', id => state.currentRequestId = id);
+
+      return state.currentRequestId;
+   }
+
    const handleErrors = {
       create(categoryElement) {
          categoryElement.remove();
       },
-      update(inputCategoryName) {
-         inputCategoryName.value = inputCategoryName.getAttribute('value');
+      update(inputCategoryName, lastCategoryName) {
+         inputCategoryName.setAttribute('value', lastCategoryName);
+         inputCategoryName.value = lastCategoryName;
       },
       delete(categoryElement) {
-         categoryElement.classList.remove('selected');
-         notifyAll('restoreCategory', categoryElement);
+         categoryElement.classList.remove('selected', 'remove');
 
-         document.querySelector('.container-not-selected').classList.remove('hide');
+         notifyAll('deletionError', {
+            item: categoryElement,
+            list: document.querySelector('.category-list'),
+            action: 'add'
+         });
       }
    }
 
    const createCategory = async ({ categoryElement, categoryName }) => {
-      const id = popupLoading.showLoading();
+      const id = setRequestId();
 
       try {
          const { categoryId } = await networkTemplate({
             route: "addCategory",
             method: "POST",
-            body: { 'categoryName': categoryName }
+            body: { categoryName }
          });
             
          categoryElement.setAttribute('data-id', categoryId);
+
       } catch (e) {
          handleErrors.create(categoryElement);
       }
 
-      popupLoading.shouldHideLoading(id);
+      notifyAll('endingRequest', id);
    }
 
-   const updateCategory = async ({ inputCategoryName, categoryId, newCategoryName }) => {
-      const id = popupLoading.showLoading();
+   const updateCategory = async ({ inputCategoryName, categoryId, lastCategoryName }) => {
+      const id = setRequestId();
 
       try {
          await networkTemplate({
             route: 'updateCategory',
             method: 'POST',
-            body: { categoryId, newCategoryName }
-         })
+            body: { categoryId, newCategoryName: inputCategoryName.value }
+         });
          
-         inputCategoryName.setAttribute('value', newCategoryName);
-   
-         notifyAll('categoryUpdated', { categoryId, newCategoryName });
+         notifyAll('update', { categoryId, newCategoryName: inputCategoryName.value });
+         
       } catch(e) {
-         handleErrors.update(inputCategoryName);
+         handleErrors.update(inputCategoryName, lastCategoryName);
       }
 
-      popupLoading.shouldHideLoading(id);
+      notifyAll('endingRequest', id);
    }
 
    const deleteCategory = async ({ categoryElement, categoryId }) => {
-      const id = popupLoading.showLoading();
-      const categoryClone = categoryElement.cloneNode(true);
+      const id = setRequestId();
 
       try {
-         // categoryElement.remove();
-         notifyAll('removeItem', { item: categoryElement, list: categoryElement.parentElement, action: 'remove' });
+         const animationData = { 
+            item: categoryElement,
+            list: categoryElement.parentElement,
+            action: 'remove' 
+         }
 
-         notifyAll('categoryRemoved', { categoryId });
+         notifyAll('delete', { ...animationData, categoryId });
 
          await networkTemplate({
             route: 'deleteCategory',
@@ -87,11 +100,14 @@ export function createCategoryNetwork({ networkTemplate, popupLoading }) {
 
       } catch (e) {
          setTimeout(() => {
-            handleErrors.delete(categoryClone);
+            handleErrors.delete(categoryElement);
          }, 300);
       }
 
-      popupLoading.shouldHideLoading(id);
+      // melhorar (se estiver aberto outra categoria ela vai mostrar a img (criar um regra de negócio))
+      // document.querySelector('.container-not-selected').classList.remove('hide');
+
+      notifyAll('endingRequest', id);
    }
 
    const getCategories = async () => {
@@ -103,7 +119,7 @@ export function createCategoryNetwork({ networkTemplate, popupLoading }) {
    }
 
    const setCategoryConfirmationDeletion = () => {
-      notifyAll('setTheDeleteTarget', dispatch.shouldDeleteCategory);
+      notifyAll('setDeletion', dispatch.shouldDeleteCategory);
    }
 
    const dispatch = {
@@ -114,12 +130,8 @@ export function createCategoryNetwork({ networkTemplate, popupLoading }) {
          inputCategoryName.setAttribute('value', categoryName);
 
          createCategory({ categoryElement, categoryName });
-
-         notifyAll('verifyToCreateCategory', categoryElement);
       },
       shouldUpdateCategory(categoryElement) {
-         notifyAll('verifyToUpdateCategory', categoryElement);
-
          const inputCategoryName = categoryElement.querySelector('input');
          const categoryId = categoryElement.dataset.id;
    
@@ -136,13 +148,15 @@ export function createCategoryNetwork({ networkTemplate, popupLoading }) {
             return
          }
 
-         updateCategory({ inputCategoryName, categoryId, newCategoryName });
+         inputCategoryName.setAttribute('value', newCategoryName);
+
+         updateCategory({ inputCategoryName, categoryId, lastCategoryName });
       },
       shouldDeleteCategory() {
          const categoryElement = document.querySelector('.category-item.dropDown-active');
          const categoryId = categoryElement.dataset.id;
    
-         notifyAll('verifyToDeleteCategory', categoryElement);
+         notifyAll('callingTheDispatch', categoryElement);
 
          if (!categoryId) {
             return
@@ -158,7 +172,9 @@ export function createCategoryNetwork({ networkTemplate, popupLoading }) {
       if (acceptedDispatch) {
          const categoryElement = getCategory(e);
 
-         dispatch[action](categoryElement)
+         notifyAll('dispatchCalled', categoryElement);
+
+         dispatch[action](categoryElement);
       }
    }
 
@@ -175,6 +191,7 @@ export function createCategoryList() {
       observers: [],
       gettingCategories: true,
       availableToAddCategory: true,
+
       categoryList: document.querySelector('.category-list'),
       inputSearch: document.querySelector('.input-search-categories'),
       btnAddCategory: document.querySelector('.add-new-category')
@@ -193,17 +210,17 @@ export function createCategoryList() {
    }
 
    const getCategory = e => {
-      let currentParentElement = e.target.parentElement;
+      let currentElement = e.target.parentElement;
 
-      while (!currentParentElement.classList.contains('category-item')) {
-         currentParentElement = currentParentElement.parentElement;
+      while (!currentElement.classList.contains('category-item')) {
+         currentElement = currentElement.parentElement;
 
-         if (currentParentElement === state.categoryList) {
+         if (currentElement === state.categoryList) {
             break
          }
       }
 
-      return currentParentElement;
+      return currentElement;
    }
 
    const createCategoryElement = ({ isItNewCategory, ...category }) => {
@@ -272,8 +289,10 @@ export function createCategoryList() {
    }
 
    const searchCategory = categoryElements => {
-      const valueInputSeach = state.inputSearch.value.trim();
-      const areTheSameTexts = new RegExp(valueInputSeach, 'i');
+      const areTheSameTexts = new RegExp(
+         state.inputSearch.value.trim(),
+         'i'
+      );
 
       const showOrHideCategories = categoryElements.map(element => {
          const name = element.querySelector('input').value.trim();
@@ -284,41 +303,38 @@ export function createCategoryList() {
       });
 
       showOrHideCategories.forEach(({ element, removeOrAdd }) => 
-         element.classList[removeOrAdd]('hide'));
-   }
-
-   const renderAllCategories = categories => {
-      if (categories === []) {
-         return
-      }
-
-      const allCategoryElements = categories.map(([id, name]) => 
-         createCategoryElement({ isItNewCategory: false, id, name }));
-
-      allCategoryElements.forEach(element => state.categoryList.append(element));
-
-      state.gettingCategories = false;
+         element.classList[removeOrAdd]('hide')
+      );
    }
 
    const resetAvailableToAddCategory = () => {
       state.availableToAddCategory = false;
-
+      
       setTimeout(() => state.availableToAddCategory = true, 400);
    }
 
-   const renderNewCategory = () => {
+   const renderCategories = categories => {
+      categories.forEach(([id, name]) => {
+         const element = createCategoryElement({ isItNewCategory: false, id, name });
+         
+         state.categoryList.append(element);
+      });
+
+      state.gettingCategories = false;
+   }
+
+   const renderCategory = () => {
       resetAvailableToAddCategory();
 
       const categoryElement = createCategoryElement({ isItNewCategory: true });     
 
-      notifyAll('renderItem', { item: categoryElement, list: state.categoryList, action: 'add' });
-      // renderCategory(categoryElement);
+      notifyAll('creatingNewCategory', { 
+         item: categoryElement, 
+         list: state.categoryList, 
+         action: 'add' 
+      });
 
       categoryElement.querySelector('input').focus();
-   }
-
-   const renderCategory = categoryElement => {
-      state.categoryList.prepend(categoryElement);
    }
 
    const dispatch = {
@@ -329,7 +345,7 @@ export function createCategoryList() {
 
          const categoryElements = [...state.categoryList.children];
 
-         if (categoryElements === []) {
+         if (!categoryElements.length) {
             return
          }
 
@@ -340,7 +356,7 @@ export function createCategoryList() {
             return
          }
 
-         renderNewCategory();
+         renderCategory();
       }
    }
 
@@ -360,8 +376,7 @@ export function createCategoryList() {
 
    return { 
       subscribe,
-      renderAllCategories,
-      renderCategory,
+      renderCategories,
       resetAvailableToAddCategory
    }
 }
@@ -419,7 +434,7 @@ export function createCategoryItem() {
       inputCategoryName.setAttribute('readonly', 'readonly');
    }
 
-   const removeSelectedItem = () => {
+   const removeLastSelectedItem = () => {
       const lastSelectedLi = document.querySelector('.category-item.selected');
       lastSelectedLi && lastSelectedLi.classList.remove('selected');
    }
@@ -437,7 +452,7 @@ export function createCategoryItem() {
          notifyAll('showPopupDelete', 'category');
       },
       selectItem() {
-         removeSelectedItem();
+         removeLastSelectedItem();
 
          this.categoryElement.classList.add('selected');
 
@@ -479,21 +494,21 @@ export function createCategoryItem() {
    }
 
    const categoryItemListener = ({ e, action, getCategory }) => {
+
       if (dispatch[action]) {
          dispatch[action](getCategory(e));
       }
 
       if (acceptedCategoryActions[action]) {
-         acceptedCategoryActions.categoryElement = getCategory(e) ;
-
+         acceptedCategoryActions.categoryElement = getCategory(e);
          acceptedCategoryActions[action]();
       }
+
    }
 
    return { 
       subscribe,
-      categoryItemListener,
-      inputAutoFocus,
-      removeConfirmation
+      removeConfirmation,
+      categoryItemListener
    }
 }
