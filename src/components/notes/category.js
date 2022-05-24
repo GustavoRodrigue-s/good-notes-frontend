@@ -36,8 +36,7 @@ export function createCategoryNetwork({ networkTemplate }) {
 
          notifyAll('deletionError', {
             item: categoryElement,
-            list: document.querySelector('.category-list'),
-            action: 'add'
+            list: document.querySelector('.category-list')
          });
       }
    }
@@ -84,13 +83,11 @@ export function createCategoryNetwork({ networkTemplate }) {
       const id = setRequestId();
 
       try {
-         const animationData = { 
+         notifyAll('delete', { 
             item: categoryElement,
-            list: categoryElement.parentElement,
-            action: 'remove' 
-         }
-
-         notifyAll('delete', { ...animationData, categoryId });
+            list: categoryElement.parentElement, 
+            categoryId 
+         });
 
          await networkTemplate({
             route: 'deleteCategory',
@@ -330,8 +327,7 @@ export function createCategoryList() {
 
       notifyAll('creatingNewCategory', { 
          item: categoryElement, 
-         list: state.categoryList, 
-         action: 'add' 
+         list: state.categoryList
       });
 
       categoryElement.querySelector('input').focus();
@@ -461,8 +457,7 @@ export function createCategoryItem() {
       cancelItemAddition() {
          notifyAll('cancelAddition', { 
             item: this.categoryElement,
-            list: this.categoryElement.parentElement,
-            action: 'remove' 
+            list: this.categoryElement.parentElement
          });
       },
       cancelRenameItem() {

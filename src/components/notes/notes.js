@@ -43,8 +43,7 @@ export function createNoteNetwork({ networkTemplate, repository }) {
 
          notifyAll('restoreNote', { 
             item: note.element,
-            list: document.querySelector('section.note-list ul.note-list'),
-            action: 'add' 
+            list: document.querySelector('ul.note-list')
          });
       },
       update(note, noteClone) {
@@ -111,8 +110,7 @@ export function createNoteNetwork({ networkTemplate, repository }) {
       try {
          notifyAll('deletingNote', { 
             item: note.element, 
-            list: note.element.parentElement, 
-            action: 'remove'
+            list: note.element.parentElement
          });
 
          repository.deleteItem(selectedCategoryId, selectedNoteId);
@@ -569,10 +567,10 @@ export function createNoteList(repository) {
       noteTitle.innerText = title;
       noteSummary.innerText = summary;
 
-      // const firstNoteElement = state.noteList.firstElementChild;
-
-      // state.noteList.insertBefore(noteElement, firstNoteElement);
-      notifyAll('updateItem', { item: noteElement, list: state.noteList, action: 'update' });
+      notifyAll('updateItem', { 
+         item: noteElement, 
+         list: state.noteList 
+      });
 
       state.sectionNoteList.scrollTop = 0;
    }
@@ -585,7 +583,7 @@ export function createNoteList(repository) {
       containerDate.classList.remove('loading');
    }
 
-   const renderAllItems = notes => {
+   const renderNotes = notes => {
       notes.forEach(note => {
          if (!note.element) {
             note.element = createNoteElement({ isItNewNote: false, ...note });
@@ -596,12 +594,15 @@ export function createNoteList(repository) {
       });
    }
 
-   const renderNewItem = note => {
+   const renderNote = note => {
       note.element = createNoteElement({ isItNewNote: true });
 
       document.querySelector('.container-notes-not-found').classList.remove('show');
 
-      notifyAll('renderItem', { item: note.element, list: state.noteList, action: 'add' });
+      notifyAll('renderItem', { 
+         item: note.element, 
+         list: state.noteList 
+      });
    }
 
    const resetNoteList = categoryElement => {
@@ -624,7 +625,7 @@ export function createNoteList(repository) {
          const hasNotes = repository.getAllItems(categoryId);
 
          hasNotes.length
-            ? renderAllItems(hasNotes)
+            ? renderNotes(hasNotes)
             : notifyAll('noNotesFoundInRepository', { categoryId });
       },
       shouldHideNoteList({ categoryId }) {
@@ -664,7 +665,7 @@ export function createNoteList(repository) {
    return { 
       subscribe,
       showSection,
-      renderNewItem,
+      renderNote,
       setDate,
       updateListItem,
       //talvez adicionar um listener??

@@ -4,22 +4,10 @@ export default function createAnimation() {
       currentListItems: null
    }
 
-   const prepareAnimation = (item, action) => {
+   const prepareAnimation = callbackAction => {
       const initialPosition = state.currentListItems.map(item => item.getBoundingClientRect());
 
-      const acceptedActions = {
-         add() {
-            state.currentList.prepend(item);
-         },
-         remove() {
-            item.classList.add('remove');
-         },
-         update() {
-            state.currentList.insertBefore(item, state.currentListItems[0]);
-         }
-      }
-
-      acceptedActions[action] && acceptedActions[action]();
+      callbackAction();
 
       state.currentListItems.forEach((item, i) => {
          const finalPosition = item.getBoundingClientRect();
@@ -35,25 +23,39 @@ export default function createAnimation() {
       state.currentList.classList.add('animation');
    }
 
-   const endAnimation = (item, action) => {
+   const endAnimation = item => {
       state.currentList.classList.remove('animation');
 
-      if (action === 'remove' && item.classList.contains('remove')) {
+      if (item.classList.contains('remove')) {
          item.remove();
       }
    }
-
-   const animationListener = ({ item, list, action }) => {
+   
+   const animationModel = (item, list, callback) => {
       state.currentList = list;
       state.currentListItems = [...list.children];
 
-      prepareAnimation(item, action);
+      prepareAnimation(callback);
       requestAnimationFrame(startAnimation);
 
-      setTimeout(() => endAnimation(item, action), 300);
+      setTimeout(() => endAnimation(item), 300);
+   }
+
+   const add = ({ item, list }) => {
+      animationModel(item, list, () => list.prepend(item));
+   }
+
+   const remove = ({ item, list }) => {
+      animationModel(item, list, () => item.classList.add('remove'));
+   }
+
+   const update = ({ item, list }) => {
+      animationModel(item, list, () => list.insertBefore(item, list.children[0]));
    }
 
    return {
-      animationListener
+      add,
+      remove,
+      update
    }
 }

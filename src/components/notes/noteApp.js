@@ -190,7 +190,7 @@ export default function createNoteApp({ api }) {
    categoryList.subscribe('click', categoryNetwork.networkListener);
    categoryList.subscribe('click', categoryItem.categoryItemListener);
 
-   categoryList.subscribe('creatingNewCategory', animation.animationListener);
+   categoryList.subscribe('creatingNewCategory', animation.add);
 
    categoryNetwork.subscribe('obtainedCategories', categoryList.renderCategories);
    categoryNetwork.subscribe('dispatchCalled', categoryItem.removeConfirmation);
@@ -200,9 +200,9 @@ export default function createNoteApp({ api }) {
 
    categoryNetwork.subscribe('delete', noteList.shouldHideNoteList);
    categoryNetwork.subscribe('delete', currentNote.shouldHideCurrentNote);
-   categoryNetwork.subscribe('delete', animation.animationListener);
+   categoryNetwork.subscribe('delete', animation.remove);
    categoryNetwork.subscribe('setDeletion', popupConfirmDeletion.setTheDeleteTarget);
-   categoryNetwork.subscribe('deletionError', animation.animationListener);
+   categoryNetwork.subscribe('deletionError', animation.add);
 
    categoryNetwork.subscribe('startingRequest', popupLoading.showLoading);
    categoryNetwork.subscribe('endingRequest', popupLoading.shouldHideLoading);
@@ -214,10 +214,10 @@ export default function createNoteApp({ api }) {
    categoryItem.subscribe('showPopupDelete', popupConfirmDeletion.showPopup);
    categoryItem.subscribe('showPopupDelete', categoryNetwork.setCategoryConfirmationDeletion);
 
-   categoryItem.subscribe('cancelAddition', animation.animationListener);
+   categoryItem.subscribe('cancelAddition', animation.remove);
    categoryItem.subscribe('cancelAddition', categoryList.resetAvailableToAddCategory);
 
-   noteNetwork.subscribe('creatingNote', noteList.renderNewItem);
+   noteNetwork.subscribe('creatingNote', noteList.renderNote);
    noteNetwork.subscribe('noteCreated', noteList.setDate);
    
    noteNetwork.subscribe('updatingNote', noteList.updateListItem);
@@ -227,11 +227,11 @@ export default function createNoteApp({ api }) {
    noteNetwork.subscribe('setTheDeleteTarget', popupConfirmDeletion.setTheDeleteTarget);
 
    noteNetwork.subscribe('deletingNote', currentNote.hideSection);
-   noteNetwork.subscribe('deletingNote', animation.animationListener);
+   noteNetwork.subscribe('deletingNote', animation.remove);
    noteNetwork.subscribe('restoreUpdate', noteList.updateListItem);
    noteNetwork.subscribe('restoreUpdate', currentNote.setCurrentNoteDatas);
    
-   noteNetwork.subscribe('restoreNote', animation.animationListener);
+   noteNetwork.subscribe('restoreNote', animation.add);
    noteNetwork.subscribe('obtainedNotes', noteList.shouldRenderNotes);
 
    noteNetwork.subscribe('startingRequest', popupLoading.showLoading);
@@ -240,8 +240,8 @@ export default function createNoteApp({ api }) {
    noteList.subscribe('click', noteItem.noteItemListener);
    noteList.subscribe('click', noteNetwork.networkListener);
    
-   noteList.subscribe('renderItem', animation.animationListener);
-   noteList.subscribe('updateItem', animation.animationListener);
+   noteList.subscribe('renderItem', animation.add);
+   noteList.subscribe('updateItem', animation.update);
 
    noteList.subscribe('noNotesFoundInRepository', noteNetwork.shouldGetNotes);
 
