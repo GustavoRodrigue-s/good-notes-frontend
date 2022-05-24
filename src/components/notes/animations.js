@@ -1,4 +1,4 @@
-export default function createAnimation() {
+export default function createAnimations() {
    const state = {
       currentList: null,
       currentListItems: null

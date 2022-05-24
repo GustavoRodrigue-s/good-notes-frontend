@@ -1,7 +1,7 @@
 import { createCategoryNetwork, createCategoryList, createCategoryItem } from './category.js';
 import { createNoteList, createNoteItem, createCurrentNote, createNoteNetwork } from './notes.js';
 import createRepository from './repository.js';
-import createAnimation from './animations.js';
+import createAnimations from './animations.js';
 
 export default function createNoteApp({ api }) {
 
@@ -16,7 +16,7 @@ export default function createNoteApp({ api }) {
          return data;
          
       } catch(e) {
-         cloudError.showPopup();
+         popupCloudError.showPopup();
 
          throw e
       }
@@ -174,8 +174,8 @@ export default function createNoteApp({ api }) {
    // layers
    const popupLoading = createLoading();
    const popupConfirmDeletion = createConfirmDelete();
-   const cloudError = createCloudError();
-   const animation = createAnimation();
+   const popupCloudError = createCloudError();
+   const animations = createAnimations();
    
    const categoryList = createCategoryList();
    const categoryNetwork = createCategoryNetwork({ networkTemplate });
@@ -190,7 +190,7 @@ export default function createNoteApp({ api }) {
    categoryList.subscribe('click', categoryNetwork.networkListener);
    categoryList.subscribe('click', categoryItem.categoryItemListener);
 
-   categoryList.subscribe('creatingNewCategory', animation.add);
+   categoryList.subscribe('creatingNewCategory', animations.add);
 
    categoryNetwork.subscribe('obtainedCategories', categoryList.renderCategories);
    categoryNetwork.subscribe('dispatchCalled', categoryItem.removeConfirmation);
@@ -200,9 +200,9 @@ export default function createNoteApp({ api }) {
 
    categoryNetwork.subscribe('delete', noteList.shouldHideNoteList);
    categoryNetwork.subscribe('delete', currentNote.shouldHideCurrentNote);
-   categoryNetwork.subscribe('delete', animation.remove);
+   categoryNetwork.subscribe('delete', animations.remove);
    categoryNetwork.subscribe('setDeletion', popupConfirmDeletion.setTheDeleteTarget);
-   categoryNetwork.subscribe('deletionError', animation.add);
+   categoryNetwork.subscribe('deletionError', animations.add);
 
    categoryNetwork.subscribe('startingRequest', popupLoading.showLoading);
    categoryNetwork.subscribe('endingRequest', popupLoading.shouldHideLoading);
@@ -214,7 +214,7 @@ export default function createNoteApp({ api }) {
    categoryItem.subscribe('showPopupDelete', popupConfirmDeletion.showPopup);
    categoryItem.subscribe('showPopupDelete', categoryNetwork.setCategoryConfirmationDeletion);
 
-   categoryItem.subscribe('cancelAddition', animation.remove);
+   categoryItem.subscribe('cancelAddition', animations.remove);
    categoryItem.subscribe('cancelAddition', categoryList.resetAvailableToAddCategory);
 
    noteNetwork.subscribe('creatingNote', noteList.renderNote);
@@ -227,11 +227,11 @@ export default function createNoteApp({ api }) {
    noteNetwork.subscribe('setTheDeleteTarget', popupConfirmDeletion.setTheDeleteTarget);
 
    noteNetwork.subscribe('deletingNote', currentNote.hideSection);
-   noteNetwork.subscribe('deletingNote', animation.remove);
+   noteNetwork.subscribe('deletingNote', animations.remove);
    noteNetwork.subscribe('restoreUpdate', noteList.updateListItem);
    noteNetwork.subscribe('restoreUpdate', currentNote.setCurrentNoteDatas);
    
-   noteNetwork.subscribe('restoreNote', animation.add);
+   noteNetwork.subscribe('restoreNote', animations.add);
    noteNetwork.subscribe('obtainedNotes', noteList.shouldRenderNotes);
 
    noteNetwork.subscribe('startingRequest', popupLoading.showLoading);
@@ -240,8 +240,8 @@ export default function createNoteApp({ api }) {
    noteList.subscribe('click', noteItem.noteItemListener);
    noteList.subscribe('click', noteNetwork.networkListener);
    
-   noteList.subscribe('renderItem', animation.add);
-   noteList.subscribe('updateItem', animation.update);
+   noteList.subscribe('renderItem', animations.add);
+   noteList.subscribe('updateItem', animations.update);
 
    noteList.subscribe('noNotesFoundInRepository', noteNetwork.shouldGetNotes);
 
