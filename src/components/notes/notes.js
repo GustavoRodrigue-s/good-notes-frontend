@@ -519,6 +519,8 @@ export function createNoteList(repository) {
    const hideSection = () => {
       state.noteList.innerHTML = '';
       state.sectionNoteList.classList.add('hide');
+      
+      document.querySelector('.container-not-selected').classList.remove('hide');
    }
 
    const createNoteElement = ({ isItNewNote, ...note }) => {

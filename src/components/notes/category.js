@@ -101,9 +101,6 @@ export function createCategoryNetwork({ networkTemplate }) {
          }, 300);
       }
 
-      // melhorar (se estiver aberto outra categoria ela vai mostrar a img (criar um regra de negócio))
-      // document.querySelector('.container-not-selected').classList.remove('hide');
-
       notifyAll('endingRequest', id);
    }
 
