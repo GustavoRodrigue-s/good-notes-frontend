@@ -1,0 +1,255 @@
+section.current-note {
+   position: relative;
+   height: 100%;
+   padding: 20px;
+   overflow: hidden !important;
+   transition: 0.2s;
+   opacity: 1;
+   visibility: visible;
+}
+
+.current-note > .main {
+   padding: 20px 0;
+   height: 100%;
+   overflow-y: auto;
+}
+
+section.current-note, .current-note-form {
+   display: flex;
+   flex-direction: column;
+}
+
+.current-note-form {
+   height: 100%;
+}
+
+/* ---------- Current Note Header ---------- */
+
+.note-path {
+   padding-right: 20px;
+   flex: 1 1;
+   color: var(--accentColor);
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+}
+
+.current-note > .header {
+   border-bottom: 1px solid #DBDBDB; 
+   padding-bottom: 10px;
+}
+
+.container-more-currentNote > button {
+   padding: 10px;
+   cursor: pointer;
+   border: none;
+   background: transparent;
+}
+
+.container-more-currentNote button:hover {
+   background-color: #ebebeb;
+}
+
+.container-more-currentNote .list-dropDown li {
+   padding: 0;
+}
+
+.container-more-currentNote .list-dropDown button {
+   background-color: transparent;
+   border: none;
+   cursor: pointer;
+}
+
+.container-more-currentNote > .list-dropDown {
+   transform: translate(-50%, -20px);
+}
+
+.container-more-currentNote .btn-dropDown.active ~ .list-dropDown {
+   transform: translate(-50%, 0px);
+}
+
+/* ---------- Note Title and Summary ---------- */
+
+.title-note .input-note-title {
+   width: 100%;
+   border: none;
+   outline: none;
+   background-color: none;
+   font: 400 4rem var(--fontDefault), sans-serif;
+}
+
+.container-summary {
+   position: relative;
+   margin: 10px 0;
+}
+
+.container-summary > button {
+   position: relative;
+   z-index: 99;
+   padding-right: 10px;
+   display: flex;
+   align-items: center;
+   font: 500 1.6rem var(--fontDefault);
+   transition: 0.3s;
+   border-radius: 5px;
+}
+
+.container-summary > button:hover {
+   background-color: #ebebeb;
+}
+
+.container-summary > button > img {
+   width: 30px;
+   height: 30px;
+   transition: 0.2s;
+}
+
+.container-summary-textarea {
+   width: 100%;
+   position: absolute;
+   z-index: 1;
+   margin-top: 10px;
+   opacity: 0;
+   visibility: hidden;
+   transform: translateY(-50%);
+   transition: 0.3s;
+}
+
+.container-summary > button.active > img {
+   transform: rotateZ(-180deg);
+}
+
+.container-summary > button.active ~ .container-summary-textarea {
+   position: relative;
+   opacity: 1;
+   visibility: visible;
+   transform: translateY(0);
+}
+
+.summaryArea {
+   width: 100%;
+   height: 70px;
+   resize: none;
+   outline: none;
+   border-radius: 8px;
+   border: 1px solid #DBDBDB;
+   background-color: #F6F6F6;
+   font: 1.5rem var(--fontDefault);
+   padding: 10px;
+   transition: border-color 0.3s;
+}
+
+.summaryArea:focus {
+   border-color: #afafaf;
+}
+
+/* ---------- Last Modification ---------- */
+
+.last-modification {
+   margin-top: 10px;
+}
+
+.last-modification > small {
+   color: #757575;
+}
+
+.last-modification strong {
+   color: #000;
+}
+
+/* ---------- Tool Bar ---------- */ 
+
+.tool-bar {
+   position: sticky;
+   top: -21px;
+   margin: 20px 0;
+   padding: 5px 20px;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   border-top: 1px solid #DBDBDB;
+   border-bottom: 1px solid #DBDBDB;
+   background-color: #fff;
+}
+
+.tool-bar button, .select-group > select, .select-group > input {
+   height: 35px;
+   padding: 10px;
+   border-radius: 3px;
+   background: none;
+   outline: none;
+   border: none;
+   cursor: pointer;
+   flex-shrink: 0;
+   transition: background-color 0.3s;
+}
+
+.tool-bar button:hover {
+   background-color: #ebebeb;
+}
+
+.tool-bar button > img {
+   width: 100%;
+   height: 100%;
+}
+
+.tool-bar > div {
+   display: flex;
+   gap: 15px;
+}
+
+.tool-bar > span {
+   color: #DBDBDB;
+}
+
+.select-group > select, .select-group > input {
+   height: 30px;
+   border: 1px solid #DBDBDB;
+   background-color: #F6F6F6;
+   border-radius: 5px;
+   padding: 0 5px;
+   transition: border-color 0.3s;
+}
+
+:is(.select-group > select, .select-group > input):focus {
+   border-color: var(--accentColor);
+}
+
+.select-group > input {
+   width: 40px;
+   padding: 1px 3px;
+}
+
+/* TEXT EDITOR */
+
+.area-note-content ul, .area-note-content ol {
+   list-style-position: inside;
+   list-style-type: initial;
+}
+
+.area-note-content ol {
+   list-style-type: decimal;
+}
+
+font[size="1"] { font-size: 12px; }
+font[size="2"] { font-size: 14px; }
+font[size="3"] { font-size: 16px; }
+font[size="4"] { font-size: 18px; }
+font[size="5"] { font-size: 20px; }
+font[size="6"] { font-size: 24px; }
+font[size="7"] { font-size: 32px; }
+
+/* ---------- Current Note Content ---------- */
+
+.note-content {
+   height: 100%;
+   padding: 0 20px;
+}
+
+.note-content > .area-note-content {
+   width: 100%;
+   height: 100%;
+   border: none;
+   outline: none;
+   font: 1.6rem Arial, sans-serif;
+}

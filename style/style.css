@@ -51,7 +51,7 @@ button svg, button div, button span, button img {
    pointer-events: none !important;
 }
 
-/* STYLES DEFAULTS --------------- */
+/* ---------- Styles Default ---------- */
 
 .container-limiter {
    width: 90%;
@@ -65,7 +65,7 @@ button svg, button div, button span, button img {
    justify-content: center;
 }
 
-/* BUTTON DEFAULT */
+/* ---------- Button Default ---------- */
 
 .btn-default {
    border: none;
@@ -82,7 +82,7 @@ button svg, button div, button span, button img {
    background: #0058dd;
 }
 
-/* CLOSE BUTTON DEFAULT */
+/* ---------- Close Button Default ---------- */
 
 .close {
    position: absolute;
