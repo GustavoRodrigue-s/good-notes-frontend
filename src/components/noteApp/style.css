@@ -201,7 +201,7 @@ section.current-note {
 }
 
 .popup-cloud-error p {
-   color: var(--colorGray);
+   color: var(--paragraphColor);
    margin-top: 10px;
 }
 
@@ -214,7 +214,7 @@ section.current-note {
    background: transparent;
    box-shadow: none;
    font-weight: 600;
-   color: var(--accentColor);
+   color: var(--primaryColor);
 }
 
 .popup-cloud-error .btn-confirm-error > img {
@@ -223,7 +223,7 @@ section.current-note {
 }
 
 .popup-cloud-error .btn-confirm-error:hover {
-   background-color: #e2f0fe;
+   background-color: var(--secondaryColor);
 }
 
 .popup-cloud-error .btn-confirm-error:hover > img {
@@ -246,7 +246,7 @@ section.current-note {
    max-width: 350px;
    text-align: center;
    padding-bottom: 20px;
-   color: var(--colorGray);
+   color: var(--paragraphColor);
 }
 
 .category-message, .note-message {
@@ -307,13 +307,13 @@ section.current-note {
 .container-not-selected > p {
    max-width: 370px;
    padding: 0 10px;
-   color: var(--colorGray);
+   color: var(--paragraphColor);
 }
 
 .container-notes-not-found {
    display: none;
    text-align: center;
-   color: var(--colorGray);
+   color: var(--paragraphColor);
 }
 
 .container-notes-not-found.show {

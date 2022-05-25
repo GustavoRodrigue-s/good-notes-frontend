@@ -46,7 +46,6 @@
       z-index: 9999;
       background: #fff;
       box-shadow: 0;
-      border: 1px solid #D4D4D4;
       right: 10px;
       top: 80%;
       height: auto;
@@ -64,7 +63,7 @@
       opacity: 1;
       visibility: visible;
       transform: translateY(15px);
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.185);
+      box-shadow: 0 0 10px var(--primaryBoxShadow);
    }
    
    .popup-hamburguer button, .nav-hamburguer a {
@@ -103,7 +102,7 @@
       margin: 5px;
       display: block;
       height: 1px;
-      background-color: #D4D4D4;
+      background-color: var(--colorLine);
       border: none;
    }
 

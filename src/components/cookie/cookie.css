@@ -37,7 +37,7 @@
 
 .main-content p {
    font-size: 1.6rem;
-   color: var(--colorGray);
+   color: var(--paragraphColor);
 }
 
 .more-information {
@@ -72,6 +72,6 @@
 
    .main-content p {
       font-size: 1.4rem;
-      color: var(--colorGray);
+      color: var(--paragraphColor);
    }
 }

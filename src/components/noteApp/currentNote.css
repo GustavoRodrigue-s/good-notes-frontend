@@ -28,14 +28,14 @@ section.current-note, .current-note-form {
 .note-path {
    padding-right: 20px;
    flex: 1 1;
-   color: var(--accentColor);
+   color: var(--primaryColor);
    overflow: hidden;
    text-overflow: ellipsis;
    white-space: nowrap;
 }
 
 .current-note > .header {
-   border-bottom: 1px solid #DBDBDB; 
+   border-bottom: 1px solid var(--colorLine); 
    padding-bottom: 10px;
 }
 
@@ -47,7 +47,7 @@ section.current-note, .current-note-form {
 }
 
 .container-more-currentNote button:hover {
-   background-color: #ebebeb;
+   background-color: var(--primaryCloseColor);
 }
 
 .container-more-currentNote .list-dropDown li {
@@ -95,7 +95,7 @@ section.current-note, .current-note-form {
 }
 
 .container-summary > button:hover {
-   background-color: #ebebeb;
+   background-color: var(--primaryCloseColor);
 }
 
 .container-summary > button > img {
@@ -132,7 +132,7 @@ section.current-note, .current-note-form {
    resize: none;
    outline: none;
    border-radius: 8px;
-   border: 1px solid #DBDBDB;
+   border: 1px solid var(--colorLine);
    background-color: #F6F6F6;
    font: 1.5rem var(--fontDefault);
    padding: 10px;
@@ -167,8 +167,8 @@ section.current-note, .current-note-form {
    display: flex;
    align-items: center;
    justify-content: space-between;
-   border-top: 1px solid #DBDBDB;
-   border-bottom: 1px solid #DBDBDB;
+   border-top: 1px solid var(--colorLine);
+   border-bottom: 1px solid var(--colorLine);
    background-color: #fff;
 }
 
@@ -199,12 +199,12 @@ section.current-note, .current-note-form {
 }
 
 .tool-bar > span {
-   color: #DBDBDB;
+   color: var(--colorLine);
 }
 
 .select-group > select, .select-group > input {
    height: 30px;
-   border: 1px solid #DBDBDB;
+   border: 1px solid var(--colorLine);
    background-color: #F6F6F6;
    border-radius: 5px;
    padding: 0 5px;
@@ -212,7 +212,7 @@ section.current-note, .current-note-form {
 }
 
 :is(.select-group > select, .select-group > input):focus {
-   border-color: var(--accentColor);
+   border-color: var(--primaryColor);
 }
 
 .select-group > input {
@@ -220,7 +220,7 @@ section.current-note, .current-note-form {
    padding: 1px 3px;
 }
 
-/* TEXT EDITOR */
+/* ---------- Text Editor ---------- */
 
 .area-note-content ul, .area-note-content ol {
    list-style-position: inside;

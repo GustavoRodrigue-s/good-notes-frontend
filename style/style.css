@@ -15,9 +15,20 @@
 }
 
 :root {
-   --accentColor: #0066FF;
-   --cardsColor: #D9D9D9;
-   --colorGray: #646369;
+   --primaryColor: #0066FF;
+   --primaryHoverColor: #0058dd;
+   --primaryBoxShadowColor: #0066ff2a;
+   --primaryErrorColor: #D9000C;
+   --primaryErrorHoverColor: #b40009;
+   --primarySuccessColor: #4CAF50;
+   --secondaryColor: #e2f0fe;
+   --secondaryBorderColor: #00000028;
+   --secondaryHoverBorderColor: #646369d3;
+   --tertiaryColor: #F9F9F9;
+   --paragraphColor: #646369;
+   --primaryBoxShadow: #0000002c;
+   --primaryCloseColor: #ebebeb; 
+   --colorLine: #DBDBDB;
    --fontDefault: 'Inter', sans-serif;
 }
 
@@ -43,7 +54,7 @@ ul, ol {
 
 a {
    text-decoration: none;
-   color: var(--colorGray);
+   color: var(--paragraphColor);
    cursor: pointer;
 }
 
@@ -72,14 +83,14 @@ button svg, button div, button span, button img {
    cursor: pointer;
    transition: 0.3s;
    font: 400 1.6rem var(--fontDefault);
-   background-color: var(--accentColor);
-   box-shadow: 0 0 10px #0066ff2a;
+   background-color: var(--primaryColor);
+   box-shadow: 0 0 10px var(--primaryBoxShadowColor);
    color: #fff;
    border-radius: 8px;
 }
 
 .btn-default-hover:hover {
-   background: #0058dd;
+   background: var(--primaryHoverColor);
 }
 
 /* ---------- Close Button Default ---------- */
@@ -99,16 +110,16 @@ button svg, button div, button span, button img {
 }
 
 .close-popup:hover {
-   background-color: #ebebeb;
+   background-color: var(--primaryCloseColor);
 }
 
-/* INPUT DEFAULT */
+/* ---------- Input Default ---------- */
 
 .input-default {
    outline: none;
-   border: 1px solid #DBDBDB;
+   border: 1px solid var(--colorLine);
    background: transparent;
-   color: var(--colorGray);
+   color: var(--paragraphColor);
    width: 100%;
    height: 40px;
    border-radius: 8px;
@@ -122,14 +133,14 @@ button svg, button div, button span, button img {
 }
 
 .input-default:focus {
-   border-color: var(--accentColor);
+   border-color: var(--primaryColor);
 }
 
-/* ERROR */
+/* ---------- Error ---------- */
 
 .container-error {
    margin-top: 5px;
-   color: #D9000C;
+   color: var(--primaryErrorColor);
    display: none;
    align-items: center;
    gap: 5px;
@@ -137,15 +148,15 @@ button svg, button div, button span, button img {
 }
 
 .input-and-message.error .input-default {
-   border-color: #D9000C;
+   border-color: var(--primaryErrorColor);
 }
 
 .input-and-message.error .input-default:focus + label,
 .input-and-message.error label:focus, .input-and-message.error label {
-   color: #D9000C !important;
+   color: var(--primaryErrorColor) !important;
 }
 
-/* LOADING */
+/* ---------- Loading ---------- */
 
 .container-loading {
    position: absolute;
@@ -178,7 +189,7 @@ button svg, button div, button span, button img {
    opacity: 1;
 }
 
-/* POPUPS & WRAPPERS */
+/* ---------- Popups & Wrappers ---------- */
 
 .popup-wrapper {
    position: fixed;
@@ -197,6 +208,16 @@ button svg, button div, button span, button img {
 .popup-wrapper.show {
    visibility: visible;
    opacity: 1;
+}
+
+.btn-wrapper-default::before {
+   content: '';
+   position: fixed;
+   inset: 0;
+   width: 100%;
+   height: 100%;
+   z-index: 9999;
+   cursor: initial;
 }
 
 @keyframes overflowDelay {
@@ -265,7 +286,7 @@ button svg, button div, button span, button img {
    transition: 0.4s;
 }
 
-/* CHECKBOX DEFAULT */
+/* ---------- CheckBox Default --------- */
 
 .checkbox-default {
    appearance: none;
@@ -292,17 +313,17 @@ button svg, button div, button span, button img {
 }
 
 .checkbox-default:checked {
-   background-color: var(--accentColor);
+   background-color: var(--primaryColor);
 }
 
 .checkbox-default:checked::before {
    transform: scale(1);
 }
 
-/* INPUT DEFAULT */
+/* ---------- Input Default ---------- */
 
 .label-input-default {
-   color: var(--colorGray);
+   color: var(--paragraphColor);
    position: absolute;
    z-index: -1;
    top: 50%;
@@ -320,23 +341,23 @@ button svg, button div, button span, button img {
    left: 10px;
    font-size: 1.2rem;
    padding: 0 5px;
-   color: var(--accentColor);
+   color: var(--primaryColor);
    z-index: 10;
 }
 
 .input-default:not(:focus) + label, .input-default:not(:focus) {
-   color: var(--colorGray);
+   color: var(--paragraphColor);
    border-color: #00000028;
 } 
 
-/* Animation Error */
+/* ---------- Animation Error ---------- */
 
 @keyframes opacityMessage {
    from { opacity: 0; }
    to { opacity: 1; }
 }
 
-/* FOOTER */
+/* ---------- Footer ---------- */
 
 footer {
    position: relative;
@@ -348,7 +369,7 @@ footer {
    background-color: #fff;
 }
 
-/* TOOL TIP */
+/* ---------- Tool Tip ---------- */
 
 span.tooltip {
    position: absolute;
@@ -375,7 +396,7 @@ span.tooltip::before {
    border-color: transparent transparent transparent #000;
 }
 
-/* DROP DOWN DEFAULT */
+/* ---------- Drop Down Derfault ---------- */
 
 .container-dropDown {
    position: relative;
@@ -407,14 +428,13 @@ span.tooltip::before {
 
 .list-dropDown {
    background-color: #fff;
-   border: 1px solid #D4D4D4;
    box-shadow: none;
    border-radius: 8px;
    padding: 5px;
    position: absolute;
    z-index: 9999;
    left: 50%;
-   color: var(--colorGray);
+   color: var(--paragraphColor);
    transition: 0.25s;
    
    opacity: 0;
@@ -427,7 +447,7 @@ span.tooltip::before {
    opacity: 1;
    visibility: visible;
    transform: translate(-50%, 40px);
-   box-shadow: 0 0 5px rgba(0, 0, 0, 0.185);
+   box-shadow: 0 0 10px var(--primaryBoxShadow);
 }
 
 .list-dropDown > li {
@@ -444,25 +464,12 @@ span.tooltip::before {
 .list-dropDown hr {
    display: block;
    height: 1px;
-   background-color: #D4D4D4;
+   background-color: var(--colorLine);
    border: none;
    margin: 0 2px;
 }
 
-
-/* WRAPPER DEFAULT */
-
-.btn-wrapper-default::before {
-   content: '';
-   position: fixed;
-   inset: 0;
-   width: 100%;
-   height: 100%;
-   z-index: 9999;
-   cursor: initial;
-}
-
-/* RESPONSIVE */
+/* ---------- Resposive ---------- */
 
 @media (max-width: 550px) {
    .popup {

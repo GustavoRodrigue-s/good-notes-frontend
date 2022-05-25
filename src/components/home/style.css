@@ -10,7 +10,7 @@ main.container-sticky {
    align-items: center;
    justify-content: space-between;
    margin: auto;
-   color: var(--colorGray);
+   color: var(--paragraphColor);
    text-align: center;
 }
 
@@ -134,11 +134,11 @@ main.container-sticky {
 /* SECTION ABOUT */
 
 .container-about-product {
-   background: #F9F9F9;
+   background: var(--tertiaryColor);
    margin-top: 120px;
    padding: 30px 0;
-   border-top: 1px solid #dbdbdb;
-   border-bottom: 1px solid #dbdbdb;
+   border-top: 1px solid var(--colorLine);
+   border-bottom: 1px solid var(--colorLine);
    position: relative;
    z-index: 999;
    overflow: hidden;
@@ -181,7 +181,7 @@ main.container-sticky {
 .item-text {
    margin-top: 5px;
    font: 400 1.6rem var(--fontDefault);
-   color: var(--colorGray);
+   color: var(--paragraphColor);
    line-height: 25px;
 }
 

@@ -1,7 +1,7 @@
 section.note-list {
    height: 100%;
    padding: 20px;
-   border-right: 1px solid #DBDBDB; 
+   border-right: 1px solid var(--colorLine); 
    overflow-y: auto;
 } 
 
@@ -24,8 +24,8 @@ section.note-list {
 }
 
 .container-add-note > button {
-   background-color: #F9F9F9; 
-   color: var(--accentColor);
+   background-color: var(--tertiaryColor); 
+   color: var(--primaryColor);
 }
 
 /* ---------- Note Item ---------- */
@@ -38,7 +38,7 @@ section.note-list {
    width: 100%;
    height: 130px;
    border-radius: 8px;
-   background-color: #F9F9F9;
+   background-color: var(--tertiaryColor);
    overflow: hidden;
 }
 

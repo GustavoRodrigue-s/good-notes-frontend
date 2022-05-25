@@ -2,7 +2,7 @@ header {
    font-family: var(--fontDefault); 
    position: relative;
    background: #fff;
-   border-bottom: 1px solid #DBDBDB; 
+   border-bottom: 1px solid var(--colorLine); 
    padding: 5px 34px; 
 }
 
@@ -18,7 +18,7 @@ a.link-logo {
 }
 
 .button-signIn {
-   color: var(--colorGray);
+   color: var(--paragraphColor);
    background: transparent;
    box-shadow: none;
 }
@@ -51,7 +51,7 @@ a.link-logo {
 
 .pipe-header {
    margin-right: 13px;
-   color: #DBDBDB;
+   color: var(--colorLine);
 }
 .container-content-header {
    display: flex;
@@ -74,7 +74,7 @@ a.link-logo {
    display: none;
 }
 
-/* USER LOGGED IN */
+/* ---------- User Logged In ---------- */
 
 .container-isLoggedIn {
    width: 70px;
@@ -110,5 +110,5 @@ a.link-logo {
 }
 
 .container-isLoggedIn > ul > li:hover {
-   background-color: rgb(240, 240, 240);
+   background-color: var(--tertiaryColor);
 }
