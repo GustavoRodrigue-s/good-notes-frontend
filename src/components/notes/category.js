@@ -1,4 +1,4 @@
-export function createCategoryNetwork({ networkTemplate }) {
+export function createCategoryNetwork(networkTemplate) {
    const state = {
       observers: [],
       currentRequestId: 0,
@@ -322,7 +322,7 @@ export function createCategoryList() {
 
       const categoryElement = createCategoryElement({ isItNewCategory: true });     
 
-      notifyAll('creatingNewCategory', { 
+      notifyAll('render', { 
          item: categoryElement, 
          list: state.categoryList
       });

@@ -87,16 +87,15 @@ export default function createNoteRepository() {
       return state.selectedNoteId;
    }
 
-   const setSelectedNoteId = ({ noteElement }) => {
-      const id = noteElement.dataset.id;
-      state.selectedNoteId = id;
+   const setSelectedNoteId = ({ noteId }) => {
+      state.selectedNoteId = noteId;
    }
 
    const deleteItem = (currentCategoryId, noteId) => {
       const { notes } = state.storage;
 
       const newNoteList = notes.filter(({ id, categoryId }) => 
-         id !== +noteId && currentCategoryId !== categoryId);
+            id !== +noteId && currentCategoryId !== categoryId);
 
       state.storage.notes = newNoteList;
    }
