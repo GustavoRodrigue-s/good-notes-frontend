@@ -64,7 +64,7 @@ export function createNoteNetwork(networkTemplate, repository) {
          body: { categoryId: category.id }
       });
 
-      notes && repository.setAllItems(notes);
+      notes && repository.setNotes(notes);
 
       category.notesReceived = true;
       category.waitingForNotes = false;
@@ -79,7 +79,7 @@ export function createNoteNetwork(networkTemplate, repository) {
    const createNote = async ({ selectedCategoryId }) => {
       const id = setRequestId();
 
-      const newNote = repository.setItem(selectedCategoryId);
+      const newNote = repository.create(selectedCategoryId);
 
       try {
          notifyAll('creatingNote', newNote);
@@ -103,7 +103,7 @@ export function createNoteNetwork(networkTemplate, repository) {
    const deleteNote = async ({ selectedCategoryId, selectedNoteId }) => {
       const id = setRequestId();
 
-      const note = repository.getItem(selectedNoteId);
+      const note = repository.get('note', selectedNoteId);
       
       try {
          notifyAll('delete', { 
@@ -111,7 +111,7 @@ export function createNoteNetwork(networkTemplate, repository) {
             list: note.element.parentElement
          });
 
-         repository.deleteItem(selectedCategoryId, selectedNoteId);
+         repository.deleteNote(selectedCategoryId, selectedNoteId);
 
          await networkTemplate({
             route: 'deleteNote',
@@ -132,7 +132,7 @@ export function createNoteNetwork(networkTemplate, repository) {
       const noteClone = { ...note };
 
       try {
-         repository.updateItem(note, newNoteValues);
+         repository.update(note, newNoteValues);
 
          notifyAll('updating', newNoteValues);
 
@@ -196,7 +196,7 @@ export function createNoteNetwork(networkTemplate, repository) {
          getNotes({ category });
       },
       shouldCreateNote() {
-         const selectedCategoryId = repository.getSelectedCategoryId();
+         const { selectedCategoryId } = repository.get('selectedIds');
          const isGettingCategories = state.gettingNotes;
 
          if (!selectedCategoryId || isGettingCategories || !state.availableToAddNote) {
@@ -210,8 +210,7 @@ export function createNoteNetwork(networkTemplate, repository) {
          createNote({ selectedCategoryId });
       },
       shouldDeleteNote() {
-         const selectedCategoryId = repository.getSelectedCategoryId();
-         const selectedNoteId = repository.getSelectedNoteId();
+         const { selectedCategoryId, selectedNoteId } = repository.get('selectedIds');
 
          if (!selectedCategoryId || !selectedNoteId) {
             return
@@ -220,14 +219,13 @@ export function createNoteNetwork(networkTemplate, repository) {
          deleteNote({ selectedCategoryId, selectedNoteId });
       },
       shouldUpdateNote({ currentNoteForm }) {
-         const selectedCategoryId = repository.getSelectedCategoryId();
-         const selectedNoteId = repository.getSelectedNoteId();
+         const { selectedCategoryId, selectedNoteId} = repository.get('selectedIds');
 
          if (!selectedNoteId || !selectedCategoryId) {
             return
          }
 
-         const note = repository.getItem(selectedNoteId);
+         const note = repository.get('note', selectedNoteId);
 
          if (!note) {
             return
@@ -255,7 +253,7 @@ export function createNoteNetwork(networkTemplate, repository) {
          updateNote(note, newNoteValues);
       },
       shouldHideLoading({ id }) {
-         const selectedCategoryId = repository.getSelectedCategoryId();
+         const { selectedCategoryId } = repository.get('selectedIds');
 
          if (id === selectedCategoryId) {
             state.loading.classList.remove('show');
@@ -309,7 +307,7 @@ export function createCurrentNote(repository) {
    const showSection = ({ noteId, noteListTitle }) => {
       state.currentNote.classList.remove('hide');
 
-      const note = repository.getItem(noteId);
+      const note = repository.get('note', noteId);
 
       setCurrentNoteDatas(note);
 
@@ -410,21 +408,21 @@ export function createCurrentNote(repository) {
 
    const dispatch = {
       shouldSetNewLastModification({ noteId, lastModification }) {
-         const selectedNoteId = repository.getSelectedNoteId();
+         const { selectedNoteId } = repository.get('selectedIds');
 
          if (noteId === selectedNoteId) {
             setNewModifications(lastModification);
          }
       },
       shouldHideCurrentNote({ categoryId }) {
-         const selectedCategoryId = repository.getSelectedCategoryId();
+         const { selectedCategoryId } = repository.get('selectedIds');
 
          if (categoryId === selectedCategoryId) {
             hideSection();
          }
       },
       shouldUpdateCategoryName({ categoryId, newCategoryName }) {
-         const selectedCategoryId = repository.getSelectedCategoryId();
+         const { selectedCategoryId } = repository.get('selectedIds');
 
          if (categoryId === selectedCategoryId) {
             updatePathName({ categoryName: newCategoryName });
@@ -549,7 +547,7 @@ export function createNoteList(repository) {
       noteElement.querySelector('.title').innerText = title;
       noteElement.querySelector('.summary').innerText = summary;
 
-      notifyAll('updatedListNote', { 
+      notifyAll('update', { 
          item: noteElement, 
          list: state.noteList 
       });
@@ -593,27 +591,27 @@ export function createNoteList(repository) {
 
    const dispatch = {
       shouldRenderNotes({ categoryId }) {
-         const selectedCategoryId = repository.getSelectedCategoryId();
+         const { selectedCategoryId } = repository.get('selectedIds');
 
          if (!categoryId || categoryId !== selectedCategoryId) {
             return
          }
 
-         const hasNotes = repository.getAllItems(categoryId);
+         const hasNotes = repository.get('notes', categoryId);
 
          hasNotes.length
             ? renderNotes(hasNotes)
             : notifyAll('noNotesFoundInRepository', { categoryId });
       },
       shouldHideNoteList({ categoryId }) {
-         const selectedCategoryId = repository.getSelectedCategoryId();
+         const { selectedCategoryId } = repository.get('selectedIds');
 
          if (categoryId === selectedCategoryId) {
             hideSection();
          }
       },
       shouldUpdateCategoryName({ categoryId, newCategoryName }) {
-         const selectedCategoryId = repository.getSelectedCategoryId();
+         const { selectedCategoryId } = repository.get('selectedIds');
 
          if (categoryId === selectedCategoryId) {
             updateSectionTitle(newCategoryName);

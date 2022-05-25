@@ -238,6 +238,7 @@ export default function createNoteApp({ api }) {
    currentNote.subscribe('showPopupDelete', popupConfirmDeletion.showPopup);
    currentNote.subscribe('showPopupDelete', noteNetwork.setNoteConfirmationDeletion);
    currentNote.subscribe('click', noteNetwork.networkListener);
+   currentNote.subscribe('update', noteNetwork.shouldUpdateNote);
    currentNote.subscribe('autosave', noteNetwork.shouldUpdateNote);
 
    categoryNetwork.getCategories();

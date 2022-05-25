@@ -2,10 +2,7 @@ export default function createNoteRepository() {
    const state = {
       selectedCategoryId: undefined,
       selectedNoteId: undefined,
-
-      storage: {
-         notes: []
-      }
+      notes: []
    }
 
    const handleErrors = {
@@ -26,8 +23,36 @@ export default function createNoteRepository() {
       }
    }
 
+   const acceptedGetActions = {
+      notes(currentCategoryId) {
+         const notes = state.notes;
+   
+         const currentNoteList = notes.filter(({ categoryId }) => categoryId === +currentCategoryId);
+   
+         return currentNoteList;
+      },
+      note(noteId) {
+         const notes = state.notes;
+   
+         const currentNote = notes.find(({ id }) => id === +noteId);
+   
+         return currentNote
+      },
+      selectedIds() {
+         const { selectedNoteId, selectedCategoryId } = state;
+
+         return { selectedNoteId, selectedCategoryId }
+      }
+   }
+
+   const get = (where, argument) => {
+      const data = acceptedGetActions[where](argument);
+
+      return data
+   }
+
    const insertItemFirst = noteId => {
-      const { notes } = state.storage;
+      const notes = state.notes;
 
       const updatedNoteIndex = notes.findIndex(({ id }) => id === +noteId);
 
@@ -39,7 +64,7 @@ export default function createNoteRepository() {
       notes.unshift(updatedNoteRemoved);
    }
 
-   const setItem = currentCategoryId => {
+   const create = currentCategoryId => {
       const categoryId = +currentCategoryId;
 
       const newItem = { 
@@ -49,33 +74,13 @@ export default function createNoteRepository() {
          content: 'O conteúdo da nova nota está aqui...'
       }
 
-      state.storage.notes.unshift(newItem);
+      state.notes.unshift(newItem);
 
       return newItem;
    }
 
-   const setAllItems = notes => {
-      state.storage.notes = [...notes, ...state.storage.notes];
-   }
-
-   const getAllItems = currentCategoryId => {
-      const { notes } = state.storage;
-
-      const currentNoteList = notes.filter(({ categoryId }) => categoryId === +currentCategoryId);
-
-      return currentNoteList;
-   }
-
-   const getItem = noteId => {
-      const { notes } = state.storage;
-
-      const currentNote = notes.find(({ id }) => id === +noteId);
-
-      return currentNote
-   }
-
-   const getSelectedCategoryId = () => {
-      return state.selectedCategoryId;
+   const setNotes = notes => {
+      state.notes = [...notes, ...state.notes];
    }
 
    const setSelectedCategoryId = category => {
@@ -83,32 +88,28 @@ export default function createNoteRepository() {
       state.selectedCategoryId = id;
    }
 
-   const getSelectedNoteId = () => {
-      return state.selectedNoteId;
-   }
-
    const setSelectedNoteId = ({ noteId }) => {
       state.selectedNoteId = noteId;
    }
 
-   const deleteItem = (currentCategoryId, noteId) => {
-      const { notes } = state.storage;
+   const deleteNote = (currentCategoryId, noteId) => {
+      const notes = state.notes;
 
       const newNoteList = notes.filter(({ id, categoryId }) => 
             id !== +noteId && currentCategoryId !== categoryId);
 
-      state.storage.notes = newNoteList;
+      state.notes = newNoteList;
    }
 
-   const deleteAllItems = currentCategoryId => {
-      const { notes } = state.storage;
+   const deleteNotes = currentCategoryId => {
+      const notes = state.notes;
 
       const newNoteList = notes.filter(({ categoryId }) => categoryId !== +currentCategoryId);
 
-      state.storage.notes = newNoteList;
+      state.notes = newNoteList;
    }
 
-   const updateItem = (note, { title, content, summary }) => {
+   const update = (note, { title, content, summary }) => {
       note.title = title;
       note.content = content;
       note.summary = summary;
@@ -117,16 +118,13 @@ export default function createNoteRepository() {
    }
 
    return { 
-      setAllItems,
-      setItem,
-      getAllItems,
-      getItem,
-      deleteAllItems,
-      deleteItem,
-      updateItem,
-      getSelectedCategoryId,
+      get,
+      create,
+      update,
+      setNotes,
+      deleteNote,
+      deleteNotes,
       setSelectedCategoryId,
-      getSelectedNoteId,
       setSelectedNoteId,
       handleErrors: handleErrors
    }
