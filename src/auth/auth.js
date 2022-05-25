@@ -1,73 +1,93 @@
 import api from '../services/api.js';
-import renderHeader from "../components/header/renderHeader.js";
-import renderPopupForms from "../components/popupForms/renderPopup.js";
-import renderPopupCookie from '../components/popupCookie/cookie.js'; 
-import renderPopupEditProfile from '../components/popupProfile/renderPopup.js';
-import { getCookies, createCookies, deleteCookies } from '../services/cookie.js';
+import cookie from '../components/cookie/cookie.js';
 
-const containerLoading = document.querySelector('.container-loading');
+function createAuthProvider() {
+   const state = {
+      observers: [],
+      authenticated: false,
+      loading: document.querySelector('body > .container-loading')
+   }
 
+   const subscribe = (event, listener) => {
+      state.observers.push({ event, listener });
+   }
 
-const redirectUserAsLoggedOut = () => {
-   deleteCookies();
+   const notifyAll = (event, data) => {
+      const listeners = state.observers.filter(observer => observer.event === event);
 
-   renderHeader(false);
-   renderPopupForms({ api, createCookies });
+      for (const { listener } of listeners) {
+         listener(data);
+      }
+   }
+
+   const removeLoading = () => {
+      setTimeout(() => state.loading.classList.remove('show'), 300);
+   }
+
+   const unauthenticated = () => {
+      cookie.deleteCookies();
    
-   const cookieConfirm = localStorage.getItem('cookieConfirm');
+      notifyAll('unauthenticated', { api, cookie, authenticated: false });
+   
+      cookie.shouldShowThePopup();
 
-   !cookieConfirm && renderPopupCookie();
+      removeLoading();
+   }
 
-   setTimeout(() => {
-      containerLoading.classList.toggle('show');
+   const authenticated = () => {
+      notifyAll('authenticated', { api, cookie, authenticated: true });
+
+      removeLoading();
+   }
+
+   const validateTokens = async () => {
+      try {
+         const [data, status] = await api.request({ auth: true, route: "auth" });
+
+         if(status === 401 || status === 403) {
+            throw 'The tokens is not valid.';
+         }
+
+         state.authenticated = true;
+         authenticated();
+
+      } catch (e) {
+         console.log(e);
+         unauthenticated();
+      }
+   }
+
+   const verifyAuth = async () => {
+      const shouldLog = dispatch.shouldLogTheUser();
+
+      shouldLog
+         ? await validateTokens()
+         : unauthenticated();
+
+      return state.authenticated 
+   }
+
+   const dispatch = {
+      shouldLogTheUser() {
+         const { accessToken, refreshToken } = cookie.getCookies();
       
-      if (!cookieConfirm) {
-         document.querySelector('.popup-wrapper-cookie').classList.add('show');
-      }
-   }, 300);
-}
-
-const verifyTheTokens = async () => {
-   try {
-      const { accessToken, refreshToken, apiKey } = getCookies();
-
-      api.headers["Authorization"] = `${accessToken};${refreshToken}`;
-      api.apiKey = `?key=${apiKey}`;
-
-      const [data, status] = await api.request({ auth: true, route: "required" });
-
-      if(status === 401 || status === 403) {
-         throw 'The tokens is not valid.';
-      }
-
-      if(data.newAccessToken) {
-         document.cookie = `accessToken = ${data.newAccessToken} ; path=/`;
+         const itemConnected = localStorage.getItem('keepConnected');
+         const keepConnected = itemConnected && JSON.parse(itemConnected);
          
-         verifyTheTokens();
-      }
+         const itemSession = sessionStorage.getItem('USER_FIRST_SESSION');
+         const userFirstSession = itemSession && JSON.parse(itemSession);
 
-      if(status === 200) {
-         renderHeader(true);
-         renderPopupEditProfile({ api, deleteCookies });
+         // rever essa regra de negócio
+         const shouldLog = accessToken && refreshToken || userFirstSession && keepConnected
 
-         setTimeout(() => containerLoading.classList.toggle('show'), 300);
+         return shouldLog
       }
-      
-   }catch(e) {
-      redirectUserAsLoggedOut();
+   }
+
+   return {
+      subscribe,
+      verifyAuth
    }
 }
 
-const { accessToken, refreshToken } = getCookies();
-
-
-const itemConnected = localStorage.getItem('keepConnected');
-const keepConnected = itemConnected && JSON.parse(itemConnected);
-
-const itemSession = sessionStorage.getItem('USER_FIRST_SESSION');
-const user_first_session = itemSession && JSON.parse(itemSession);
-
-
-!accessToken && !refreshToken || !user_first_session && !keepConnected
-   ? redirectUserAsLoggedOut()
-   : verifyTheTokens();
+export default createAuthProvider

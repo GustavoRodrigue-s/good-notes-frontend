@@ -4,8 +4,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400&display=swap');
 
-@import url('../src/components/header/header.css');
-@import url('../src/components/popupCookie/cookie.css');
+@import url('../src/components/cookie/cookie.css');
 @import url('../src/components/popupForms/popup.css');
 @import url('../src/components/popupProfile/popup.css');
 
@@ -48,6 +47,10 @@ a {
    cursor: pointer;
 }
 
+button svg, button div, button span, button img {
+   pointer-events: none !important;
+}
+
 /* STYLES DEFAULTS --------------- */
 
 .container-limiter {
@@ -68,9 +71,9 @@ a {
    border: none;
    cursor: pointer;
    transition: 0.3s;
-   font-weight: 400;
-   font-family: var(--fontDefault);
+   font: 400 1.6rem var(--fontDefault);
    background-color: var(--accentColor);
+   box-shadow: 0 0 10px #0066ff2a;
    color: #fff;
    border-radius: 8px;
 }
@@ -96,14 +99,14 @@ a {
 }
 
 .close-popup:hover {
-   background-color: rgb(235, 235, 235);
+   background-color: #ebebeb;
 }
 
 /* INPUT DEFAULT */
 
 .input-default {
    outline: none;
-   border: 1px solid #00000028;
+   border: 1px solid #DBDBDB;
    background: transparent;
    color: var(--colorGray);
    width: 100%;
@@ -138,8 +141,8 @@ a {
 }
 
 .input-and-message.error .input-default:focus + label,
-.input-and-message.error label:focus {
-   color: #D9000C;
+.input-and-message.error label:focus, .input-and-message.error label {
+   color: #D9000C !important;
 }
 
 /* LOADING */
@@ -161,13 +164,13 @@ a {
    to { transform: rotateZ(360deg) }
 }
 
-.container-loading > div {
+.container-loading > div, .container-auto-save .loading {
    height: 45px;
    width: 45px;
    border-radius: 50%;
    border: 2.5px solid rgb(209, 209, 209);
    border-top-color: rgba(0, 0, 0, 0.767);
-   animation: spinLoading 0.6s linear infinite;
+   animation: spinLoading 0.5s linear infinite;
 }
 
 .container-loading.show {
@@ -183,12 +186,12 @@ a {
    left: 0;
    width: 100%;
    height: 100%;
-   background: rgba(0, 0, 0, 0.482);
+   background: rgba(0, 0, 0, 0.425);
    z-index: 99999;
    visibility: hidden;
    opacity: 0;
-   transition: 0.3s;
    overflow: hidden;
+   transition: 0.3s;
 }
 
 .popup-wrapper.show {
@@ -223,7 +226,7 @@ a {
    height: auto;
    background: #fff;
    border-radius: 20px;
-   padding: 40px;
+   padding: 40px 20px;
    transform: scale(0.9);  
    visibility: hidden; 
    opacity: 0;
@@ -236,7 +239,9 @@ a {
 
 .popup-wrapper.show > .overlay-signIn.show > .popup-signIn,
 .popup-wrapper.show > .overlay-signUp.show > .popup-signUp,
-.popup-wrapper-cookie.show .popup {
+.popup-wrapper-cookie.show .popup,
+.popup-wrapper-confirm-delete.show .popup,
+.popup-wrapper-cloud-error.show .popup {
    transform: scale(1);
    visibility: visible;
    opacity: 1;
@@ -343,6 +348,120 @@ footer {
    background-color: #fff;
 }
 
+/* TOOL TIP */
+
+span.tooltip {
+   position: absolute;
+   right: 55px;
+   z-index: 9999;
+   padding: 5px;
+   background: #000;
+   color: #fff;
+   border-radius: 5px;
+   text-align: center;
+   transform: translateX(20px);
+   visibility: hidden;
+   opacity: 0;
+   transition: 0.3s;
+}
+
+span.tooltip::before {
+   content: '';
+   position: absolute;
+   top: 50%;
+   transform: translateY(-50%);
+   right: -9px;
+   border: 5px solid;
+   border-color: transparent transparent transparent #000;
+}
+
+/* DROP DOWN DEFAULT */
+
+.container-dropDown {
+   position: relative;
+}
+
+.container-dropDown > button {
+   width: 100%;
+   height: 100%;
+}
+
+.btn-dropDown {
+   border: none;
+   background: transparent;
+   outline: none;
+   cursor: pointer;
+   border-radius: 5px;
+   transition: 0.3s;
+}
+
+.btn-dropDown::before {
+   visibility: hidden;
+   opacity: 0;
+}
+
+.btn-dropDown.active::before {
+   visibility: visible;
+   opacity: 1;
+}
+
+.list-dropDown {
+   background-color: #fff;
+   border: 1px solid #D4D4D4;
+   box-shadow: none;
+   border-radius: 8px;
+   padding: 5px;
+   position: absolute;
+   z-index: 9999;
+   left: 50%;
+   color: var(--colorGray);
+   transition: 0.25s;
+   
+   opacity: 0;
+   visibility: hidden;
+   transform: translate(-50%, 20px);
+   will-change: transform;
+}
+
+.btn-dropDown.active ~ .list-dropDown {
+   opacity: 1;
+   visibility: visible;
+   transform: translate(-50%, 40px);
+   box-shadow: 0 0 5px rgba(0, 0, 0, 0.185);
+}
+
+.list-dropDown > li {
+   width: 100%;
+   color: #000;
+   cursor: pointer;
+   padding: 7px 10px;
+   border-radius: 5px;
+   font-size: 1.6rem;
+   transition: 0.2s;
+   white-space: nowrap;
+}
+
+.list-dropDown hr {
+   display: block;
+   height: 1px;
+   background-color: #D4D4D4;
+   border: none;
+   margin: 0 2px;
+}
+
+
+/* WRAPPER DEFAULT */
+
+.btn-wrapper-default::before {
+   content: '';
+   position: fixed;
+   inset: 0;
+   width: 100%;
+   height: 100%;
+   z-index: 9999;
+   cursor: initial;
+}
+
 /* RESPONSIVE */
 
 @media (max-width: 550px) {
@@ -367,45 +486,3 @@ footer {
       transition: 0.2s !important;
    }
 }
-
-/* 
-   
-   To do list
-
-   separar as regras de negócio usando o then e catch. --- feito
-   Responsive popup edit account (IU). --- feito
-   add jwt token validation. --- feito
-   add container error in the popup edit profile. --- feito
-   isolar as features com o jwt na pasta services backend. --- feito
-   add padding main home responsivo. --- feito
-   reduzir as request do edit profile quando já fez uma request --- feito
-   para logar auto, validar se o token está correto --- feito
-   reduzir argumentos classe User backend. --- feito
-   erro token registro --- feito
-   melhorar código auth. --- feito
-   refatorar backend regras de negócio usando try catch. --- fetio
-   criar a rota /refresh (token). --- feito
-   resolver todos problemas com o access token e refresh token --- feito
-   adicionar a feature de manter conectado. --- feito
-   implementar a api key. --- feito
-   melhorar o delete session token. --- feito
-   popup política de cookies. --- feito
-   deploy no heroku. --- feito
-   mudar as regras de negócio do front para o backend. --- feito
-   lidar com sql injection. --- feito
-   adicionar data de registro de usuário. --- feito
-   adicionar feature de editar e deletar conta --- feito.
-   usar métodos static no backend --- feito.
-   aplicar a arquitetura MVC no backend --- fetito.
-   mudar o nome das pastas popupForms > popupForms (exemplo) --- feito.
-   criar um js para automatizar o uso das requests --- feito.
-   separar as funcs cookies o auth.js. --- feito
-   
-
-   utilizar o base64 para encode e decode do bd.
-   lidar com xss (quando precisamos printar no body (Notes)).
-   não depender de serviços externos (lordicon).
-   pensar em importar as folhas css pelo js.
-   criar a IU da criação de notas.
-   
-*/

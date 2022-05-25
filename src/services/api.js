@@ -1,19 +1,29 @@
-// Default request api
+import cookie from "../components/cookie/cookie.js";
 
-const api = {
-   baseUrl: 'https://good-notes-backend.herokuapp.com/',
+function createApiNetwork() {
+   const state = {
+      baseUrl: 'http://192.168.0.3:5000/',
+      headers: {
+         "Content-Type": "application/json"
+      }
+   }
 
-   headers: {
-      "Content-Type": "application/json"
-   },
+   const setAuthorization = () => {
+      const { accessToken, refreshToken } = cookie.getCookies();
+   
+      state.headers["Authorization"] = `${accessToken};${refreshToken}`;
+   }
 
-   async request({ method, route, body }) {
+   const requestTemplate = async ({ auth, method, route, body }) => {
+      if (auth) {
+         setAuthorization();
+      }
 
-      const currentUrl = `${api.baseUrl}${route}${api.apiKey ? api.apiKey : ''}`;
+      const currentUrl = `${state.baseUrl}${route}`;
 
       const options = {
-         "method": method || "GET",
-         headers: api.headers
+         method: method || "GET",
+         headers: state.headers
       }
 
       if (body) {
@@ -28,6 +38,38 @@ const api = {
 
       return response.json();
    }
+
+   const request = async props => {
+      const getData = async (res, rej) => {
+         try {
+            const [data, status] = await requestTemplate(props);
+
+            dispatch.shouldGetTheDataAgain({ data, status, res, rej, getData });
+
+         } catch (e) {
+            rej(e);
+         }
+      }
+
+      return new Promise(getData);
+   }
+
+   const dispatch = {
+      shouldGetTheDataAgain({ data, status, res, rej, getData }) {
+         if (!data.newAccessToken) {
+            res([data, status]);
+         } else {
+            cookie.setNewAccessToken(data.newAccessToken);
+            getData(res, rej);
+         }
+      }
+   }
+
+   return {
+      request
+   }
 }
+
+const api = createApiNetwork();
 
 export default api
