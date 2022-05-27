@@ -3,6 +3,7 @@ section.note-list {
    padding: 20px;
    border-right: 1px solid var(--colorLine); 
    overflow-y: auto;
+   background-color: #fff;
 } 
 
 .note-list h1 {
@@ -14,6 +15,12 @@ section.note-list {
 
 .note-list > li:not(.note-list > li:first-child) {
    margin-top: 20px;
+}
+
+.container-section-notes {
+   display: flex;
+   gap: 15px;
+   align-items: center;
 }
 
 /* ---------- Add Button ---------- */

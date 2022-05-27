@@ -35,12 +35,19 @@
 
    <main>
       <div class="note-app">
-         <section class="categories">
+         <section class="categories show">
             <div>
-               <div class="container-search">
+               <div class="header">
+                  <div class="container-search">
+                     <div>
+                        <img src="./images/search_icon.svg" alt="search_icon" />
+                        <input class="input-search-categories" type="search" name="inputSearch" placeholder="Pesquisar categoria..." autocomplete="off" />
+                     </div>
+                  </div>
                   <div>
-                     <img src="./images/search_icon.svg" alt="search_icon" />
-                     <input class="input-search-categories" type="search" name="inputSearch" placeholder="Pesquisar categoria..." autocomplete="off" />
+                     <button class="arrow">
+                        <img src="./images/rightPrevious.svg" alt="Mostrar a lista de notas" />
+                     </button>
                   </div>
                </div>
                <div class="container-categories-list">
@@ -135,6 +142,9 @@
             
          <section class="note-list hide">
             <div class="container-section-notes">
+               <button class="arrow">
+                  <img src="./images/leftPrevious.svg" alt="Voltar para as categorias" />
+               </button>
                <h1 class="section-title">Notas</h1>
             </div>
             <div class="container-add-note">

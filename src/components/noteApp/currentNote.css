@@ -1,4 +1,5 @@
 section.current-note {
+   background-color: #Fff;
    position: relative;
    height: 100%;
    padding: 20px;
@@ -159,17 +160,28 @@ section.current-note, .current-note-form {
 
 /* ---------- Tool Bar ---------- */ 
 
+.tool-bar::-webkit-scrollbar {
+   height: 3px;
+   background: #F4F4F4;
+}
+.tool-bar::-webkit-scrollbar-thumb {
+   background: #dad7d7;
+}
+
 .tool-bar {
    position: sticky;
    top: -21px;
    margin: 20px 0;
-   padding: 5px 20px;
+   padding: 15px 20px;
    display: flex;
    align-items: center;
    justify-content: space-between;
+   gap: 10px;
    border-top: 1px solid var(--colorLine);
    border-bottom: 1px solid var(--colorLine);
    background-color: #fff;
+   user-select: none;
+   overflow: auto hidden;
 }
 
 .tool-bar button, .select-group > select, .select-group > input {
@@ -196,6 +208,7 @@ section.current-note, .current-note-form {
 .tool-bar > div {
    display: flex;
    gap: 15px;
+   flex-shrink: 0;
 }
 
 .tool-bar > span {

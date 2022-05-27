@@ -188,7 +188,8 @@ export function createCategoryList() {
 
       categoryList: document.querySelector('.category-list'),
       inputSearch: document.querySelector('.input-search-categories'),
-      btnAddCategory: document.querySelector('.add-new-category')
+      btnAddCategory: document.querySelector('.add-new-category'),
+      nextArrow: document.querySelector('section.categories .arrow')
    }
 
    const subscribe = (event, listener) => {
@@ -330,6 +331,19 @@ export function createCategoryList() {
       categoryElement.querySelector('input').focus();
    }
 
+   const showArrow = () => {
+      state.nextArrow.classList.add('show');
+   }
+
+   const goToTheNoteList = e => {
+      if (e.type === 'touchstart') e.preventDefault();
+
+      document.querySelector('section.categories').classList.remove('show');
+
+      document.querySelector('section.note-list').classList.remove('hide');
+      document.querySelector('section.note-list').classList.add('show');
+   }
+
    const dispatch = {
       shouldSearchItem() {
          if (state.gettingCategories) {
@@ -367,7 +381,11 @@ export function createCategoryList() {
    state.btnAddCategory.addEventListener('click', dispatch.shouldCreateElement);
    state.inputSearch.addEventListener('input', dispatch.shouldSearchItem);
 
+   state.nextArrow.addEventListener('click', goToTheNoteList);
+   state.nextArrow.addEventListener('touchstart', goToTheNoteList);
+
    return { 
+      showArrow,
       subscribe,
       renderCategories,
       resetAvailableToAddCategory

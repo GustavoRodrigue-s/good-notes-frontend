@@ -191,6 +191,8 @@ export default function createNoteApp({ api }) {
    categoryList.subscribe('click', categoryItem.categoryItemListener);
    categoryList.subscribe('render', animations.add);
 
+   // categoryList.subscribe('arrowClicked', noteList.showSection);
+
    categoryNetwork.subscribe('obtainedCategories', categoryList.renderCategories);
    categoryNetwork.subscribe('dispatchCalled', categoryItem.removeConfirmation);
    categoryNetwork.subscribe('update', noteList.shouldUpdateCategoryName);
@@ -206,6 +208,7 @@ export default function createNoteApp({ api }) {
    categoryItem.subscribe('categorySelected', noteRepository.setSelectedCategoryId);
    categoryItem.subscribe('categorySelected', currentNote.hideSection);
    categoryItem.subscribe('categorySelected', noteList.showSection);
+   categoryItem.subscribe('categorySelected', categoryList.showArrow);
    categoryItem.subscribe('showPopupDelete', popupConfirmDeletion.showPopup);
    categoryItem.subscribe('showPopupDelete', categoryNetwork.setCategoryConfirmationDeletion);
    categoryItem.subscribe('cancelAddition', animations.remove);

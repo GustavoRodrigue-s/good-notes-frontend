@@ -1,6 +1,12 @@
 main, .note-app {
    height: calc(100vh - 61px);
-   min-height: 600px;
+   overflow: hidden !important;
+}
+
+body, html {
+   width: 100%;
+   height: 100vh;
+   overflow: hidden;
 }
 
 .note-app {
@@ -12,6 +18,7 @@ main, .note-app {
 
 .note-app > section {
    scroll-behavior: smooth;
+   transition: 0.3s;
 }
 
 .note-app > section::-webkit-scrollbar, .current-note > .main::-webkit-scrollbar {
@@ -49,15 +56,15 @@ main, .note-app {
 }
 
 section.categories {
-   width: 20%;
+   flex: 1 0 330px;
 }
 
 section.note-list {
-   width: 35%;
+   flex: 1 1 600px;
 }
 
 section.current-note {
-   width: 45%;
+   flex: 1 0 800px;
 }
 
 .container-add-categorie > button, .container-add-note > button {
@@ -318,4 +325,76 @@ section.current-note {
 
 .container-notes-not-found.show {
    display: block;
+}
+
+/* ---------- Responsive ---------- */
+
+.note-app .arrow {
+   border: none;
+   outline: none;
+   background-color: transparent;
+   cursor: pointer;
+   display: none;
+}
+
+.note-app .arrow > img {
+   width: 40px;
+}
+
+.note-app > section.show, section.note-list.active {
+   transform: translate(0);
+   visibility: visible;
+   opacity: 1;
+} 
+
+@media (max-width: 1580px) {   
+   section.current-note {
+      flex: 1 1 900px;
+   }
+}
+
+@media (max-width: 1350px) {
+   section.categories, section.note-list {
+      flex: 1 0 40%;
+      width: 40%;
+   }
+
+   section.note-list .arrow, section.categories .arrow.show {
+      display: inline-block;
+   }
+
+   section.current-note {
+      flex: 1 1 60%;
+      width: 60%;
+      position: relative;
+      z-index: 10;
+   }
+
+   section.note-list {
+      position: absolute;
+      visibility: hidden;
+      opacity: 0;
+      transform: translate(100%, 20%);
+   }
+
+   section.categories {
+      opacity: 0;
+      transform: translateX(-100%);
+   }
+}
+
+@media (max-width: 930px) {
+   .note-app > section {
+      position: absolute !important;
+      flex: 1 0 100%;
+      width: 100%;
+   }
+
+   section.current-note {
+      transform: translate(100%, 20%);
+   }
+
+   section.note-list.active {
+      transform: translateX(-100%);
+   }
 }

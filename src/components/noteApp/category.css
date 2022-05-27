@@ -21,7 +21,17 @@ section.categories {
    margin-top: 10px;
 }
 
+section.categories .header {
+   display: flex;
+   align-items: center;
+   gap: 15px;
+}
+
 /* ---------- Search Category ---------- */
+
+.container-search {
+   flex: 1 1;
+}
 
 .container-search, .category-item, .container-add-categorie, .container-category-loading li {
    border-radius: 8px;

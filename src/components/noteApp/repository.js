@@ -19,7 +19,7 @@ export default function createNoteRepository() {
          state.storage.notes.unshift(note);
       },
       update(note, noteClone) {
-         updateItem(note, noteClone);
+         update(note, noteClone);
       }
    }
 

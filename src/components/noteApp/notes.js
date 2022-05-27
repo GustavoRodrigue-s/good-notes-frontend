@@ -305,6 +305,12 @@ export function createCurrentNote(repository) {
    }
 
    const showSection = ({ noteId, noteListTitle }) => {
+      const noteList = document.querySelector('section.note-list');
+
+      noteList.classList.remove('show');
+      noteList.classList.add('active');
+
+      state.currentNote.classList.add('show');
       state.currentNote.classList.remove('hide');
 
       const note = repository.get('note', noteId);
@@ -410,7 +416,7 @@ export function createCurrentNote(repository) {
       shouldSetNewLastModification({ noteId, lastModification }) {
          const { selectedNoteId } = repository.get('selectedIds');
 
-         if (noteId === selectedNoteId) {
+         if (noteId === +selectedNoteId) {
             setNewModifications(lastModification);
          }
       },
@@ -469,7 +475,8 @@ export function createNoteList(repository) {
       noteList: document.querySelector('section.note-list ul.note-list'),
       sectionNoteList: document.querySelector('section.note-list'),
       notSelectedItem: document.querySelector('.container-not-selected'),
-      btnAddNote: document.querySelector('.container-add-note > button')
+      btnAddNote: document.querySelector('.container-add-note > button'),
+      arrowPrevious: document.querySelector('section.note-list .arrow')
    }
 
    const subscribe = (event, listener) => {
@@ -491,7 +498,11 @@ export function createNoteList(repository) {
 
       updateSectionTitle(categoryName);
 
+      document.querySelector('section.categories').classList.remove('show');
+
       state.sectionNoteList.classList.remove('hide');
+      state.sectionNoteList.classList.add('show');
+      
       state.notSelectedItem.classList.add('hide');
 
       state.sectionNoteList.scrollTop = 0;
@@ -589,6 +600,14 @@ export function createNoteList(repository) {
       dispatch.shouldRenderNotes({ categoryId: categoryElement.dataset.id });
    }
 
+   const backToCategories = e => {
+      if (e.type === 'touchstart') e.preventDefault();
+
+      state.sectionNoteList.classList.remove('show', 'active');
+
+      document.querySelector('section.categories').classList.add('show');
+   }
+
    const dispatch = {
       shouldRenderNotes({ categoryId }) {
          const { selectedCategoryId } = repository.get('selectedIds');
@@ -627,6 +646,8 @@ export function createNoteList(repository) {
    }
    
    state.noteList.addEventListener('click', noteListListener);
+   state.arrowPrevious.addEventListener('click', backToCategories);
+   state.arrowPrevious.addEventListener('touchstart', backToCategories);
    state.btnAddNote.addEventListener('click', noteListListener);
 
    return { 
