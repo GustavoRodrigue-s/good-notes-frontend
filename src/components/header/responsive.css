@@ -45,7 +45,7 @@
       position: absolute;
       z-index: 9999;
       background: #fff;
-      box-shadow: 0;
+      box-shadow: none;
       right: 10px;
       top: 80%;
       height: auto;
@@ -64,6 +64,11 @@
       visibility: visible;
       transform: translateY(15px);
       box-shadow: 0 0 10px var(--primaryBoxShadow);
+   }
+
+   .button-hamburguer.active ~ .popup-hamburguer ul.list-dropDown {
+      opacity: 1;
+      visibility: visible;
    }
    
    .popup-hamburguer button, .nav-hamburguer a {
@@ -143,8 +148,6 @@
       box-shadow: none;
       background-color: transparent;
       position: static;
-      opacity: 1;
-      visibility: visible;
       transform: none;
    }
 
