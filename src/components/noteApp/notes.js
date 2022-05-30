@@ -552,9 +552,7 @@ export function createNoteList(repository) {
       title.innerText = categoryName;
    }
 
-   const updateListItem = ({ id, title, summary }) => {
-      const noteElement = state.noteList.querySelector(`li[data-id="${id}"]`);
-
+   const updateListItem = ({ noteElement, title, summary }) => {
       noteElement.querySelector('.title').innerText = title;
       noteElement.querySelector('.summary').innerText = summary;
 
@@ -635,6 +633,13 @@ export function createNoteList(repository) {
          if (categoryId === selectedCategoryId) {
             updateSectionTitle(newCategoryName);
          }
+      },
+      shouldUpdateListItem({ id, ...values }) {
+         const noteElement = state.noteList.querySelector(`li[data-id="${id}"]`);
+
+         if (noteElement) {
+            updateListItem({ noteElement, ...values });
+         }
       }
    }
 
@@ -655,7 +660,7 @@ export function createNoteList(repository) {
       showSection,
       renderNote,
       setDate,
-      updateListItem,
+      shouldUpdateListItem: dispatch.shouldUpdateListItem,
       shouldRenderNotes: dispatch.shouldRenderNotes,
       shouldUpdateCategoryName: dispatch.shouldUpdateCategoryName,
       shouldHideNoteList: dispatch.shouldHideNoteList
