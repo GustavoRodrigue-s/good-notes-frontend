@@ -34,16 +34,15 @@
 
 html {
    font-size: 62.5%;
-   overflow-x: hidden;
 }
 
 html, body {
    height: 100%;
+   overflow-x: hidden;
 }
 
 body {
    font: 1.6em 'Inter', sans-serif;
-   overflow-x: hidden;
    font-family: var(--fontDefault);
    scroll-behavior: smooth;
 }

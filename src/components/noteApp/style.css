@@ -1,15 +1,16 @@
-main, .note-app {
-   height: calc(100vh - 61px);
-   overflow: hidden !important;
+html {
+   height: 100%;
+   overflow: hidden;
 }
 
-body, html {
-   width: 100%;
-   height: 100vh;
+main {
+   height: calc(100% - 61px);
    overflow: hidden;
 }
 
 .note-app {
+   position: relative;
+   height: 100%;
    width: 100%;
    display: flex;
 }
@@ -19,6 +20,7 @@ body, html {
 .note-app > section {
    scroll-behavior: smooth;
    transition: 0.3s;
+   height: 100%;
 }
 
 .note-app > section::-webkit-scrollbar, .current-note > .main::-webkit-scrollbar {
@@ -296,7 +298,6 @@ section.current-note {
    display: block;
 }
 
-
 /* ---------- MESSAGES ---------- */
 
 .container-not-selected {
@@ -327,6 +328,49 @@ section.current-note {
    display: block;
 }
 
+/* ---------- Menu Mobile ---------- */
+
+/* Colorcar em baixo osse menu */
+
+.container-nav-mobile {
+   border-top: 1px solid var(--colorLine);
+   width: 100%;
+   background-color: #fff;
+   position: fixed;
+   bottom: 0;
+   display: none;
+}
+
+.container-nav-mobile button {
+   cursor: pointer;
+   outline: none;
+   border: none;
+   background-color: transparent;
+}
+
+.mobile-btn-list {
+   display: flex;
+}
+
+.mobile-btn-list > li {
+   flex: 1 1;
+}
+
+.mobile-btn-list button {
+   width: 100%;
+   height: 50px;
+   color: #B5B5B5;
+   background-color: transparent;
+}
+
+.mobile-btn-list > li.available svg {
+   color: #5F5F5F;
+}
+
+.mobile-btn-list > li.selected svg {
+   color: var(--primaryColor);
+}
+
 /* ---------- Responsive ---------- */
 
 .note-app .arrow {
@@ -350,6 +394,10 @@ section.current-note {
 @media (max-width: 1580px) {   
    section.current-note {
       flex: 1 1 900px;
+   }
+
+   .note-app > section {
+      padding: 10px !important;
    }
 }
 
@@ -383,7 +431,15 @@ section.current-note {
    }
 }
 
-@media (max-width: 930px) {
+@media (max-width: 900px) {
+   .container-not-selected, section.note-list .arrow, section.categories .arrow.show {
+      display: none;
+   }
+
+   main {
+      height: calc(100% - 111px);
+   }
+
    .note-app > section {
       position: absolute !important;
       flex: 1 0 100%;
@@ -396,5 +452,9 @@ section.current-note {
 
    section.note-list.active {
       transform: translateX(-100%);
+   }
+
+   .container-nav-mobile {
+      display: block;
    }
 }

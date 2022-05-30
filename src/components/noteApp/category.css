@@ -1,5 +1,4 @@
 section.categories {
-   height: 100%;
    background: var(--tertiaryColor);
    display: flex;
    flex-direction: column;

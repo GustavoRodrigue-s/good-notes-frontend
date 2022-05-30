@@ -1,7 +1,6 @@
 section.current-note {
    background-color: #Fff;
    position: relative;
-   height: 100%;
    padding: 20px;
    overflow: hidden !important;
    transition: 0.2s;
