@@ -1,5 +1,6 @@
 section.categories {
    background: var(--tertiaryColor);
+   border-right: 1px solid var(--colorLine);
    display: flex;
    flex-direction: column;
    justify-content: space-between;

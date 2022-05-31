@@ -11,12 +11,12 @@ export default function createNoteRepository() {
 
          const newNoteList = notes.filter(note => 'id' in note);
 
-         state.storage.notes = newNoteList;
+         state.notes = newNoteList;
       },
       delete(note) {
          note.element.classList.remove('selected');
 
-         state.storage.notes.unshift(note);
+         state.notes.unshift(note);
       },
       update(note, noteClone) {
          update(note, noteClone);

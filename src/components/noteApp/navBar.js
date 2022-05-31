@@ -23,15 +23,27 @@ export default function createNavMobile() {
       li.classList.add('selected');
    }
 
-   const setBtnNoteListAvailability = () => {
+   // refatorar essas func
+   const setNoteListAvailability = () => {
       const liNoteList = state.navList.children[1];
 
       liNoteList.classList.add('available');
 
+      acceptedSectionActions.showNoteList();
+
       selectLi(liNoteList);
    }
 
-   const setBtnCurrentNoteAvailability = () => {
+   // essa func deveriar ser um reset
+   const removeNoteListAvailability = () => {
+      const liNoteList = state.navList.children[1];
+      const liCurrentNote = state.navList.children[2];
+
+      liNoteList.classList.remove('available', 'selected');
+      liCurrentNote.classList.remove('available', 'selected');
+   }
+
+   const setCurrentNoteAvailability = () => {
       const liCurrentNote = state.navList.children[2];
 
       liCurrentNote.classList.add('available');
@@ -39,6 +51,25 @@ export default function createNavMobile() {
       selectLi(liCurrentNote);
    }
 
+   const removeCurrentNoteAvailability = () => {
+      const liCurrentNote = state.navList.children[2];
+
+      liCurrentNote.classList.remove('available', 'selected')
+
+      setNoteListAvailability();
+   }
+
+   const selecteAndShowCategories = () => {
+      acceptedSectionActions.showCategories();
+      selectLi(state.navList.children[0]);
+   }
+
+   const selecteAndShowNoteList = () => {
+      acceptedSectionActions.showNoteList();
+      selectLi(state.navList.children[1]);
+   }
+
+   // reaproveitar showSections das outras camadas
    const acceptedSectionActions = {
       showCategories() {
          resetSectionsVisibility();
@@ -93,7 +124,11 @@ export default function createNavMobile() {
    state.navList.addEventListener('click', navListener);
 
    return { 
-      setBtnNoteListAvailability,
-      setBtnCurrentNoteAvailability
+      setNoteListAvailability,
+      removeNoteListAvailability,
+      setCurrentNoteAvailability,
+      removeCurrentNoteAvailability,
+      selecteAndShowCategories,
+      selecteAndShowNoteList
    }
 }

@@ -193,13 +193,15 @@ export default function createNoteApp({ api }) {
    categoryList.subscribe('click', categoryNetwork.networkListener);
    categoryList.subscribe('click', categoryItem.categoryItemListener);
    categoryList.subscribe('render', animations.add);
+   categoryList.subscribe('arrowClicked', navMobile.selecteAndShowNoteList);
+   categoryList.subscribe('hiddenSection', navMobile.removeNoteListAvailability);
 
    categoryNetwork.subscribe('obtainedCategories', categoryList.renderCategories);
    categoryNetwork.subscribe('dispatchCalled', categoryItem.removeConfirmation);
    categoryNetwork.subscribe('update', noteList.shouldUpdateCategoryName);
    categoryNetwork.subscribe('update', currentNote.shouldUpdateCategoryName);
-   categoryNetwork.subscribe('delete', noteList.shouldHideNoteList);
    categoryNetwork.subscribe('delete', currentNote.shouldHideCurrentNote);
+   categoryNetwork.subscribe('delete', noteList.shouldHideNoteList);
    categoryNetwork.subscribe('delete', animations.remove);
    categoryNetwork.subscribe('setDeletion', popupConfirmDeletion.setTheDeleteTarget);
    categoryNetwork.subscribe('deletionError', animations.add);
@@ -210,7 +212,11 @@ export default function createNoteApp({ api }) {
    categoryItem.subscribe('categorySelected', currentNote.hideSection);
    categoryItem.subscribe('categorySelected', noteList.showSection);
    categoryItem.subscribe('categorySelected', categoryList.showArrow);
-   categoryItem.subscribe('categorySelected', navMobile.setBtnNoteListAvailability);
+
+   // refatorar isso
+   categoryItem.subscribe('categorySelected', navMobile.removeCurrentNoteAvailability);
+   categoryItem.subscribe('categorySelected', navMobile.setNoteListAvailability);
+   
    categoryItem.subscribe('showPopupDelete', popupConfirmDeletion.showPopup);
    categoryItem.subscribe('showPopupDelete', categoryNetwork.setCategoryConfirmationDeletion);
    categoryItem.subscribe('cancelAddition', animations.remove);
@@ -224,6 +230,7 @@ export default function createNoteApp({ api }) {
    noteNetwork.subscribe('setDeletion', popupConfirmDeletion.setTheDeleteTarget);
    noteNetwork.subscribe('delete', currentNote.hideSection);
    noteNetwork.subscribe('delete', animations.remove);
+   noteNetwork.subscribe('delete', navMobile.removeCurrentNoteAvailability);
    noteNetwork.subscribe('updateError', noteList.shouldUpdateListItem);
    noteNetwork.subscribe('updateError', currentNote.setCurrentNoteDatas);
    noteNetwork.subscribe('deletionError', animations.add);
@@ -236,10 +243,12 @@ export default function createNoteApp({ api }) {
    noteList.subscribe('render', animations.add);
    noteList.subscribe('update', animations.update);
    noteList.subscribe('noNotesFoundInRepository', noteNetwork.shouldGetNotes);
+   noteList.subscribe('arrowClicked', navMobile.selecteAndShowCategories);
+   noteList.subscribe('hiddenSection', navMobile.removeNoteListAvailability);
 
    noteItem.subscribe('noteSelected', noteRepository.setSelectedNoteId);
    noteItem.subscribe('noteSelected', currentNote.showSection);
-   noteItem.subscribe('noteSelected', navMobile.setBtnCurrentNoteAvailability);
+   noteItem.subscribe('noteSelected', navMobile.setCurrentNoteAvailability);
 
    currentNote.subscribe('showPopupDelete', popupConfirmDeletion.showPopup);
    currentNote.subscribe('showPopupDelete', noteNetwork.setNoteConfirmationDeletion);

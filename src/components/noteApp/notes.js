@@ -301,6 +301,8 @@ export function createCurrentNote(repository) {
       const btnDropDown = state.currentNote.querySelector('.btn-dropDown');
 
       state.currentNote.classList.add('hide');
+      state.currentNote.classList.remove('show');
+
       btnDropDown.classList.remove('active');
    }
 
@@ -511,8 +513,11 @@ export function createNoteList(repository) {
    const hideSection = () => {
       state.noteList.innerHTML = '';
       state.sectionNoteList.classList.add('hide');
+      state.sectionNoteList.classList.remove('show', 'active');
       
       state.notSelectedItem.classList.remove('hide');
+
+      notifyAll('hiddenSection');
    }
 
    const createNoteElement = ({ isItNewNote, ...note }) => {
@@ -601,9 +606,7 @@ export function createNoteList(repository) {
    const backToCategories = e => {
       if (e.type === 'touchstart') e.preventDefault();
 
-      state.sectionNoteList.classList.remove('show', 'active');
-
-      document.querySelector('section.categories').classList.add('show');
+      notifyAll('arrowClicked');
    }
 
    const dispatch = {
@@ -625,6 +628,8 @@ export function createNoteList(repository) {
 
          if (categoryId === selectedCategoryId) {
             hideSection();
+
+            notifyAll('hiddenSection');
          }
       },
       shouldUpdateCategoryName({ categoryId, newCategoryName }) {

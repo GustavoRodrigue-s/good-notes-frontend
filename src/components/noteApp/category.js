@@ -338,10 +338,7 @@ export function createCategoryList() {
    const goToTheNoteList = e => {
       if (e.type === 'touchstart') e.preventDefault();
 
-      document.querySelector('section.categories').classList.remove('show');
-
-      document.querySelector('section.note-list').classList.remove('hide');
-      document.querySelector('section.note-list').classList.add('show');
+      notifyAll('arrowClicked');
    }
 
    const dispatch = {

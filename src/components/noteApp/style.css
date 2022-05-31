@@ -367,6 +367,22 @@ section.current-note {
    height: 60px;
    color: #B5B5B5;
    background-color: transparent;
+   position: relative;
+   overflow: hidden;
+}
+
+.mobile-btn-list button::before {
+   content: '';
+   position: absolute;
+   z-index: -1;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%) scale(0);
+   background-color: rgb(188, 215, 255);
+   border-radius: 50%;
+   transition: 0.3s;
+   width: 200px;
+   height: 200px;
 }
 
 .mobile-btn-list > li span {
@@ -379,6 +395,17 @@ section.current-note {
 
 .mobile-btn-list > li.selected :is(svg, span)  {
    color: var(--primaryColor);
+}
+
+@keyframes btnMobileNavAnimation {
+   from { transform: translate(-50%, -50%) scale(0); }
+   to { transform: translate(-50%, -50%) scale(1); }
+}
+
+.mobile-btn-list > li.selected button::before {
+   animation: btnMobileNavAnimation 0.3s ease;
+   transition-delay: opacity 0.7s;
+   opacity: 0;
 }
 
 /* ---------- Responsive ---------- */
