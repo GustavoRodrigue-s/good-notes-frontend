@@ -2,6 +2,7 @@ import { createCategoryNetwork, createCategoryList, createCategoryItem } from '.
 import { createNoteList, createNoteItem, createCurrentNote, createNoteNetwork } from './notes.js';
 import createNoteRepository from './repository.js';
 import createAnimations from './animations.js';
+import createNavMobile from './navBar.js';
 
 export default function createNoteApp({ api }) {
 
@@ -186,6 +187,8 @@ export default function createNoteApp({ api }) {
    const currentNote = createCurrentNote(noteRepository);
    const noteNetwork = createNoteNetwork(networkTemplate, noteRepository);
 
+   const navMobile = createNavMobile();
+
    // Connecting layers
    categoryList.subscribe('click', categoryNetwork.networkListener);
    categoryList.subscribe('click', categoryItem.categoryItemListener);
@@ -207,6 +210,7 @@ export default function createNoteApp({ api }) {
    categoryItem.subscribe('categorySelected', currentNote.hideSection);
    categoryItem.subscribe('categorySelected', noteList.showSection);
    categoryItem.subscribe('categorySelected', categoryList.showArrow);
+   categoryItem.subscribe('categorySelected', navMobile.setBtnNoteListAvailability);
    categoryItem.subscribe('showPopupDelete', popupConfirmDeletion.showPopup);
    categoryItem.subscribe('showPopupDelete', categoryNetwork.setCategoryConfirmationDeletion);
    categoryItem.subscribe('cancelAddition', animations.remove);
@@ -235,6 +239,7 @@ export default function createNoteApp({ api }) {
 
    noteItem.subscribe('noteSelected', noteRepository.setSelectedNoteId);
    noteItem.subscribe('noteSelected', currentNote.showSection);
+   noteItem.subscribe('noteSelected', navMobile.setBtnCurrentNoteAvailability);
 
    currentNote.subscribe('showPopupDelete', popupConfirmDeletion.showPopup);
    currentNote.subscribe('showPopupDelete', noteNetwork.setNoteConfirmationDeletion);

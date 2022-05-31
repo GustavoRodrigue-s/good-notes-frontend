@@ -155,13 +155,20 @@ section.current-note {
    opacity: 0;
 }
 
-@keyframes fadeLoading {
-   from { visibility: hidden; opacity: 0; }
-   to { visibility: visible; opacity: 1; }
+.container-auto-save.success > .success {
+   transition: 0.3s;
+   transition-delay: 0.3s;
+   visibility: visible;
+   opacity: 1;
 }
 
-.container-auto-save.success > .success {
-   animation: fadeLoading 0.3s 0.3s forwards;
+@keyframes fadeOutLogin {
+   from { visibility: visible; opacity: 1; }
+   to { visibility: hidden; opacity: 0; }
+}
+
+.container-auto-save.hide > .success {
+   animation: fadeOutLogin 0.3s 1.5s forwards;
 }
 
 .container-auto-save.show {
@@ -330,13 +337,12 @@ section.current-note {
 
 /* ---------- Menu Mobile ---------- */
 
-/* Colorcar em baixo osse menu */
-
 .container-nav-mobile {
    border-top: 1px solid var(--colorLine);
    width: 100%;
    background-color: #fff;
    position: fixed;
+   z-index: 999;
    bottom: 0;
    display: none;
 }
@@ -358,16 +364,20 @@ section.current-note {
 
 .mobile-btn-list button {
    width: 100%;
-   height: 50px;
+   height: 60px;
    color: #B5B5B5;
    background-color: transparent;
+}
+
+.mobile-btn-list > li span {
+   font: 500 1.2rem var(--fontDefault);
 }
 
 .mobile-btn-list > li.available svg {
    color: #5F5F5F;
 }
 
-.mobile-btn-list > li.selected svg {
+.mobile-btn-list > li.selected :is(svg, span)  {
    color: var(--primaryColor);
 }
 
@@ -437,13 +447,14 @@ section.current-note {
    }
 
    main {
-      height: calc(100% - 111px);
+      height: calc(100% - 121px);
    }
 
    .note-app > section {
       position: absolute !important;
       flex: 1 0 100%;
       width: 100%;
+      opacity: 1;
    }
 
    section.current-note {
