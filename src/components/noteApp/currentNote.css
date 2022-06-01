@@ -257,7 +257,6 @@ font[size="7"] { font-size: 32px; }
 
 /* ---------- Current Note Content ---------- */
 
-/* aumentar o padding bottom */
 .note-content {
    height: 100%;
    padding: 0 20px;
