@@ -31,7 +31,7 @@ main {
    background: #dad7d7;
 }
 
-.note-app > section.hide, .note-app > div.hide {
+.note-app > section.hide, .container-not-selected {
    opacity: 0;
    visibility: hidden;
 }
@@ -468,6 +468,14 @@ section.current-note {
       opacity: 0;
       transform: translateX(-100%);
    }
+
+   .container-auto-save {
+      right: 10px;
+      bottom: 10px;
+      width: 230px;
+      height: 45px;
+      font-size: 1.4rem;
+   }
 }
 
 @media (max-width: 900px) {
@@ -496,5 +504,19 @@ section.current-note {
 
    .container-nav-mobile {
       display: block;
+   }
+
+   .container-auto-save {
+      transform: translateX(-50%);
+      left: 50%;
+      bottom: 70px;
+      width: 210px;
+      height: 40px;
+      font-size: 1.3rem;
+   }
+
+   .container-auto-save :is(.loading, svg) {
+      width: 20px;
+      height: 20px;
    }
 }
