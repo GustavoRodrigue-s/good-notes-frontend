@@ -10,8 +10,6 @@ section.current-note {
 
 .current-note > .main {
    padding: 20px 0;
-   /* min-height: 500px;
-   height: 100%; */
 }
 
 section.current-note, .current-note-form {
