@@ -283,7 +283,6 @@ export function createCurrentNote(repository) {
       currentNote: document.querySelector('section.current-note'),
       currentNoteForm: document.querySelector('.current-note .current-note-form'), 
       toolBar: document.querySelector('section.current-note .tool-bar'),
-      noteContent: document.querySelector('.area-note-content')
    }
 
    const subscribe = (event, listener) => {
