@@ -282,7 +282,8 @@ export function createCurrentNote(repository) {
       autoSave: setTimeout,
       currentNote: document.querySelector('section.current-note'),
       currentNoteForm: document.querySelector('.current-note .current-note-form'), 
-      toolBar: document.querySelector('section.current-note .tool-bar')
+      toolBar: document.querySelector('section.current-note .tool-bar'),
+      noteContent: document.querySelector('.area-note-content')
    }
 
    const subscribe = (event, listener) => {
@@ -330,6 +331,8 @@ export function createCurrentNote(repository) {
       selectFontSize.value = '3';
       selectFontFamily.value = 'arial';
       inputColor.value = '#000000';
+
+      state.toolBar.scrollLeft = 0;
    }
 
    const setCurrentNoteDatas = ({ title, summary, content, lastModification }) => {

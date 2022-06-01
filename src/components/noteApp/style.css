@@ -313,8 +313,9 @@ section.current-note {
    gap: 15px;
    position: fixed;
    z-index: -1;
-   width: 100%;
-   height: 85%;
+   width: calc(100% - 330px);
+   height: 100%;
+   top: 0;
    right: 0;
    transition: opacity 2s;
 }
@@ -342,7 +343,6 @@ section.current-note {
    width: 100%;
    background-color: #fff;
    position: fixed;
-   z-index: 999;
    bottom: 0;
    display: none;
 }
@@ -423,7 +423,7 @@ section.current-note {
 }
 
 .note-app > section.show, section.note-list.active {
-   transform: translate(0);
+   transform: none;
    visibility: visible;
    opacity: 1;
 } 
@@ -439,6 +439,10 @@ section.current-note {
 }
 
 @media (max-width: 1350px) {
+   .container-not-selected {
+      width: 60%;
+   }
+
    section.categories, section.note-list {
       flex: 1 0 40%;
       width: 40%;
@@ -451,8 +455,6 @@ section.current-note {
    section.current-note {
       flex: 1 1 60%;
       width: 60%;
-      position: relative;
-      z-index: 10;
    }
 
    section.note-list {

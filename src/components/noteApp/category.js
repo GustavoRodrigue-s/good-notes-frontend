@@ -335,6 +335,10 @@ export function createCategoryList() {
       state.nextArrow.classList.add('show');
    }
 
+   const hideArrow = () => {
+      state.nextArrow.classList.remove('show');
+   }
+
    const goToTheNoteList = e => {
       if (e.type === 'touchstart') e.preventDefault();
 
@@ -383,6 +387,7 @@ export function createCategoryList() {
 
    return { 
       showArrow,
+      hideArrow,
       subscribe,
       renderCategories,
       resetAvailableToAddCategory

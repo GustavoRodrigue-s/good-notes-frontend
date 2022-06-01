@@ -199,8 +199,11 @@ export default function createNoteApp({ api }) {
    categoryNetwork.subscribe('obtainedCategories', categoryList.renderCategories);
    categoryNetwork.subscribe('dispatchCalled', categoryItem.removeConfirmation);
    categoryNetwork.subscribe('update', noteList.shouldUpdateCategoryName);
+
+   // refatorar essas func
    categoryNetwork.subscribe('update', currentNote.shouldUpdateCategoryName);
    categoryNetwork.subscribe('delete', currentNote.shouldHideCurrentNote);
+   
    categoryNetwork.subscribe('delete', noteList.shouldHideNoteList);
    categoryNetwork.subscribe('delete', animations.remove);
    categoryNetwork.subscribe('setDeletion', popupConfirmDeletion.setTheDeleteTarget);
@@ -245,6 +248,7 @@ export default function createNoteApp({ api }) {
    noteList.subscribe('noNotesFoundInRepository', noteNetwork.shouldGetNotes);
    noteList.subscribe('arrowClicked', navMobile.selecteAndShowCategories);
    noteList.subscribe('hiddenSection', navMobile.removeNoteListAvailability);
+   noteList.subscribe('hiddenSection', categoryList.hideArrow);
 
    noteItem.subscribe('noteSelected', noteRepository.setSelectedNoteId);
    noteItem.subscribe('noteSelected', currentNote.showSection);

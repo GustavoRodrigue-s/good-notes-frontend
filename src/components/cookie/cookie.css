@@ -14,13 +14,13 @@
    transition-delay: 0.3s;
 }
 
-.header {
+.popup-cookie .header {
    display: flex;
    align-items: center;
    justify-content: space-between;
 }
 
-.title {
+.popup-cookie .title {
    font-size: 2rem;
    display: flex;
    align-items: center;
