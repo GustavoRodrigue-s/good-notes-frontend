@@ -315,6 +315,8 @@ export function createCurrentNote(repository) {
       state.currentNote.classList.add('show');
       state.currentNote.classList.remove('hide');
 
+      state.currentNote.scrollTop = 0;
+
       const note = repository.get('note', noteId);
 
       setCurrentNoteDatas(note);

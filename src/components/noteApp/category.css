@@ -24,7 +24,6 @@ section.categories {
 section.categories .header {
    display: flex;
    align-items: center;
-   gap: 15px;
 }
 
 /* ---------- Search Category ---------- */

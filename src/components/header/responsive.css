@@ -156,6 +156,12 @@
    }
 } 
 
+@media (max-width: 430px) {
+   header {
+      height: 50px;
+   }
+}
+
 @media (max-width: 320px) {
    .good-notes-logo > svg {
       display: none;

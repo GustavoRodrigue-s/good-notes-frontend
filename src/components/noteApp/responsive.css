@@ -1,0 +1,213 @@
+.note-app .arrow {
+   border: none;
+   outline: none;
+   background-color: transparent;
+   cursor: pointer;
+   display: none;
+}
+
+.note-app .arrow > img {
+   width: 40px;
+}
+
+.note-app > section.show, section.note-list.active {
+   transform: none;
+   visibility: visible;
+   opacity: 1;
+} 
+
+@media (max-width: 1580px) {   
+   section.current-note {
+      flex: 1 1 900px;
+   }
+
+   .note-app > section {
+      padding: 10px !important;
+   }
+
+   .container-categories-list  {
+      margin-top: 30px !important;
+   }
+}
+
+@media (max-width: 1350px) {
+   .container-not-selected {
+      width: 60%;
+   }
+
+   section.categories, section.note-list {
+      flex: 1 0 40%;
+      width: 40%;
+   }
+
+   section.categories .header {
+      gap: 15px;
+   }
+
+   section.note-list .arrow, section.categories .arrow.show {
+      display: inline-block;
+   }
+
+   section.current-note {
+      flex: 1 1 60%;
+      width: 60%;
+   }
+
+   section.note-list {
+      position: absolute;
+      visibility: hidden;
+      opacity: 0;
+      transform: translate(100%, 20%);
+   }
+
+   section.categories {
+      opacity: 0;
+      transform: translateX(-100%);
+   }
+
+   .container-auto-save {
+      right: 10px;
+      bottom: 10px;
+      width: 230px;
+      height: 45px;
+      font-size: 1.4rem;
+   }
+}
+
+@media (max-width: 900px) {
+   section.categories .header {
+      gap: 0;
+   }
+
+   .container-not-selected, section.note-list .arrow, section.categories .arrow.show {
+      display: none;
+   }
+
+   main {
+      height: calc(100% - 121px);
+   }
+
+   .note-app > section {
+      position: absolute !important;
+      flex: 1 0 100%;
+      width: 100%;
+      opacity: 1;
+   }
+
+   section.current-note {
+      transform: translate(100%, 20%);
+   }
+
+   section.note-list.active {
+      transform: translateX(-100%);
+   }
+
+   .container-nav-mobile {
+      display: block;
+   }
+
+   .container-auto-save {
+      transform: translateX(-50%);
+      left: 50%;
+      bottom: 70px;
+      width: 210px;
+      height: 40px;
+      font-size: 1.3rem;
+   }
+
+   .container-auto-save :is(.loading, svg) {
+      width: 20px;
+      height: 20px;
+   }
+
+   .container-auto-save.show {
+      transform: translateX(-50%) scale(1);
+   }
+   
+   .container-auto-save.hide {
+      transform: translateX(-50%) scale(0.9);
+   }
+   
+   .container-auto-save.reset {
+      transform: translateX(-50%) scale(0.8);
+   }
+
+   section.current-note .tool-bar {
+      padding: 2px 5px;
+      margin: 0 !important;
+      width: 100%;
+      position: fixed;
+      top: unset;
+      bottom: 60px;
+      left: 0;
+      opacity: 0;
+   }
+
+   @keyframes toolBarIn {
+      from { opacity: 0; transform: translateY(100%); }
+      to { opacity: 1; transform: translateY(0); }
+   }
+
+   section.current-note.show .tool-bar {
+      animation: toolBarIn 0.3s 0.3s forwards;
+   }
+}
+
+@media (max-width: 430px) {
+   html {
+      font-size: 55%;
+   }
+
+   main {
+      height: calc(100% - 111px);
+   }
+
+   .note-item {
+      height: 120px !important;
+   }
+
+   .popup-cloud-error {
+      padding: 30px 20px !important;
+   }
+
+   .popup-cloud-error h1 {
+      font-size: 2.5rem;
+   }
+
+   section.current-note .main {
+      padding-top: 10px;
+   }
+
+   section.current-note .container-summary {
+      margin: 5px 0;
+   }
+}
+
+@media (max-width: 320px) {
+   main {
+      height: calc(100% - 101px);
+   }
+
+   .mobile-btn-list button {
+      height: 50px;
+   }
+
+   .mobile-btn-list button.btn-categories svg {
+      width: 24px;
+      height: 18px;
+   }
+
+   .mobile-btn-list button.btn-notes svg {
+      width: 22px;
+      height: 20px;
+   }
+
+   .mobile-btn-list button.btn-current-note svg {
+      width: 18px;
+      height: 18px;
+   }
+
+   section.current-note .tool-bar {
+      bottom: 50px;
+   }
+}
