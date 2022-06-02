@@ -170,7 +170,7 @@ section.current-note, .current-note-form {
 
 .tool-bar {
    position: sticky;
-   top: -11px;
+   top: -21px;
    flex-shrink: 0;
    margin-top: 20px;
    padding: 5px 20px;
@@ -179,6 +179,7 @@ section.current-note, .current-note-form {
    justify-content: space-between;
    gap: 10px;
    border-top: 1px solid var(--colorLine);
+   border-bottom: 1px solid var(--colorLine);
    background-color: #fff;
    user-select: none;
    overflow: auto hidden;
@@ -257,7 +258,6 @@ font[size="7"] { font-size: 32px; }
 .note-content {
    height: 100%;
    padding: 0 20px;
-   border-top: 1px solid var(--colorLine);
 }
 
 .note-content > .area-note-content {

@@ -76,7 +76,7 @@ section.current-note {
    justify-content: flex-start;
    align-items: center;
    gap: 10px;
-   font: 1.6rem var(--fontDefault), sans-serif;
+   font: 500 1.6rem var(--fontDefault), sans-serif;
 }
 
 .container-add-note > button {
@@ -278,12 +278,13 @@ section.current-note {
 
 .btn-cancel-delete {
    background-color: #fff;
-   color: #000;
+   color: var(--paragraphColor);
    margin-top: 5px;
 }
 
 .btn-confirm-delete {
    background-color: rgb(255, 77, 77);
+   box-shadow: 0 13.5px 64px hsl(0deg 0% 30% / 20%);
 }
 
 .btn-confirm-delete:hover {
@@ -380,6 +381,10 @@ section.current-note {
 
 .mobile-btn-list > li.available svg {
    color: #5F5F5F;
+}
+
+.mobile-btn-list > li.available button {
+   color: #7c7c7c;
 }
 
 .mobile-btn-list > li.selected :is(svg, span)  {

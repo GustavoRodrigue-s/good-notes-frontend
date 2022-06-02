@@ -28,6 +28,10 @@
    .container-categories-list  {
       margin-top: 30px !important;
    }
+
+   section.current-note .tool-bar {
+      top: -11px;
+   }
 }
 
 @media (max-width: 1350px) {
@@ -138,6 +142,7 @@
       width: 100%;
       position: fixed;
       top: unset;
+      border-bottom: none;
       bottom: 60px;
       left: 0;
       opacity: 0;
@@ -154,6 +159,7 @@
 
    .note-content {
       margin-top: 10px;
+      border-top: 1px solid var(--colorLine);
    }
 }
 

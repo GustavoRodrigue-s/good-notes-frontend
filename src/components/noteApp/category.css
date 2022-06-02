@@ -1,6 +1,7 @@
 section.categories {
+   position: relative;
+   z-index: 10;
    background: var(--tertiaryColor);
-   border-right: 1px solid var(--colorLine);
    display: flex;
    flex-direction: column;
    justify-content: space-between;
@@ -30,6 +31,7 @@ section.categories .header {
 
 .container-search {
    flex: 1 1;
+   box-shadow: 0 13.5px 64px hsl(0deg 0% 30% / 3%);
 }
 
 .container-search, .category-item, .container-add-categorie, .container-category-loading li {
@@ -73,8 +75,13 @@ section.categories .header {
    display: none;
 }
 
-.category-item.selected, .category-item.confirmation, .category-item:hover {
+.category-item.confirmation {
    background-color: #fff;
+}
+
+.category-item.selected {
+   background-color: #fff;
+   box-shadow: 0 13.5px 64px hsl(0deg 0% 30% / 7%);
 }
 
 .category-item.selected :is(.btn-name svg, .btn-name input) {
@@ -90,7 +97,7 @@ section.categories .header {
    transition: 0.3s;
 }
 
-.category-item:hover .btn-dropDown svg, .category-item.selected .btn-dropDown svg {
+.category-item:hover :is(.btn-dropDown svg, .btn-name svg, input), .category-item.selected .btn-dropDown svg {
    fill: #000;
    color: #000;
 }
@@ -137,7 +144,7 @@ section.categories .header {
 }
 
 .btn-name input {
-   font-size: 1.6rem;
+   font: 1.6rem var(--fontDefault);
    pointer-events: none;
    height: 100%;
    padding: 0;
