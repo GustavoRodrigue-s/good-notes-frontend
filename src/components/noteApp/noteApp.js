@@ -2,7 +2,7 @@ import { createCategoryNetwork, createCategoryList, createCategoryItem } from '.
 import { createNoteList, createNoteItem, createCurrentNote, createNoteNetwork } from './notes.js';
 import createNoteRepository from './repository.js';
 import createAnimations from './animations.js';
-import createNavMobile from './navBar.js';
+import createMobileNav from './mobileNav.js';
 
 export default function createNoteApp({ api }) {
 
@@ -187,13 +187,13 @@ export default function createNoteApp({ api }) {
    const currentNote = createCurrentNote(noteRepository);
    const noteNetwork = createNoteNetwork(networkTemplate, noteRepository);
 
-   const navMobile = createNavMobile();
+   const mobileNav = createMobileNav();
 
    // Connecting layers
    categoryList.subscribe('click', categoryNetwork.networkListener);
    categoryList.subscribe('click', categoryItem.categoryItemListener);
    categoryList.subscribe('render', animations.add);
-   categoryList.subscribe('arrowClicked', navMobile.showNoteList);
+   categoryList.subscribe('arrowClicked', mobileNav.showNoteList);
 
    categoryNetwork.subscribe('obtainedCategories', categoryList.renderCategories);
    categoryNetwork.subscribe('dispatchCalled', categoryItem.removeConfirmation);
@@ -211,8 +211,8 @@ export default function createNoteApp({ api }) {
    categoryItem.subscribe('categorySelected', currentNote.hideSection);
    categoryItem.subscribe('categorySelected', noteList.showSection);
    categoryItem.subscribe('categorySelected', categoryList.showArrow);
-   categoryItem.subscribe('categorySelected', navMobile.hideCurrentNote);
-   categoryItem.subscribe('categorySelected', navMobile.showNoteList);
+   categoryItem.subscribe('categorySelected', mobileNav.hideCurrentNote);
+   categoryItem.subscribe('categorySelected', mobileNav.showNoteList);
    categoryItem.subscribe('showPopupDelete', popupConfirmDeletion.showPopup);
    categoryItem.subscribe('showPopupDelete', categoryNetwork.setCategoryConfirmationDeletion);
    categoryItem.subscribe('cancelAddition', animations.remove);
@@ -226,8 +226,8 @@ export default function createNoteApp({ api }) {
    noteNetwork.subscribe('setDeletion', popupConfirmDeletion.setTheDeleteTarget);
    noteNetwork.subscribe('delete', currentNote.hideSection);
    noteNetwork.subscribe('delete', animations.remove);
-   noteNetwork.subscribe('delete', navMobile.hideCurrentNote);
-   noteNetwork.subscribe('delete', navMobile.showNoteList);
+   noteNetwork.subscribe('delete', mobileNav.hideCurrentNote);
+   noteNetwork.subscribe('delete', mobileNav.showNoteList);
    noteNetwork.subscribe('updateError', noteList.shouldUpdateListItem);
    noteNetwork.subscribe('updateError', currentNote.setCurrentNoteDatas);
    noteNetwork.subscribe('deletionError', animations.add);
@@ -240,22 +240,22 @@ export default function createNoteApp({ api }) {
    noteList.subscribe('render', animations.add);
    noteList.subscribe('update', animations.update);
    noteList.subscribe('noNotesFoundInRepository', noteNetwork.shouldGetNotes);
-   noteList.subscribe('arrowClicked', navMobile.showCategories);
-   noteList.subscribe('hiddenSection', navMobile.hideNoteList);
+   noteList.subscribe('arrowClicked', mobileNav.showCategories);
+   noteList.subscribe('hiddenSection', mobileNav.hideNoteList);
    noteList.subscribe('hiddenSection', categoryList.hideArrow);
-   noteList.subscribe('showingSection', navMobile.showNoteList);
+   noteList.subscribe('showingSection', mobileNav.showNoteList);
 
    noteItem.subscribe('noteSelected', noteRepository.setSelectedNoteId);
    noteItem.subscribe('noteSelected', currentNote.showSection);
-   noteItem.subscribe('noteSelected', navMobile.showCurrentNote);
+   noteItem.subscribe('noteSelected', mobileNav.showCurrentNote);
 
    currentNote.subscribe('showPopupDelete', popupConfirmDeletion.showPopup);
    currentNote.subscribe('showPopupDelete', noteNetwork.setNoteConfirmationDeletion);
    currentNote.subscribe('click', noteNetwork.networkListener);
    currentNote.subscribe('update', noteNetwork.shouldUpdateNote);
    currentNote.subscribe('autosave', noteNetwork.shouldUpdateNote);
-   currentNote.subscribe('showingSection', navMobile.showCurrentNote);
-   currentNote.subscribe('hiddenSection', navMobile.hideCurrentNote);
+   currentNote.subscribe('showingSection', mobileNav.showCurrentNote);
+   currentNote.subscribe('hiddenSection', mobileNav.hideCurrentNote);
 
    categoryNetwork.getCategories();
 

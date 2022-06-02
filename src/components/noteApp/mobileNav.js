@@ -1,4 +1,4 @@
-export default function createNavMobile() {
+export default function createMobileNav() {
    const state = {
       navList: document.querySelector('.mobile-btn-list'),
       categories: document.querySelector('section.categories'),
