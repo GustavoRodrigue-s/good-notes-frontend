@@ -1,6 +1,5 @@
 export default function createNavMobile() {
    const state = {
-      mobileNav: document.querySelector('.container-nav-mobile'),
       navList: document.querySelector('.mobile-btn-list'),
       categories: document.querySelector('section.categories'),
       noteList: document.querySelector('section.note-list'),
@@ -24,72 +23,56 @@ export default function createNavMobile() {
       li.classList.add('selected');
    }
 
-   // refatorar essas func
-   const setNoteListAvailability = () => {
-      const liNoteList = state.navList.children[1];
-
-      liNoteList.classList.add('available');
-
-      acceptedSectionActions.showNoteList();
-
-      selectLi(liNoteList);
-   }
-
-   // essa func deveriar ser um reset
-   const removeNoteListAvailability = () => {
-      const liNoteList = state.navList.children[1];
-      const liCurrentNote = state.navList.children[2];
-
-      liNoteList.classList.remove('available', 'selected');
-      liCurrentNote.classList.remove('available', 'selected');
-   }
-
-   const setCurrentNoteAvailability = () => {
-      const liCurrentNote = state.navList.children[2];
-
-      liCurrentNote.classList.add('available');
-
-      selectLi(liCurrentNote);
-   }
-
-   const removeCurrentNoteAvailability = () => {
-      const liCurrentNote = state.navList.children[2];
-
-      liCurrentNote.classList.remove('available', 'selected')
-
-      setNoteListAvailability();
-   }
-
-   const selecteAndShowCategories = () => {
-      acceptedSectionActions.showCategories();
-      selectLi(state.navList.children[0]);
-   }
-
-   const selecteAndShowNoteList = () => {
-      acceptedSectionActions.showNoteList();
-      selectLi(state.navList.children[1]);
-   }
-
-   // reaproveitar showSections das outras camadas
    const acceptedSectionActions = {
       showCategories() {
          resetSectionsVisibility();
 
          state.categories.classList.add('show');
+
+         selectLi(state.navList.children[0]);
       }, 
       showNoteList() {
          resetSectionsVisibility();
 
+         const liNoteList = state.navList.children[1];
+
+         liNoteList.classList.add('available');
+
          state.noteList.classList.remove('hide');
          state.noteList.classList.add('show');
+
+         selectLi(liNoteList);
       },
       showCurrentNote() {
          resetSectionsVisibility();
+
+         const liCurrentNote = state.navList.children[2];
+
+         liCurrentNote.classList.add('available');
 
          state.noteList.classList.add('active');
 
          state.currentNote.classList.remove('hide');
          state.currentNote.classList.add('show');
+
+         selectLi(state.navList.children[2]);
+      },
+      hideCategories() {
+         state.categories.classList.remove('show');
+      },
+      hideNoteList() {
+         const liNoteList = state.navList.children[1];
+         
+         state.noteList.classList.remove('show', 'active');
+
+         liNoteList.classList.remove('available', 'selected');
+      },
+      hideCurrentNote() {
+         const liCurrentNote = state.navList.children[2];
+
+         state.currentNote.classList.remove('show');
+
+         liCurrentNote.classList.remove('available', 'selected');
       }
    }
 
@@ -105,8 +88,6 @@ export default function createNavMobile() {
          if (!shouldShowSection || !shouldSelectLi) {
             return
          }
-
-         selectLi(currentLi);
 
          acceptedSectionActions[action]();
       }
@@ -125,11 +106,11 @@ export default function createNavMobile() {
    state.navList.addEventListener('click', navListener);
 
    return { 
-      setNoteListAvailability,
-      removeNoteListAvailability,
-      setCurrentNoteAvailability,
-      removeCurrentNoteAvailability,
-      selecteAndShowCategories,
-      selecteAndShowNoteList
+      showCategories: acceptedSectionActions.showCategories,
+      showCurrentNote: acceptedSectionActions.showCurrentNote,
+      showNoteList: acceptedSectionActions.showNoteList,
+      hideCategories: acceptedSectionActions.hideCategories,
+      hideNoteList: acceptedSectionActions.hideNoteList,
+      hideCurrentNote: acceptedSectionActions.hideCurrentNote
    }
 }

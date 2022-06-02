@@ -307,12 +307,8 @@ export function createCurrentNote(repository) {
    }
 
    const showSection = ({ noteId, noteListTitle }) => {
-      const noteList = document.querySelector('section.note-list');
+      notifyAll('showingSection');
 
-      noteList.classList.remove('show');
-      noteList.classList.add('active');
-
-      state.currentNote.classList.add('show');
       state.currentNote.classList.remove('hide');
 
       state.currentNote.scrollTop = 0;
@@ -431,6 +427,8 @@ export function createCurrentNote(repository) {
 
          if (categoryId === selectedCategoryId) {
             hideSection();
+
+            notifyAll('hiddenSection');
          }
       },
       shouldUpdateCategoryName({ categoryId, newCategoryName }) {
@@ -498,16 +496,13 @@ export function createNoteList(repository) {
    }
 
    const showSection = categoryElement => {
+      notifyAll('showingSection');
+
       resetNoteList(categoryElement);
 
       const categoryName = categoryElement.querySelector('input').value;
 
       updateSectionTitle(categoryName);
-
-      document.querySelector('section.categories').classList.remove('show');
-
-      state.sectionNoteList.classList.remove('hide');
-      state.sectionNoteList.classList.add('show');
       
       state.notSelectedItem.classList.add('hide');
 
@@ -516,8 +511,8 @@ export function createNoteList(repository) {
 
    const hideSection = () => {
       state.noteList.innerHTML = '';
+
       state.sectionNoteList.classList.add('hide');
-      state.sectionNoteList.classList.remove('show', 'active');
       
       state.notSelectedItem.classList.remove('hide');
 
