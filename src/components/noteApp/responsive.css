@@ -151,6 +151,10 @@
    section.current-note.show .tool-bar {
       animation: toolBarIn 0.3s 0.3s forwards;
    }
+
+   .note-content {
+      margin-top: 10px;
+   }
 }
 
 @media (max-width: 430px) {

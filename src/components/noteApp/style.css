@@ -30,7 +30,7 @@ main {
    background: #dad7d7;
 }
 
-.note-app > section.hide, .container-not-selected {
+.note-app > section.hide, .container-not-selected.hide {
    opacity: 0;
    visibility: hidden;
 }
