@@ -12,93 +12,90 @@ function createPopupProfile() {
 
       const MAXIMUM_PHOTO_SIZE = 1 * 1024 * 1024; // 1MB
 
+      const handleErrors = {
+         showPhotoError(message) {
+            const containerError = document.querySelector('.container-photo-error');
+            const spanError = containerError.querySelector('span');
+
+            const acceptedErrors = {
+               "maximum photo size"() {
+                  spanError.innerText = 'Esta foto é maior que 1MB.';
+               },
+               "image type not allowed"() {
+                  spanError.innerText = 'Formato não permitido.';
+               },
+               "request error"() {
+                  spanError.innerText = 'Houve um erro, tente novamente mais tarde!';
+               }
+            }
+
+            containerError.classList.add('show');
+
+            acceptedErrors[message]
+               ? acceptedErrors[message]()
+               : acceptedErrors['request error'];
+         },
+         showCredentialsError(errors) {
+            const hideError = (input, containerInput) => {
+               input.addEventListener('keypress', () => 
+                  containerInput.classList.remove('error'));
+            }
+
+            const showError = (input, message) => {
+               const containerInput = input.parentElement.parentElement;
+               const span = containerInput.querySelector('.container-error > span');
+
+               span.innerText = "" || message;
+
+               containerInput.classList.add('error');
+
+               hideError(input, containerInput);
+            }
+
+            const acceptedErrors = {
+               "empty input"({ input }) {
+                  showError(state.credentialsForm[input], 'Preencha este campo!');
+               },
+               "email already exists"({ input }) {
+                  showError(state.credentialsForm[input], 'Este email já existe!');
+               },
+               "username already exists"({ input }) {
+                  showError(state.credentialsForm[input], 'Este nome já existe!');
+               },
+               "request error"() {
+                  const errorMessage = state.credentialsForm.querySelector('.container-credentials-error');
+                  errorMessage.classList.add('show');
+               }
+            }
+   
+            errors.forEach(data => {
+               acceptedErrors[data.reason]
+                  ? acceptedErrors[data.reason](data)
+                  : acceptedErrors['request error']();
+            });
+         }
+      }
+      const handleSuccess = {
+         showPhotoSuccess() {
+            const containerSuccess = document.querySelector('.container-photo-success');
+            containerSuccess.classList.add('show');
+         },
+         showCredentialsSuccess() {
+            const successMessage = state.credentialsForm.querySelector('.container-credentials-success');
+            successMessage.classList.add('show');
+         }
+      }
+
       const toggleLoading = () => {
          state.loading.classList.toggle('show');
       }
-      
-      const handleErrors = {}
-      const handleSuccess = {}
 
-      const showPhotoErrorMessage = message => {
-         const containerError = document.querySelector('.container-photo-error');
-         const spanError = containerError.querySelector('span');
+      const readFileAsDataUrl = (file, callback) => {
+         const reader = new FileReader();
 
-         const errors = {
-            "maximum photo size"() {
-               spanError.innerText = 'Esta foto é maior que 1MB.';
-            },
-            "image type not allowed"() {
-               spanError.innerText = 'Formato não permitido.';
-            },
-            "request error"() {
-               spanError.innerText = 'Houve um erro, tente novamente mais tarde!';
-            }
-         }
+         reader.addEventListener('load', () => callback(reader.result));
 
-         if (errors[message]) {
-            containerError.classList.add('show');
-            errors[message]();
-         }
-      }
-
-      const showPhotoSuccessMessage = () => {
-         const containerSuccess = document.querySelector('.container-photo-success');
-         containerSuccess.classList.add('show');
-      }
-
-      const hideCredentialsErrorMessage = (input, containerInputAndMessage)  => {
-         input.addEventListener('keypress', () => 
-            containerInputAndMessage.classList.remove('error'));
-      }
-
-      const showCredentialsErrorMessage = (input, message) => {
-         const containerInputAndMessage = input.parentElement.parentElement;
-         const containerError = containerInputAndMessage.lastElementChild;
-
-         const template = `
-            <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
-               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path>
-            </svg>
-            ${message}
-         `;
-
-         containerError.innerHTML = message ? template : "";
-
-         containerInputAndMessage.classList.add('error');
-
-         hideCredentialsErrorMessage(input, containerInputAndMessage);
-      }
-
-      const handleRequestError = errors => {
-         const acceptedErrors = {
-            "empty input"({ input }) {
-               const currentInput = state.credentialsForm[input];
-               showCredentialsErrorMessage(currentInput, 'Preencha este campo!');
-            },
-            "email already exists"({ input }) {
-               const currentInput = state.credentialsForm[input];
-               showCredentialsErrorMessage(currentInput, 'Este email já existe!');
-            },
-            "username already exists"({ input }) {
-               const currentInput = state.credentialsForm[input];
-               showCredentialsErrorMessage(currentInput, 'Este nome já existe!');
-            },
-            "request error"() {
-               const errorMessage = state.credentialsForm.querySelector('.container-error-profile');
-               errorMessage.classList.add('show');
-            }
-         }
-
-         errors.forEach(data => {
-            acceptedErrors[data.reason]
-               ? acceptedErrors[data.reason](data)
-               : acceptedErrors['request error']();
-         });
-      }
-
-      const showSuccessMessage = () => {
-         const successMessage = state.credentialsForm.querySelector('.container-credentials-success');
-         successMessage.classList.add('show');
+         reader.readAsDataURL(file);
       }
 
       const setProfileData = ({ email, username, photo }) => {
@@ -117,17 +114,24 @@ function createPopupProfile() {
       }
 
       const setSavedProfileData = () => {
-         const credentials = JSON.parse(sessionStorage.getItem('credentials'));
+         const credentials = JSON.parse(sessionStorage.getItem('profileData'));
 
          setProfileData(credentials);
       }
 
       const saveProfileDatas = ({ username, email, photo }) => {
-         sessionStorage.setItem('credentials',
+         sessionStorage.setItem('profileData',
             JSON.stringify({ username, email, photo }) 
          ); 
 
          setProfileData({ username, email, photo });
+      }
+
+      const saveProfilePhoto = photoUrl => {
+         const profileData = JSON.parse(sessionStorage.getItem('profileData'));
+         profileData.photo = photoUrl;
+
+         sessionStorage.setItem('profileData', JSON.stringify(profileData));
       }
 
       const getProfileData = async () => {
@@ -145,7 +149,7 @@ function createPopupProfile() {
 
          }catch(e) {
             toggleLoading();
-            handleRequestError([{ reason: 'request error' }]);
+            handleErrors.showCredentialsError([{ reason: 'request error' }]);
          }
       }
 
@@ -163,17 +167,16 @@ function createPopupProfile() {
             toggleLoading();
    
             if (status !== 200) {
-               handleRequestError(data.reason);
-
+               handleErrors.showCredentialsError(data.reason);
                return
             }
 
             saveProfileDatas(data.newDatas);
-            showSuccessMessage();
+            handleSuccess.showCredentialsSuccess();
    
          }catch(e) {
             toggleLoading();
-            handleRequestError([{ reason: 'request error' }]);
+            handleErrors.showCredentialsError([{ reason: 'request error' }]);
          }
       }
 
@@ -191,23 +194,19 @@ function createPopupProfile() {
             toggleLoading();
 
             if (status !== 200) {
-               showPhotoErrorMessage(data.reason);
+               handleErrors.showPhotoError(data.reason);
                return
             }
 
-            const profileData = JSON.parse(sessionStorage.getItem('credentials'));
-            profileData.photo = fileData.photo;
+            saveProfilePhoto(fileData.photo);
 
-            sessionStorage.setItem('credentials', JSON.stringify(profileData));
-
-            showPhotoSuccessMessage();
+            handleSuccess.showPhotoSuccess();
 
          } catch (e) {
-            showPhotoErrorMessage('request error');
+            handleErrors.showPhotoError('request error');
          }
       }
 
-      // refatorar a duplicação
       const handlePreviewChange = e => {
          const preview = state.formPhoto.querySelector('.photoPreview');
 
@@ -218,18 +217,13 @@ function createPopupProfile() {
          document.querySelector('.container-photo-error').classList.remove('show');
          document.querySelector('.container-photo-success').classList.remove('show');
 
-         const reader = new FileReader();
-
-         reader.addEventListener('load', () => {
-            preview.setAttribute('src', reader.result);
-         });
-
-         reader.readAsDataURL(e.target.files[0]);
+         readFileAsDataUrl(e.target.files[0], photoUrl => 
+            preview.setAttribute('src', photoUrl)); 
       }
 
       const dispatch = {
          shouldRequestCredentials() {
-            sessionStorage.getItem('credentials')
+            sessionStorage.getItem('profileData')
                ? setSavedProfileData()
                : getProfileData();
          },
@@ -243,7 +237,7 @@ function createPopupProfile() {
                username: inputUsername.value.trim()
             };
             
-            const lastCredentials = JSON.parse(sessionStorage.getItem('credentials'));
+            const lastCredentials = JSON.parse(sessionStorage.getItem('profileData'));
    
             const keysOfNewCredentials = Object.keys(newCredentials);
    
@@ -257,42 +251,33 @@ function createPopupProfile() {
             e.preventDefault();
 
             const { inputPhoto } = state.formPhoto;
-            const { photo } = JSON.parse(sessionStorage.getItem('credentials'));
+            const { photo } = JSON.parse(sessionStorage.getItem('profileData'));
 
             if (!inputPhoto.value) {
                return
             }
 
             const file = inputPhoto.files[0];
+            const { size, type, name } = file;
 
-            const photoFormated = {
-               size: file.size,
-               type: file.type,
-               name: file.name
-            }
+            const photoFormated = { size, type, name };
 
             if (photoFormated.size > MAXIMUM_PHOTO_SIZE) {
-               showPhotoErrorMessage('maximum photo size');
+               handleErrors.showPhotoError('maximum photo size');
                return
             }
 
-            const reader = new FileReader();
+            readFileAsDataUrl(file, photoUrl => {
+               if (photo === photoUrl) return
 
-            reader.addEventListener('load', () => {
-               if (photo !== reader.result) {
-                  photoFormated.photo = reader.result;
-
-                  uploadPhoto(photoFormated);
-               }
+               photoFormated.photo = photoUrl;
+               uploadPhoto(photoFormated);
             });
-
-            reader.readAsDataURL(file);
          }
       }
 
       state.credentialsForm.addEventListener('submit', dispatch.shouldUpdateCredentials);
       state.formPhoto.addEventListener('submit', dispatch.shouldUploadPhoto);
-
       state.formPhoto.inputPhoto.addEventListener('change', handlePreviewChange);
 
       return { 
@@ -450,7 +435,7 @@ function createPopupProfile() {
             shouldToHide && hidePopup();
          },
          shouldActiveTheButton() {
-            const { username } = JSON.parse(sessionStorage.getItem('credentials'));
+            const { username } = JSON.parse(sessionStorage.getItem('profileData'));
             const { inputUsername, btnConfirm } = state.confirmDeletionForm; 
    
             const addOrRemove = username === inputUsername.value ? 'add' : 'remove';
@@ -581,14 +566,24 @@ function createPopupProfile() {
                         <label for="input-username">Nome de usuário</label>
                         <input type="text" class="input-username input-default" id="input-username" value="" name="inputUsername" autocomplete="off">
                      </div>
-                     <div class="container-error"></div>
+                     <div class="container-error">
+                        <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
+                           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path>
+                        </svg>
+                        <span></span>
+                     </div>
                   </div>
                   <div class="input-and-message">
                      <div class="container-input">
                         <label for="input-email">Endereço de email</label>
                         <input type="email" class="input-email input-default" id="input-email" value="" name="inputEmail" autocomplete="off">  
                      </div>
-                     <div class="container-error"></div>
+                     <div class="container-error">
+                        <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
+                           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path>
+                        </svg>
+                        <span></span>
+                     </div>
                   </div>
                   <div class="container-messages">
                      <div class="container-credentials-success container-message">
