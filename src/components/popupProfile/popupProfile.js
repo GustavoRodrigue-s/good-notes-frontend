@@ -201,7 +201,7 @@ function createPopupProfile() {
                return
             }
 
-            saveProfilePhoto(fileData.photo);
+            saveProfileData({ photo: fileData.photo });
 
             handleSuccess.showPhotoSuccess();
 
