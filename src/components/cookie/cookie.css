@@ -14,13 +14,13 @@
    transition-delay: 0.3s;
 }
 
-.header {
+.popup-cookie .header {
    display: flex;
    align-items: center;
    justify-content: space-between;
 }
 
-.title {
+.popup-cookie .title {
    font-size: 2rem;
    display: flex;
    align-items: center;
@@ -37,7 +37,7 @@
 
 .main-content p {
    font-size: 1.6rem;
-   color: var(--colorGray);
+   color: var(--paragraphColor);
 }
 
 .more-information {
@@ -72,6 +72,6 @@
 
    .main-content p {
       font-size: 1.4rem;
-      color: var(--colorGray);
+      color: var(--paragraphColor);
    }
 }

@@ -19,7 +19,7 @@ function createNoteAuth() {
    auth.subscribe('unauthenticated', redirectUser);
 
    auth.subscribe('authenticated', header.render);
-   auth.subscribe('authenticated', popupProfile.render);
+   auth.subscribe('authenticated', popupProfile.render); 
 
    auth.subscribe('authenticated', createNoteApp);
 

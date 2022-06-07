@@ -2,6 +2,7 @@ import { createCategoryNetwork, createCategoryList, createCategoryItem } from '.
 import { createNoteList, createNoteItem, createCurrentNote, createNoteNetwork } from './notes.js';
 import createNoteRepository from './repository.js';
 import createAnimations from './animations.js';
+import createMobileNav from './mobileNav.js';
 
 export default function createNoteApp({ api }) {
 
@@ -169,7 +170,7 @@ export default function createNoteApp({ api }) {
    }
 
    // core application
-   const noteRepository = createNoteRepository();
+   const noteRepository = createNoteRepository(); 
 
    // layers
    const popupLoading = createLoading();
@@ -186,17 +187,20 @@ export default function createNoteApp({ api }) {
    const currentNote = createCurrentNote(noteRepository);
    const noteNetwork = createNoteNetwork(networkTemplate, noteRepository);
 
+   const mobileNav = createMobileNav();
+
    // Connecting layers
    categoryList.subscribe('click', categoryNetwork.networkListener);
    categoryList.subscribe('click', categoryItem.categoryItemListener);
    categoryList.subscribe('render', animations.add);
+   categoryList.subscribe('arrowClicked', mobileNav.showNoteList);
 
    categoryNetwork.subscribe('obtainedCategories', categoryList.renderCategories);
    categoryNetwork.subscribe('dispatchCalled', categoryItem.removeConfirmation);
    categoryNetwork.subscribe('update', noteList.shouldUpdateCategoryName);
    categoryNetwork.subscribe('update', currentNote.shouldUpdateCategoryName);
-   categoryNetwork.subscribe('delete', noteList.shouldHideNoteList);
    categoryNetwork.subscribe('delete', currentNote.shouldHideCurrentNote);
+   categoryNetwork.subscribe('delete', noteList.shouldHideNoteList);
    categoryNetwork.subscribe('delete', animations.remove);
    categoryNetwork.subscribe('setDeletion', popupConfirmDeletion.setTheDeleteTarget);
    categoryNetwork.subscribe('deletionError', animations.add);
@@ -206,6 +210,9 @@ export default function createNoteApp({ api }) {
    categoryItem.subscribe('categorySelected', noteRepository.setSelectedCategoryId);
    categoryItem.subscribe('categorySelected', currentNote.hideSection);
    categoryItem.subscribe('categorySelected', noteList.showSection);
+   categoryItem.subscribe('categorySelected', categoryList.showArrow);
+   categoryItem.subscribe('categorySelected', mobileNav.hideCurrentNote);
+   categoryItem.subscribe('categorySelected', mobileNav.showNoteList);
    categoryItem.subscribe('showPopupDelete', popupConfirmDeletion.showPopup);
    categoryItem.subscribe('showPopupDelete', categoryNetwork.setCategoryConfirmationDeletion);
    categoryItem.subscribe('cancelAddition', animations.remove);
@@ -213,13 +220,15 @@ export default function createNoteApp({ api }) {
 
    noteNetwork.subscribe('creatingNote', noteList.renderNote);
    noteNetwork.subscribe('noteCreated', noteList.setDate);
-   noteNetwork.subscribe('updating', noteList.updateListItem);
+   noteNetwork.subscribe('updating', noteList.shouldUpdateListItem);
    noteNetwork.subscribe('updating', currentNote.shouldUpdateNoteName);
    noteNetwork.subscribe('updated', currentNote.shouldSetNewLastModification);
    noteNetwork.subscribe('setDeletion', popupConfirmDeletion.setTheDeleteTarget);
    noteNetwork.subscribe('delete', currentNote.hideSection);
    noteNetwork.subscribe('delete', animations.remove);
-   noteNetwork.subscribe('updateError', noteList.updateListItem);
+   noteNetwork.subscribe('delete', mobileNav.hideCurrentNote);
+   noteNetwork.subscribe('delete', mobileNav.showNoteList);
+   noteNetwork.subscribe('updateError', noteList.shouldUpdateListItem);
    noteNetwork.subscribe('updateError', currentNote.setCurrentNoteDatas);
    noteNetwork.subscribe('deletionError', animations.add);
    noteNetwork.subscribe('obtainedNotes', noteList.shouldRenderNotes);
@@ -231,14 +240,22 @@ export default function createNoteApp({ api }) {
    noteList.subscribe('render', animations.add);
    noteList.subscribe('update', animations.update);
    noteList.subscribe('noNotesFoundInRepository', noteNetwork.shouldGetNotes);
+   noteList.subscribe('arrowClicked', mobileNav.showCategories);
+   noteList.subscribe('hiddenSection', mobileNav.hideNoteList);
+   noteList.subscribe('hiddenSection', categoryList.hideArrow);
+   noteList.subscribe('showingSection', mobileNav.showNoteList);
 
    noteItem.subscribe('noteSelected', noteRepository.setSelectedNoteId);
    noteItem.subscribe('noteSelected', currentNote.showSection);
+   noteItem.subscribe('noteSelected', mobileNav.showCurrentNote);
 
    currentNote.subscribe('showPopupDelete', popupConfirmDeletion.showPopup);
    currentNote.subscribe('showPopupDelete', noteNetwork.setNoteConfirmationDeletion);
    currentNote.subscribe('click', noteNetwork.networkListener);
+   currentNote.subscribe('update', noteNetwork.shouldUpdateNote);
    currentNote.subscribe('autosave', noteNetwork.shouldUpdateNote);
+   currentNote.subscribe('showingSection', mobileNav.showCurrentNote);
+   currentNote.subscribe('hiddenSection', mobileNav.hideCurrentNote);
 
    categoryNetwork.getCategories();
 

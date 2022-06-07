@@ -5,109 +5,154 @@ function createPopupProfile() {
 
    function createForms({ api }) {
       const state = {
-         profileForm: document.querySelector('.edit-profile-form'),
+         credentialsForm: document.querySelector('.edit-profile-form'),
+         formPhoto: document.querySelector('.profile-photo-form'),
          loading: document.querySelector('.popup-profile .container-loading')
+      }
+
+      const MAXIMUM_PHOTO_SIZE = 1 * 1024 * 1024; // 1MB
+
+      const handleErrors = {
+         showPhotoError(message) {
+            const containerError = document.querySelector('.container-photo-error');
+            const spanError = containerError.querySelector('span');
+
+            const acceptedErrors = {
+               "maximum photo size"() {
+                  spanError.innerText = 'Esta foto é maior que 1MB.';
+               },
+               "image type not allowed"() {
+                  spanError.innerText = 'Formato não permitido.';
+               },
+               "request error"() {
+                  spanError.innerText = 'Houve um erro, tente novamente mais tarde!';
+               }
+            }
+
+            containerError.classList.add('show');
+
+            acceptedErrors[message]
+               ? acceptedErrors[message]()
+               : acceptedErrors['request error'];
+         },
+         showCredentialsError(errors) {
+            const hideError = (input, containerInput) => {
+               input.addEventListener('keypress', () => 
+                  containerInput.classList.remove('error'));
+            }
+
+            const showError = (input, message) => {
+               const containerInput = input.parentElement.parentElement;
+               const span = containerInput.querySelector('.container-error > span');
+
+               span.innerText = "" || message;
+
+               containerInput.classList.add('error');
+
+               hideError(input, containerInput);
+            }
+
+            const acceptedErrors = {
+               "empty input"({ input }) {
+                  showError(state.credentialsForm[input], 'Preencha este campo!');
+               },
+               "email already exists"({ input }) {
+                  showError(state.credentialsForm[input], 'Este email já existe!');
+               },
+               "username already exists"({ input }) {
+                  showError(state.credentialsForm[input], 'Este nome já existe!');
+               },
+               "request error"() {
+                  const errorMessage = state.credentialsForm.querySelector('.container-credentials-error');
+                  errorMessage.classList.add('show');
+               }
+            }
+   
+            errors.forEach(data => {
+               acceptedErrors[data.reason]
+                  ? acceptedErrors[data.reason](data)
+                  : acceptedErrors['request error']();
+            });
+         }
+      }
+      const handleSuccess = {
+         showPhotoSuccess() {
+            const containerSuccess = document.querySelector('.container-photo-success');
+            containerSuccess.classList.add('show');
+         },
+         showCredentialsSuccess() {
+            const successMessage = state.credentialsForm.querySelector('.container-credentials-success');
+            successMessage.classList.add('show');
+         }
       }
 
       const toggleLoading = () => {
          state.loading.classList.toggle('show');
       }
-      
-      const hideErrorMessage = (input, containerInputAndMessage)  => {
-         input.addEventListener('keypress', () => 
-            containerInputAndMessage.classList.remove('error'));
+
+      const readFileAsDataUrl = (file, callback) => {
+         const reader = new FileReader();
+
+         reader.addEventListener('load', () => callback(reader.result));
+
+         reader.readAsDataURL(file);
       }
 
-      const showErrorMessage = (input, message) => {
-         const containerInputAndMessage = input.parentElement.parentElement;
-         const containerError = containerInputAndMessage.lastElementChild;
-
-         const template = `
-            <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
-               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path>
-            </svg>
-            ${message}
-         `;
-
-         containerError.innerHTML = message ? template : "";
-
-         containerInputAndMessage.classList.add('error');
-
-         hideErrorMessage(input, containerInputAndMessage);
-      }
-
-      const handleRequestError = errors => {
-         const acceptedErrors = {
-            "empty input"({ input }) {
-               const currentInput = state.profileForm[input];
-               showErrorMessage(currentInput, 'Preencha este campo!');
-            },
-            "email already exists"({ input }) {
-               const currentInput = state.profileForm[input];
-               showErrorMessage(currentInput, 'Este email já existe!');
-            },
-            "username already exists"({ input }) {
-               const currentInput = state.profileForm[input];
-               showErrorMessage(currentInput, 'Este nome já existe!');
-            },
-            "request error"() {
-               const errorMessage = state.profileForm.querySelector('.container-error-profile');
-               errorMessage.classList.add('show');
-            }
-         }
-
-         errors.forEach(data => {
-            acceptedErrors[data.reason]
-               ? acceptedErrors[data.reason](data)
-               : acceptedErrors['request error']();
-         });
-      }
-
-      const showSuccessMessage = () => {
-         const successMessage = state.profileForm.querySelector('.container-success-profile');
-         successMessage.classList.add('show');
-      }
-
-      const setCredentials = ({ email, username }) => {
-         const { inputEmail, inputUsername } = state.profileForm;
+      const setProfileData = ({ email, username, photo }) => {
+         const { inputEmail, inputUsername } = state.credentialsForm;
+         const preview = state.formPhoto.querySelector('.photoPreview');
 
          inputEmail.setAttribute('value', email);
          inputUsername.setAttribute('value', username);
+         
+         if (photo) {
+            preview.setAttribute('src', photo);
+         }
 
          inputEmail.value = email;
          inputUsername.value = username;
       }
 
-      const setSavedCredentials = () => {
-         const credentials = JSON.parse(sessionStorage.getItem('credentials'));
+      const setSavedProfileData = () => {
+         const credentials = JSON.parse(sessionStorage.getItem('profileData'));
 
-         setCredentials(credentials);
+         setProfileData(credentials);
       }
 
-      const saveCredentials = ({ username, email }) => {
-         sessionStorage.setItem('credentials',
-            JSON.stringify({ username, email }) 
+      const saveProfileData = ({ username, email, photo }) => {
+         const profileData = JSON.parse(sessionStorage.getItem('profileData'));
+
+         profileData.username = username || profileData.username;
+         profileData.email = email || profileData.email;
+         profileData.photo = photo || profileData.photo;
+
+         sessionStorage.setItem('profileData', JSON.stringify(profileData));
+      }
+
+      const createProfileData = ({ username, email, photo }) => {
+         sessionStorage.setItem('profileData',
+            JSON.stringify({ username, email, photo }) 
          ); 
 
-         setCredentials({ username, email });
+         setProfileData({ username, email, photo });
       }
 
-      const getCredentials = async () => {
+      const getProfileData = async () => {
          try {
             toggleLoading();
 
-            const [data, status] = await api.request({ auth: true, route: "getCredentials" });
+            const [data, status] = await api.request({ auth: true, route: "getProfile" });
 
             if (status !== 200) {
                throw 'The tokens is not valid.';
             }
 
-            saveCredentials(data);
+            createProfileData(data);
             toggleLoading();
 
          }catch(e) {
             toggleLoading();
-            handleRequestError([{ reason: 'request error' }]);
+            handleErrors.showCredentialsError([{ reason: 'request error' }]);
          }
       }
 
@@ -125,37 +170,79 @@ function createPopupProfile() {
             toggleLoading();
    
             if (status !== 200) {
-               handleRequestError(data.reason);
-
+               handleErrors.showCredentialsError(data.reason);
                return
             }
 
-            saveCredentials(data.newDatas);
-            showSuccessMessage();
+            saveProfileData(data.newDatas);
+            handleSuccess.showCredentialsSuccess();
    
          }catch(e) {
             toggleLoading();
-            handleRequestError([{ reason: 'request error' }]);
+            handleErrors.showCredentialsError([{ reason: 'request error' }]);
          }
+      }
+
+      const uploadPhoto = async fileData => {
+         toggleLoading();
+
+         try {
+            const [data, status] = await api.request({ 
+               auth: true,
+               method: 'POST',
+               route: 'uploadPhoto',
+               body: fileData
+            });
+
+            toggleLoading();
+
+            if (status !== 200) {
+               handleErrors.showPhotoError(data.reason);
+               return
+            }
+
+            saveProfileData({ photo: fileData.photo });
+
+            handleSuccess.showPhotoSuccess();
+
+         } catch (e) {
+            handleErrors.showPhotoError('request error');
+         }
+      }
+
+      const handlePreviewChange = e => {
+         const preview = state.formPhoto.querySelector('.photoPreview');
+
+         if (!e.target.value) {
+            return
+         }
+
+         document.querySelector('.container-photo-error').classList.remove('show');
+         document.querySelector('.container-photo-success').classList.remove('show');
+
+         readFileAsDataUrl(e.target.files[0], photoUrl => 
+            preview.setAttribute('src', photoUrl)); 
       }
 
       const dispatch = {
          shouldRequestCredentials() {
-            sessionStorage.getItem('credentials')
-               ? setSavedCredentials()
-               : getCredentials();
+            state.formPhoto.reset();
+
+            sessionStorage.getItem('profileData')
+               ? setSavedProfileData()
+               : getProfileData();
          },
          shouldUpdateCredentials(e) {
             e.preventDefault();
    
-            const { inputUsername, inputEmail } = state.profileForm;
+            const { inputUsername, inputEmail } = state.credentialsForm;
    
             const newCredentials = {
                email: inputEmail.value.trim(),
                username: inputUsername.value.trim()
             };
             
-            const lastCredentials = JSON.parse(sessionStorage.getItem('credentials'));
+            const lastCredentials = JSON.parse(sessionStorage.getItem('profileData'));
    
             const keysOfNewCredentials = Object.keys(newCredentials);
    
@@ -164,10 +251,39 @@ function createPopupProfile() {
             if (!shouldUpdate) {
                updateCredentials(newCredentials);
             }
+         },
+         shouldUploadPhoto(e) {
+            e.preventDefault();
+
+            const { inputPhoto } = state.formPhoto;
+            const { photo } = JSON.parse(sessionStorage.getItem('profileData'));
+
+            if (!inputPhoto.value) {
+               return
+            }
+
+            const file = inputPhoto.files[0];
+            const { size, type, name } = file;
+
+            const photoFormated = { size, type, name };
+
+            if (photoFormated.size > MAXIMUM_PHOTO_SIZE) {
+               handleErrors.showPhotoError('maximum photo size');
+               return
+            }
+
+            readFileAsDataUrl(file, photoUrl => {
+               if (photo === photoUrl) return
+
+               photoFormated.photo = photoUrl;
+               uploadPhoto(photoFormated);
+            });
          }
       }
 
-      state.profileForm.addEventListener('submit', dispatch.shouldUpdateCredentials);
+      state.credentialsForm.addEventListener('submit', dispatch.shouldUpdateCredentials);
+      state.formPhoto.addEventListener('submit', dispatch.shouldUploadPhoto);
+      state.formPhoto.inputPhoto.addEventListener('change', handlePreviewChange);
 
       return { 
          shouldRequestCredentials: dispatch.shouldRequestCredentials,
@@ -198,18 +314,15 @@ function createPopupProfile() {
       }
 
       const resetPopup = () => {
-         const [usernameMessage, emailMessage] = state.popupWrapper.querySelectorAll('.input-and-message');
-         const [genericError, successMessage] = state.popupWrapper.querySelectorAll('.container-message');
          const [overlayDeletion, overlayProfile] = state.popupWrapper.querySelectorAll('.popup-overlay');
-
-         usernameMessage.classList.remove('error');
-         emailMessage.classList.remove('error');
-
-         genericError.classList.remove('show');
-         successMessage.classList.remove('show');
+         const inutWithMessage = state.popupWrapper.querySelectorAll('.input-and-message.error');
+         const messages = state.popupWrapper.querySelectorAll('.container-message.show');
 
          overlayProfile.classList.remove('show');
          overlayDeletion.classList.remove('show');
+
+         inutWithMessage.forEach(container => container.classList.remove('error'));
+         messages.forEach(message => message.classList.remove('show'));
       }
 
       const setAccessibilityProps = () => {
@@ -327,7 +440,7 @@ function createPopupProfile() {
             shouldToHide && hidePopup();
          },
          shouldActiveTheButton() {
-            const { username } = JSON.parse(sessionStorage.getItem('credentials'));
+            const { username } = JSON.parse(sessionStorage.getItem('profileData'));
             const { inputUsername, btnConfirm } = state.confirmDeletionForm; 
    
             const addOrRemove = username === inputUsername.value ? 'add' : 'remove';
@@ -417,21 +530,38 @@ function createPopupProfile() {
                <h1>Configurações da conta</h1>
             </div>
             <div class="popup-edit-photo">
-               <div class="container-photo">
-                  <img src="./images/avatar_icon.svg" alt="avatar icon" />
+               <form class="profile-photo-form">
+                  <div class="container-photo">
+                     <input type="file" name="inputFile" class="inputPhoto" id="inputPhoto" />
+                     <label for="inputPhoto" title="Selecionar foto">
+                        <img class="photoPreview" src="./images/avatar_icon.svg" alt="avatar icon" />
+                     </label>
+                  </div>
+                  <div class="container-photo-contents">
+                     <div class="photo-texts">
+                        <div class="title-photo">
+                           <h1>Foto de perfil</h1>
+                        </div>
+                        <div class="paragraph-photo">
+                           <p>Arquivo aceito do tipo .png, .jpg e .jpeg até 1MB.</p>
+                        </div>
+                     </div>
+                     <div class="button-photo">
+                        <button type="submit" class="btn-submit btn-default">Enviar</button>
+                     </div>
+                  </div>
+               </form>
+               <div class="container-photo-error container-message">
+                  <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
+                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path>
+                  </svg>
+                  <span></span>
                </div>
-               <div class="container-photo-contents">
-                  <div class="photo-texts">
-                     <div class="title-photo">
-                        <h1>Foto de perfil
-                     </div>
-                     <div class="paragraph-photo">
-                        <p>Arquivo aceito do tipo .png menos que 1MB.</p>
-                     </div>
-                  </div>
-                  <div class="button-photo">
-                     <button class="btn-submit btn-default">Enviar</button>
-                  </div>
+               <div class="container-photo-success container-message">
+                  <svg stroke="currentColor" fill="currentColor" stroke-width="0" version="1" viewBox="0 0 48 48" enable-background="new 0 0 48 48" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                     <circle fill="#4CAF50" cx="24" cy="24" r="21"></circle><polygon fill="#fff" points="34.6,14.6 21,28.2 15.4,22.6 12.6,25.4 21,33.8 37.4,17.4"></polygon>
+                  </svg>
+                  Tudo certo! Sua foto foi atualizada.
                </div>
             </div>
             <div class="popup-credentials">
@@ -441,23 +571,33 @@ function createPopupProfile() {
                         <label for="input-username">Nome de usuário</label>
                         <input type="text" class="input-username input-default" id="input-username" value="" name="inputUsername" autocomplete="off">
                      </div>
-                     <div class="container-error"></div>
+                     <div class="container-error">
+                        <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
+                           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path>
+                        </svg>
+                        <span></span>
+                     </div>
                   </div>
                   <div class="input-and-message">
                      <div class="container-input">
                         <label for="input-email">Endereço de email</label>
                         <input type="email" class="input-email input-default" id="input-email" value="" name="inputEmail" autocomplete="off">  
                      </div>
-                     <div class="container-error"></div>
+                     <div class="container-error">
+                        <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
+                           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path>
+                        </svg>
+                        <span></span>
+                     </div>
                   </div>
                   <div class="container-messages">
-                     <div class="container-success-profile container-message">
+                     <div class="container-credentials-success container-message">
                         <svg stroke="currentColor" fill="currentColor" stroke-width="0" version="1" viewBox="0 0 48 48" enable-background="new 0 0 48 48" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
                            <circle fill="#4CAF50" cx="24" cy="24" r="21"></circle><polygon fill="#fff" points="34.6,14.6 21,28.2 15.4,22.6 12.6,25.4 21,33.8 37.4,17.4"></polygon>
                         </svg>
                         Tudo certo! Seus dados foram atualizados.
                      </div>
-                     <div class="container-error-profile container-message">
+                     <div class="container-credentials-error container-message">
                         <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z">
                            </path>

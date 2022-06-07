@@ -64,7 +64,7 @@ export function createNoteNetwork(networkTemplate, repository) {
          body: { categoryId: category.id }
       });
 
-      notes && repository.setAllItems(notes);
+      notes && repository.setNotes(notes);
 
       category.notesReceived = true;
       category.waitingForNotes = false;
@@ -79,7 +79,7 @@ export function createNoteNetwork(networkTemplate, repository) {
    const createNote = async ({ selectedCategoryId }) => {
       const id = setRequestId();
 
-      const newNote = repository.setItem(selectedCategoryId);
+      const newNote = repository.create(selectedCategoryId);
 
       try {
          notifyAll('creatingNote', newNote);
@@ -103,7 +103,7 @@ export function createNoteNetwork(networkTemplate, repository) {
    const deleteNote = async ({ selectedCategoryId, selectedNoteId }) => {
       const id = setRequestId();
 
-      const note = repository.getItem(selectedNoteId);
+      const note = repository.get('note', selectedNoteId);
       
       try {
          notifyAll('delete', { 
@@ -111,7 +111,7 @@ export function createNoteNetwork(networkTemplate, repository) {
             list: note.element.parentElement
          });
 
-         repository.deleteItem(selectedCategoryId, selectedNoteId);
+         repository.deleteNote(selectedCategoryId, selectedNoteId);
 
          await networkTemplate({
             route: 'deleteNote',
@@ -132,7 +132,7 @@ export function createNoteNetwork(networkTemplate, repository) {
       const noteClone = { ...note };
 
       try {
-         repository.updateItem(note, newNoteValues);
+         repository.update(note, newNoteValues);
 
          notifyAll('updating', newNoteValues);
 
@@ -196,7 +196,7 @@ export function createNoteNetwork(networkTemplate, repository) {
          getNotes({ category });
       },
       shouldCreateNote() {
-         const selectedCategoryId = repository.getSelectedCategoryId();
+         const { selectedCategoryId } = repository.get('selectedIds');
          const isGettingCategories = state.gettingNotes;
 
          if (!selectedCategoryId || isGettingCategories || !state.availableToAddNote) {
@@ -210,8 +210,7 @@ export function createNoteNetwork(networkTemplate, repository) {
          createNote({ selectedCategoryId });
       },
       shouldDeleteNote() {
-         const selectedCategoryId = repository.getSelectedCategoryId();
-         const selectedNoteId = repository.getSelectedNoteId();
+         const { selectedCategoryId, selectedNoteId } = repository.get('selectedIds');
 
          if (!selectedCategoryId || !selectedNoteId) {
             return
@@ -220,14 +219,13 @@ export function createNoteNetwork(networkTemplate, repository) {
          deleteNote({ selectedCategoryId, selectedNoteId });
       },
       shouldUpdateNote({ currentNoteForm }) {
-         const selectedCategoryId = repository.getSelectedCategoryId();
-         const selectedNoteId = repository.getSelectedNoteId();
+         const { selectedCategoryId, selectedNoteId} = repository.get('selectedIds');
 
          if (!selectedNoteId || !selectedCategoryId) {
             return
          }
 
-         const note = repository.getItem(selectedNoteId);
+         const note = repository.get('note', selectedNoteId);
 
          if (!note) {
             return
@@ -255,7 +253,7 @@ export function createNoteNetwork(networkTemplate, repository) {
          updateNote(note, newNoteValues);
       },
       shouldHideLoading({ id }) {
-         const selectedCategoryId = repository.getSelectedCategoryId();
+         const { selectedCategoryId } = repository.get('selectedIds');
 
          if (id === selectedCategoryId) {
             state.loading.classList.remove('show');
@@ -284,7 +282,7 @@ export function createCurrentNote(repository) {
       autoSave: setTimeout,
       currentNote: document.querySelector('section.current-note'),
       currentNoteForm: document.querySelector('.current-note .current-note-form'), 
-      toolBar: document.querySelector('section.current-note .tool-bar')
+      toolBar: document.querySelector('section.current-note .tool-bar'),
    }
 
    const subscribe = (event, listener) => {
@@ -303,13 +301,19 @@ export function createCurrentNote(repository) {
       const btnDropDown = state.currentNote.querySelector('.btn-dropDown');
 
       state.currentNote.classList.add('hide');
+      state.currentNote.classList.remove('show');
+
       btnDropDown.classList.remove('active');
    }
 
    const showSection = ({ noteId, noteListTitle }) => {
+      notifyAll('showingSection');
+
       state.currentNote.classList.remove('hide');
 
-      const note = repository.getItem(noteId);
+      state.currentNote.scrollTop = 0;
+
+      const note = repository.get('note', noteId);
 
       setCurrentNoteDatas(note);
 
@@ -324,6 +328,8 @@ export function createCurrentNote(repository) {
       selectFontSize.value = '3';
       selectFontFamily.value = 'arial';
       inputColor.value = '#000000';
+
+      state.toolBar.scrollLeft = 0;
    }
 
    const setCurrentNoteDatas = ({ title, summary, content, lastModification }) => {
@@ -410,21 +416,23 @@ export function createCurrentNote(repository) {
 
    const dispatch = {
       shouldSetNewLastModification({ noteId, lastModification }) {
-         const selectedNoteId = repository.getSelectedNoteId();
+         const { selectedNoteId } = repository.get('selectedIds');
 
-         if (noteId === selectedNoteId) {
+         if (noteId === +selectedNoteId) {
             setNewModifications(lastModification);
          }
       },
       shouldHideCurrentNote({ categoryId }) {
-         const selectedCategoryId = repository.getSelectedCategoryId();
+         const { selectedCategoryId } = repository.get('selectedIds');
 
          if (categoryId === selectedCategoryId) {
             hideSection();
+
+            notifyAll('hiddenSection');
          }
       },
       shouldUpdateCategoryName({ categoryId, newCategoryName }) {
-         const selectedCategoryId = repository.getSelectedCategoryId();
+         const { selectedCategoryId } = repository.get('selectedIds');
 
          if (categoryId === selectedCategoryId) {
             updatePathName({ categoryName: newCategoryName });
@@ -471,7 +479,8 @@ export function createNoteList(repository) {
       noteList: document.querySelector('section.note-list ul.note-list'),
       sectionNoteList: document.querySelector('section.note-list'),
       notSelectedItem: document.querySelector('.container-not-selected'),
-      btnAddNote: document.querySelector('.container-add-note > button')
+      btnAddNote: document.querySelector('.container-add-note > button'),
+      arrowPrevious: document.querySelector('section.note-list .arrow')
    }
 
    const subscribe = (event, listener) => {
@@ -487,13 +496,14 @@ export function createNoteList(repository) {
    }
 
    const showSection = categoryElement => {
+      notifyAll('showingSection');
+
       resetNoteList(categoryElement);
 
       const categoryName = categoryElement.querySelector('input').value;
 
       updateSectionTitle(categoryName);
-
-      state.sectionNoteList.classList.remove('hide');
+      
       state.notSelectedItem.classList.add('hide');
 
       state.sectionNoteList.scrollTop = 0;
@@ -501,9 +511,12 @@ export function createNoteList(repository) {
 
    const hideSection = () => {
       state.noteList.innerHTML = '';
+
       state.sectionNoteList.classList.add('hide');
       
       state.notSelectedItem.classList.remove('hide');
+
+      notifyAll('hiddenSection');
    }
 
    const createNoteElement = ({ isItNewNote, ...note }) => {
@@ -543,13 +556,11 @@ export function createNoteList(repository) {
       title.innerText = categoryName;
    }
 
-   const updateListItem = ({ id, title, summary }) => {
-      const noteElement = state.noteList.querySelector(`li[data-id="${id}"]`);
-
+   const updateListItem = ({ noteElement, title, summary }) => {
       noteElement.querySelector('.title').innerText = title;
       noteElement.querySelector('.summary').innerText = summary;
 
-      notifyAll('updatedListNote', { 
+      notifyAll('update', { 
          item: noteElement, 
          list: state.noteList 
       });
@@ -591,32 +602,47 @@ export function createNoteList(repository) {
       dispatch.shouldRenderNotes({ categoryId: categoryElement.dataset.id });
    }
 
+   const backToCategories = e => {
+      if (e.type === 'touchstart') e.preventDefault();
+
+      notifyAll('arrowClicked');
+   }
+
    const dispatch = {
       shouldRenderNotes({ categoryId }) {
-         const selectedCategoryId = repository.getSelectedCategoryId();
+         const { selectedCategoryId } = repository.get('selectedIds');
 
          if (!categoryId || categoryId !== selectedCategoryId) {
             return
          }
 
-         const hasNotes = repository.getAllItems(categoryId);
+         const hasNotes = repository.get('notes', categoryId);
 
          hasNotes.length
             ? renderNotes(hasNotes)
             : notifyAll('noNotesFoundInRepository', { categoryId });
       },
       shouldHideNoteList({ categoryId }) {
-         const selectedCategoryId = repository.getSelectedCategoryId();
+         const { selectedCategoryId } = repository.get('selectedIds');
 
          if (categoryId === selectedCategoryId) {
             hideSection();
+
+            notifyAll('hiddenSection');
          }
       },
       shouldUpdateCategoryName({ categoryId, newCategoryName }) {
-         const selectedCategoryId = repository.getSelectedCategoryId();
+         const { selectedCategoryId } = repository.get('selectedIds');
 
          if (categoryId === selectedCategoryId) {
             updateSectionTitle(newCategoryName);
+         }
+      },
+      shouldUpdateListItem({ id, ...values }) {
+         const noteElement = state.noteList.querySelector(`li[data-id="${id}"]`);
+
+         if (noteElement) {
+            updateListItem({ noteElement, ...values });
          }
       }
    }
@@ -629,6 +655,8 @@ export function createNoteList(repository) {
    }
    
    state.noteList.addEventListener('click', noteListListener);
+   state.arrowPrevious.addEventListener('click', backToCategories);
+   state.arrowPrevious.addEventListener('touchstart', backToCategories);
    state.btnAddNote.addEventListener('click', noteListListener);
 
    return { 
@@ -636,7 +664,7 @@ export function createNoteList(repository) {
       showSection,
       renderNote,
       setDate,
-      updateListItem,
+      shouldUpdateListItem: dispatch.shouldUpdateListItem,
       shouldRenderNotes: dispatch.shouldRenderNotes,
       shouldUpdateCategoryName: dispatch.shouldUpdateCategoryName,
       shouldHideNoteList: dispatch.shouldHideNoteList

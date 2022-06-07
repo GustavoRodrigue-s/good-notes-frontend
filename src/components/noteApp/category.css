@@ -1,0 +1,264 @@
+section.categories {
+   position: relative;
+   z-index: 10;
+   background: var(--tertiaryColor);
+   display: flex;
+   flex-direction: column;
+   justify-content: space-between;
+   gap: 50px;
+   padding: 20px;
+   color: #969696;
+   overflow-y: auto;
+}
+
+.container-categories-list {
+   position: relative;
+   margin-top: 50px;
+}
+
+.container-categories-list ul.category-list > li:not(
+   .container-categories-list ul.category-list > li:first-child
+) {
+   margin-top: 10px;
+}
+
+section.categories .header {
+   display: flex;
+   align-items: center;
+}
+
+/* ---------- Search Category ---------- */
+
+.container-search {
+   flex: 1 1;
+   box-shadow: 0 13.5px 64px hsl(0deg 0% 30% / 3%);
+}
+
+.container-search, .category-item, .container-add-categorie, .container-category-loading li {
+   border-radius: 8px;
+   height: 50px;
+   flex-shrink: 0;
+}
+
+.container-search > div {
+   border-radius: 8px;
+   height: 100%;
+   background-color: #fff;
+   display: flex;
+   align-items: center;
+   padding: 0 10px;
+   gap: 10px;
+}
+
+.container-search input {
+   height: 100%;
+   width: 100%;
+   outline: none;
+   border: none;
+   font: 1.6rem var(--fontDefault), sans-serif;
+}
+
+.container-search input::-webkit-search-cancel-button {
+   appearance: none;
+   display: none;
+}
+
+/* ---------- Category Item ---------- */
+
+.category-item {
+   width: 100%;
+   background-color: var(--tertiaryColor);
+   transition: background-color 0.3s;
+}
+
+.category-item.hide {
+   display: none;
+}
+
+.category-item.confirmation {
+   background-color: #fff;
+}
+
+.category-item.selected {
+   background-color: #fff;
+   box-shadow: 0 13.5px 64px hsl(0deg 0% 30% / 7%);
+}
+
+.category-item.selected :is(.btn-name svg, .btn-name input) {
+   color: var(--primaryColor) !important;
+}
+
+.category-item.confirmation .btn-name input {
+   position: relative;
+   z-index: 99999;
+}
+
+.category-item svg {
+   transition: 0.3s;
+}
+
+.category-item:hover :is(.btn-dropDown svg, .btn-name svg, input), .category-item.selected .btn-dropDown svg {
+   fill: #000;
+   color: #000;
+}
+
+.category-form {
+   display: flex;
+   width: 100%;
+   height: 100%;
+}
+
+.category-form > div {
+   height: 100%;
+}
+
+.container-name {
+   width: 100%;
+}
+
+.container-options > .container-dropDown {
+   width: 50px;
+}
+
+.container-options > .container-confirmation {
+   position: relative;
+   z-index: 9999;
+   width: 90px;
+}
+
+.container-options {
+   padding: 5px;
+}
+
+.btn-name {
+   height: 100%;
+   width: 100%;
+   background: none;
+   color: var(--paragraphColor);
+   transition: color 0.3s;
+   box-shadow: none;
+   padding-left: 20px; 
+   display: flex;
+   align-items: center;
+   gap: 10px;
+}
+
+.btn-name input {
+   font: 1.6rem var(--fontDefault);
+   pointer-events: none;
+   height: 100%;
+   padding: 0;
+   border: none;
+   cursor: pointer;
+}
+
+.category-item .container-name svg {
+   flex-shrink: 0;
+   margin-top: 2px;
+}
+
+.category-item.confirmation input {
+   pointer-events: all;
+   cursor: text;
+}
+
+.container-options > div {
+   width: 100%;
+   height: 100%;
+}
+
+.container-confirmation > button {
+   flex: 1 1;
+   height: 100%;
+   background-color: transparent;
+   box-shadow: none;
+   cursor: pointer;
+}
+
+.btn-confirm-category {
+   z-index: 99999;
+}
+
+.category-item .container-options > div {
+   display: none;
+}
+
+.category-item .container-options > div.show {
+   display: flex;
+}
+
+.btn-confirm-category:hover {
+   background-color: #32ff8e28;
+}
+
+.btn-undo-category:hover {
+   background-color: rgba(255, 126, 126, 0.205);
+}
+
+.container-options .list-dropDown > li > button {
+   cursor: pointer;
+   width: 100%;
+   height: 100%;
+   background-color: transparent;
+   border: none;
+   outline: none;
+}
+
+/* ---------- Loading Skeleton ---------- */
+
+.container-category-loading, .container-noteList-loading {
+   width: 100%;
+   height: 100%;
+   background-color: var(--tertiaryColor);
+   display: none;
+}
+
+.container-category-loading.show, .container-noteList-loading.show {
+   display: block;
+}
+
+.container-category-loading > ul {
+   display: flex;
+   flex-direction: column;
+   gap: 10px;
+}
+
+.category-loading-item > div {
+   height: 100%;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   gap: 10px;
+}
+
+.category-loading-item .loading-icon {
+   width: 30px;
+   height: 30px;
+   border-radius: 5px;
+}
+
+.category-loading-item .loading-name {
+   width: 130px;
+   height: 20px;
+   border-radius: 5px;
+}
+
+.category-loading-item .loading-more {
+   display: flex;
+   gap: 3px;
+}
+
+.category-loading-item .loading-more span {
+   width: 7px;
+   height: 7px;
+   border-radius: 50%;
+}
+
+.container-category-loading li {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding: 0 15px;
+   width: 100%;
+   background: #fff;
+}

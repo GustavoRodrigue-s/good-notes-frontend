@@ -18,7 +18,7 @@
 .popup-profile p {
    font-size: 1.4rem;
    margin: 5px 0;
-   color: var(--colorGray);
+   color: var(--paragraphColor);
 }
 
 .popup-edit-photo {
@@ -36,30 +36,45 @@
    font: 700 min(3rem, 6vw) var(--fontDefault);
 }
 
-.popup-edit-photo {
+.popup-edit-photo > form {
    display: flex;
    gap: 15px;
    align-items: center;
 }
 
-.popup-edit-photo > .container-photo {
+.popup-edit-photo .container-photo {
    flex-shrink: 0;
    width: 105px; 
    height: 105px;
    border-radius: 10px;
    background: #F6F6F6;
-   border: 1px solid #DBDBDB;
+   border: 1px solid var(--colorLine);
    display: flex;
    align-items: center;
    justify-content: center;
+   overflow: hidden;
 }
 
-.container-photo > img {
+.container-photo :is(label, img) {
    width: 100%;
    height: 100%;
 }
 
-.popup-edit-photo > .container-photo-contents {
+.container-photo img {
+   border-radius: 50%;
+   object-fit: cover;
+}
+
+.container-photo > label {
+   padding: 2px;
+   cursor: pointer;
+}
+
+.inputPhoto {
+   display: none;
+}
+
+.popup-edit-photo .container-photo-contents {
    height: 100px;
    display: flex;
    flex-direction: column;
@@ -77,8 +92,8 @@
    width: 100px;
    height: 35px;
    background: #fff;
-   color: var(--accentColor);
-   border: 1px solid #00000028;
+   color: var(--primaryColor);
+   border: 1px solid var(--secondaryBorderColor);
    font-size: 1.5rem;
 }
 
@@ -87,7 +102,7 @@
 }
 
 :is(.button-photo > button, .popup-credentials .btn-cancel, .popup-disable-account button):hover {
-   border-color: #646369d3;
+   border-color: var(--secondaryHoverBorderColor);
 }
 
 .edit-profile-form > div {
@@ -100,13 +115,13 @@
 }
 
 .popup-credentials label {
-   color: var(--colorGray);
+   color: var(--paragraphColor);
 }
 
 .container-buttons > .btn-update-credentials {
    border: none;
    color: #fff;
-   background: var(--accentColor);
+   background: var(--primaryColor);
 }
 
 .container-buttons {
@@ -126,7 +141,7 @@
    color: red;
 }
 
-/* Container message */
+/* ---------- Container Message ---------- */
 
 .container-message {
    display: none;
@@ -135,30 +150,34 @@
    animation: opacityMessage 0.3s forwards;
 }
 
-:is(.container-error-profile, .container-success-profile) > svg {
+.container-message > svg {
    flex-shrink: 0;
 }
 
-.container-error-profile {
-   color: #D9000C;
+.container-credentials-error, .container-photo-error {
+   color: var(--primaryErrorColor);
 }
 
-.container-success-profile {
-   color: #4CAF50;
+.container-credentials-success, .container-photo-success {
+   color: var(--primarySuccessColor);
 }
 
-.container-error-profile.show, .container-success-profile.show {
+.container-message.show {
    display: flex;
 }
 
-/* POPUP DELETE ACCOUNT */
+.popup-edit-photo > div {
+   margin-top: 10px;
+}
+
+/* ---------- Popup Delete Account ---------- */
 
 .popup-confirm-to-delete-account p {
-   color: var(--colorGray);
+   color: var(--paragraphColor);
 }
 
 .popup-confirm-to-delete-account p > strong {
-   color: var(--accentColor);
+   color: var(--primaryColor);
 }
 
 .container-input {
@@ -194,17 +213,17 @@
    max-width: 110px;
    height: 35px;
    background-color: #fff;
-   border: 1px solid #00000028;
    box-shadow: none;
    font-size: 1.5rem;
 }
 
 .btn-cancel-confirm {
-   color: var(--accentColor) !important;
+   color: var(--primaryColor) !important;
+   border: 1px solid var(--secondaryBorderColor) !important;
 }
 
 .btn-cancel-confirm:hover {
-   border-color: #000 !important;
+   border-color: var(--secondaryHoverBorderColor) !important;
 }
 
 .btn-delete-confirm {
@@ -214,17 +233,16 @@
 }
 
 .btn-delete-confirm-active {
-   background: #d9000bad !important;
+   background: var(--primaryErrorColor) !important;
    color: #fff !important;
    cursor: pointer !important;
 }
 
 .btn-delete-confirm-active:hover {
-   background-color: #b90009da !important;
+   background-color: var(--primaryErrorHoverColor) !important;
 }
 
-
-/* Responsive */
+/* ---------- Responsive ---------- */
 
 @media (max-width: 350px) {
    .popup-disable-account {

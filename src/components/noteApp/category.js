@@ -188,7 +188,8 @@ export function createCategoryList() {
 
       categoryList: document.querySelector('.category-list'),
       inputSearch: document.querySelector('.input-search-categories'),
-      btnAddCategory: document.querySelector('.add-new-category')
+      btnAddCategory: document.querySelector('.add-new-category'),
+      nextArrow: document.querySelector('section.categories .arrow')
    }
 
    const subscribe = (event, listener) => {
@@ -222,7 +223,7 @@ export function createCategoryList() {
       <form class="category-form">
          <div class="container-name">
             <button class="btn-name btn-default" type="button" data-js="shouldSelectItem">
-               <svg width="25" height="20" viewBox="0 0 25 20" fill="#969696" xmlns="http://www.w3.org/2000/svg">
+               <svg width="25" height="20" viewBox="0 0 25 20" fill="#696969" xmlns="http://www.w3.org/2000/svg">
                   <path d="M0 5.33333H15.1661V8H0V5.33333ZM0 2.66667H15.1661V0H0V2.66667ZM0 13.3333H9.65118V10.6667H0V13.3333ZM20.6949 9.16L21.6738 8.21333C21.8013 8.08973 21.9529 7.99167 22.1196 7.92476C22.2864 7.85785 22.4652 7.82341 22.6458 7.82341C22.8264 7.82341 23.0052 7.85785 23.172 7.92476C23.3388 7.99167 23.4903 8.08973 23.6178 8.21333L24.5967 9.16C25.1344 9.68 25.1344 10.52 24.5967 11.04L23.6178 11.9867L20.6949 9.16ZM19.716 10.1067L12.4087 17.1733V20H15.3316L22.6389 12.9333L19.716 10.1067Z" fill="currentColor"/>
                </svg>
                <input placeholder="Nome da categoria" class="input-default" type="text" name="inputCategoryName" autocomplete="off" ${!isItNewCategory ? 'value="' + category.name + '"' : ''}/>
@@ -231,7 +232,7 @@ export function createCategoryList() {
          <div class="container-options">
             <div class="${!isItNewCategory ? 'container-dropDown show' : 'container-dropDown'}">
                <button class="btn-dropDown btn-wrapper-default center-flex" name="btnDropDown" type="button" data-js="activateDropDown">
-                  <svg xmlns="http://www.w3.org/2000/svg" height="35px" viewBox="0 0 24 24" width="35px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/>
+                  <svg xmlns="http://www.w3.org/2000/svg" height="35px" viewBox="0 0 24 24" width="35px" fill="#696969"><path d="M0 0h24v24H0V0z" fill="none"/>
                      <path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
                   </svg>
                </button>
@@ -330,6 +331,20 @@ export function createCategoryList() {
       categoryElement.querySelector('input').focus();
    }
 
+   const showArrow = () => {
+      state.nextArrow.classList.add('show');
+   }
+
+   const hideArrow = () => {
+      state.nextArrow.classList.remove('show');
+   }
+
+   const goToTheNoteList = e => {
+      if (e.type === 'touchstart') e.preventDefault();
+
+      notifyAll('arrowClicked');
+   }
+
    const dispatch = {
       shouldSearchItem() {
          if (state.gettingCategories) {
@@ -367,7 +382,12 @@ export function createCategoryList() {
    state.btnAddCategory.addEventListener('click', dispatch.shouldCreateElement);
    state.inputSearch.addEventListener('input', dispatch.shouldSearchItem);
 
+   state.nextArrow.addEventListener('click', goToTheNoteList);
+   state.nextArrow.addEventListener('touchstart', goToTheNoteList);
+
    return { 
+      showArrow,
+      hideArrow,
       subscribe,
       renderCategories,
       resetAvailableToAddCategory
