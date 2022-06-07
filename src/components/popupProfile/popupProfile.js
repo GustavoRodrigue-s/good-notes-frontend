@@ -119,19 +119,22 @@ function createPopupProfile() {
          setProfileData(credentials);
       }
 
-      const saveProfileDatas = ({ username, email, photo }) => {
+      const saveProfileData = ({ username, email, photo }) => {
+         const profileData = JSON.parse(sessionStorage.getItem('profileData'));
+
+         profileData.username = username || profileData.username;
+         profileData.email = email || profileData.email;
+         profileData.photo = photo || profileData.photo;
+
+         sessionStorage.setItem('profileData', JSON.stringify(profileData));
+      }
+
+      const createProfileData = ({ username, email, photo }) => {
          sessionStorage.setItem('profileData',
             JSON.stringify({ username, email, photo }) 
          ); 
 
          setProfileData({ username, email, photo });
-      }
-
-      const saveProfilePhoto = photoUrl => {
-         const profileData = JSON.parse(sessionStorage.getItem('profileData'));
-         profileData.photo = photoUrl;
-
-         sessionStorage.setItem('profileData', JSON.stringify(profileData));
       }
 
       const getProfileData = async () => {
@@ -144,7 +147,7 @@ function createPopupProfile() {
                throw 'The tokens is not valid.';
             }
 
-            saveProfileDatas(data);
+            createProfileData(data);
             toggleLoading();
 
          }catch(e) {
@@ -171,7 +174,7 @@ function createPopupProfile() {
                return
             }
 
-            saveProfileDatas(data.newDatas);
+            saveProfileData(data.newDatas);
             handleSuccess.showCredentialsSuccess();
    
          }catch(e) {
@@ -223,6 +226,8 @@ function createPopupProfile() {
 
       const dispatch = {
          shouldRequestCredentials() {
+            state.formPhoto.reset();
+
             sessionStorage.getItem('profileData')
                ? setSavedProfileData()
                : getProfileData();
