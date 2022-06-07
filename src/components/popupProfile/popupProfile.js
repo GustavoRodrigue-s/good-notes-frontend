@@ -5,20 +5,50 @@ function createPopupProfile() {
 
    function createForms({ api }) {
       const state = {
-         profileForm: document.querySelector('.edit-profile-form'),
+         credentialsForm: document.querySelector('.edit-profile-form'),
+         formPhoto: document.querySelector('.profile-photo-form'),
          loading: document.querySelector('.popup-profile .container-loading')
       }
+
+      const MAXIMUM_PHOTO_SIZE = 1 * 1024 * 1024; // 1MB
 
       const toggleLoading = () => {
          state.loading.classList.toggle('show');
       }
       
-      const hideErrorMessage = (input, containerInputAndMessage)  => {
+      const showPhotoErrorMessage = message => {
+         const containerError = document.querySelector('.popup-edit-photo .container-error-profile');
+         const spanError = containerError.querySelector('span');
+
+         const errors = {
+            "maximum photo size"() {
+               spanError.innerText = 'Esta foto é maior que 1MB.';
+            },
+            "image type not allowed"() {
+               spanError.innerText = 'Formato não permitido.';
+            },
+            "request error"() {
+               spanError.innerText = 'Houve um erro, tente novamente mais tarde!';
+            }
+         }
+
+         if (errors[message]) {
+            containerError.classList.add('show');
+            errors[message]();
+         }
+      }
+
+      const showPhotoSuccessMessage = () => {
+         const containerSuccess = document.querySelector('.popup-edit-photo .container-success-profile');
+         containerSuccess.classList.add('show');
+      }
+
+      const hideCredentialsErrorMessage = (input, containerInputAndMessage)  => {
          input.addEventListener('keypress', () => 
             containerInputAndMessage.classList.remove('error'));
       }
 
-      const showErrorMessage = (input, message) => {
+      const showCredentialsErrorMessage = (input, message) => {
          const containerInputAndMessage = input.parentElement.parentElement;
          const containerError = containerInputAndMessage.lastElementChild;
 
@@ -33,25 +63,25 @@ function createPopupProfile() {
 
          containerInputAndMessage.classList.add('error');
 
-         hideErrorMessage(input, containerInputAndMessage);
+         hideCredentialsErrorMessage(input, containerInputAndMessage);
       }
 
       const handleRequestError = errors => {
          const acceptedErrors = {
             "empty input"({ input }) {
-               const currentInput = state.profileForm[input];
-               showErrorMessage(currentInput, 'Preencha este campo!');
+               const currentInput = state.credentialsForm[input];
+               showCredentialsErrorMessage(currentInput, 'Preencha este campo!');
             },
             "email already exists"({ input }) {
-               const currentInput = state.profileForm[input];
-               showErrorMessage(currentInput, 'Este email já existe!');
+               const currentInput = state.credentialsForm[input];
+               showCredentialsErrorMessage(currentInput, 'Este email já existe!');
             },
             "username already exists"({ input }) {
-               const currentInput = state.profileForm[input];
-               showErrorMessage(currentInput, 'Este nome já existe!');
+               const currentInput = state.credentialsForm[input];
+               showCredentialsErrorMessage(currentInput, 'Este nome já existe!');
             },
             "request error"() {
-               const errorMessage = state.profileForm.querySelector('.container-error-profile');
+               const errorMessage = state.credentialsForm.querySelector('.container-error-profile');
                errorMessage.classList.add('show');
             }
          }
@@ -64,45 +94,50 @@ function createPopupProfile() {
       }
 
       const showSuccessMessage = () => {
-         const successMessage = state.profileForm.querySelector('.container-success-profile');
+         const successMessage = state.credentialsForm.querySelector('.container-success-profile');
          successMessage.classList.add('show');
       }
 
-      const setCredentials = ({ email, username }) => {
-         const { inputEmail, inputUsername } = state.profileForm;
+      const setProfileData = ({ email, username, photo }) => {
+         const { inputEmail, inputUsername } = state.credentialsForm;
+         const preview = state.formPhoto.querySelector('.photoPreview');
 
          inputEmail.setAttribute('value', email);
          inputUsername.setAttribute('value', username);
+         
+         if (photo) {
+            preview.setAttribute('src', photo);
+         }
 
          inputEmail.value = email;
          inputUsername.value = username;
       }
 
-      const setSavedCredentials = () => {
+      const setSavedProfileData = () => {
          const credentials = JSON.parse(sessionStorage.getItem('credentials'));
 
-         setCredentials(credentials);
+         setProfileData(credentials);
       }
 
-      const saveCredentials = ({ username, email }) => {
+      const saveProfileDatas = ({ username, email, photo }) => {
          sessionStorage.setItem('credentials',
-            JSON.stringify({ username, email }) 
+            JSON.stringify({ username, email, photo }) 
          ); 
 
-         setCredentials({ username, email });
+         setProfileData({ username, email, photo });
       }
 
-      const getCredentials = async () => {
+      const getProfileData = async () => {
          try {
             toggleLoading();
 
-            const [data, status] = await api.request({ auth: true, route: "getCredentials" });
+            const [data, status] = await api.request({ auth: true, route: "getProfile" });
 
             if (status !== 200) {
                throw 'The tokens is not valid.';
             }
 
-            saveCredentials(data);
+            saveProfileDatas(data);
             toggleLoading();
 
          }catch(e) {
@@ -130,7 +165,7 @@ function createPopupProfile() {
                return
             }
 
-            saveCredentials(data.newDatas);
+            saveProfileDatas(data.newDatas);
             showSuccessMessage();
    
          }catch(e) {
@@ -139,16 +174,66 @@ function createPopupProfile() {
          }
       }
 
+      const uploadPhoto = async fileData => {
+         toggleLoading();
+
+         try {
+            const [data, status] = await api.request({ 
+               auth: true,
+               method: 'POST',
+               route: 'uploadPhoto',
+               body: fileData
+            });
+
+            if (status !== 200) {
+               showPhotoErrorMessage(data.reason);
+               return
+            }
+
+            const profileData = JSON.parse(sessionStorage.getItem('credentials'));
+            profileData.photo = fileData.photo;
+
+            sessionStorage.setItem('credentials', JSON.stringify(profileData));
+
+            showPhotoSuccessMessage();
+
+         } catch (e) {
+            showPhotoErrorMessage('request error');
+         }
+
+         toggleLoading();
+      }
+
+      // refatorar a duplicação
+      const handlePreviewChange = e => {
+         const preview = state.formPhoto.querySelector('.photoPreview');
+
+         if (!e.target.value) {
+            return
+         }
+
+         document.querySelector('.popup-edit-photo .container-error-profile').classList.remove('show');
+         document.querySelector('.popup-edit-photo .container-success-profile').classList.remove('show');
+
+         const reader = new FileReader();
+
+         reader.addEventListener('load', () => {
+            preview.setAttribute('src', reader.result);
+         });
+
+         reader.readAsDataURL(e.target.files[0]);
+      }
+
       const dispatch = {
          shouldRequestCredentials() {
             sessionStorage.getItem('credentials')
-               ? setSavedCredentials()
-               : getCredentials();
+               ? setSavedProfileData()
+               : getProfileData();
          },
          shouldUpdateCredentials(e) {
             e.preventDefault();
    
-            const { inputUsername, inputEmail } = state.profileForm;
+            const { inputUsername, inputEmail } = state.credentialsForm;
    
             const newCredentials = {
                email: inputEmail.value.trim(),
@@ -164,10 +249,48 @@ function createPopupProfile() {
             if (!shouldUpdate) {
                updateCredentials(newCredentials);
             }
+         },
+         shouldUploadPhoto(e) {
+            e.preventDefault();
+
+            const { inputPhoto } = state.formPhoto;
+            const { photo } = JSON.parse(sessionStorage.getItem('credentials'));
+
+            if (!inputPhoto.value) {
+               return
+            }
+
+            const file = inputPhoto.files[0];
+
+            const photoFormated = {
+               size: file.size,
+               type: file.type,
+               name: file.name
+            }
+
+            if (photoFormated.size > MAXIMUM_PHOTO_SIZE) {
+               showPhotoErrorMessage('maximum photo size');
+               return
+            }
+
+            const reader = new FileReader();
+
+            reader.addEventListener('load', () => {
+               if (photo !== reader.result) {
+                  photoFormated.photo = reader.result;
+
+                  uploadPhoto(photoFormated);
+               }
+            });
+
+            reader.readAsDataURL(file);
          }
       }
 
-      state.profileForm.addEventListener('submit', dispatch.shouldUpdateCredentials);
+      state.credentialsForm.addEventListener('submit', dispatch.shouldUpdateCredentials);
+      state.formPhoto.addEventListener('submit', dispatch.shouldUploadPhoto);
+
+      state.formPhoto.inputPhoto.addEventListener('change', handlePreviewChange);
 
       return { 
          shouldRequestCredentials: dispatch.shouldRequestCredentials,
@@ -201,6 +324,8 @@ function createPopupProfile() {
          const [usernameMessage, emailMessage] = state.popupWrapper.querySelectorAll('.input-and-message');
          const [genericError, successMessage] = state.popupWrapper.querySelectorAll('.container-message');
          const [overlayDeletion, overlayProfile] = state.popupWrapper.querySelectorAll('.popup-overlay');
+         const containerPhotoError = document.querySelector('.popup-edit-photo .container-error-profile');
+         const containerPhotoSuccess = document.querySelector('.popup-edit-photo .container-success-profile');
 
          usernameMessage.classList.remove('error');
          emailMessage.classList.remove('error');
@@ -210,6 +335,9 @@ function createPopupProfile() {
 
          overlayProfile.classList.remove('show');
          overlayDeletion.classList.remove('show');
+
+         containerPhotoError.classList.remove('show');
+         containerPhotoSuccess.classList.remove('show');
       }
 
       const setAccessibilityProps = () => {
@@ -417,21 +545,38 @@ function createPopupProfile() {
                <h1>Configurações da conta</h1>
             </div>
             <div class="popup-edit-photo">
-               <div class="container-photo">
-                  <img src="./images/avatar_icon.svg" alt="avatar icon" />
+               <form class="profile-photo-form">
+                  <div class="container-photo">
+                     <input type="file" name="inputFile" class="inputPhoto" id="inputPhoto" />
+                     <label for="inputPhoto" title="Selecionar foto">
+                        <img class="photoPreview" src="./images/avatar_icon.svg" alt="avatar icon" />
+                     </label>
+                  </div>
+                  <div class="container-photo-contents">
+                     <div class="photo-texts">
+                        <div class="title-photo">
+                           <h1>Foto de perfil</h1>
+                        </div>
+                        <div class="paragraph-photo">
+                           <p>Arquivo aceito do tipo .png, .jpg e .jpeg até 1MB.</p>
+                        </div>
+                     </div>
+                     <div class="button-photo">
+                        <button type="submit" class="btn-submit btn-default">Enviar</button>
+                     </div>
+                  </div>
+               </form>
+               <div class="container-error-profile">
+                  <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
+                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path>
+                  </svg>
+                  <span></span>
                </div>
-               <div class="container-photo-contents">
-                  <div class="photo-texts">
-                     <div class="title-photo">
-                        <h1>Foto de perfil
-                     </div>
-                     <div class="paragraph-photo">
-                        <p>Arquivo aceito do tipo .png menos que 1MB.</p>
-                     </div>
-                  </div>
-                  <div class="button-photo">
-                     <button class="btn-submit btn-default">Enviar</button>
-                  </div>
+               <div class="container-success-profile">
+                  <svg stroke="currentColor" fill="currentColor" stroke-width="0" version="1" viewBox="0 0 48 48" enable-background="new 0 0 48 48" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                     <circle fill="#4CAF50" cx="24" cy="24" r="21"></circle><polygon fill="#fff" points="34.6,14.6 21,28.2 15.4,22.6 12.6,25.4 21,33.8 37.4,17.4"></polygon>
+                  </svg>
+                  Tudo certo! Sua foto foi atualizada.
                </div>
             </div>
             <div class="popup-credentials">

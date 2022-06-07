@@ -36,13 +36,13 @@
    font: 700 min(3rem, 6vw) var(--fontDefault);
 }
 
-.popup-edit-photo {
+.popup-edit-photo > form {
    display: flex;
    gap: 15px;
    align-items: center;
 }
 
-.popup-edit-photo > .container-photo {
+.popup-edit-photo .container-photo {
    flex-shrink: 0;
    width: 105px; 
    height: 105px;
@@ -52,14 +52,29 @@
    display: flex;
    align-items: center;
    justify-content: center;
+   overflow: hidden;
 }
 
-.container-photo > img {
+.container-photo :is(label, img) {
    width: 100%;
    height: 100%;
 }
 
-.popup-edit-photo > .container-photo-contents {
+.container-photo img {
+   border-radius: 50%;
+   object-fit: cover;
+}
+
+.container-photo > label {
+   padding: 2px;
+   cursor: pointer;
+}
+
+.inputPhoto {
+   display: none;
+}
+
+.popup-edit-photo .container-photo-contents {
    height: 100px;
    display: flex;
    flex-direction: column;
@@ -128,7 +143,7 @@
 
 /* ---------- Container Message ---------- */
 
-.container-message {
+.container-message, .container-success-profile, .container-error-profile {
    display: none;
    align-items: center;
    gap: 5px;
@@ -147,8 +162,12 @@
    color: var(--primarySuccessColor);
 }
 
-.container-error-profile.show, .container-success-profile.show {
+.container-error-profile.show, .container-success-profile.show, .popup-edit-photo .container-message.show {
    display: flex;
+}
+
+.popup-edit-photo > div {
+   margin-top: 10px;
 }
 
 /* ---------- Popup Delete Account ---------- */

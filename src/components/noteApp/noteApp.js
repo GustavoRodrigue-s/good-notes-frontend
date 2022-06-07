@@ -170,7 +170,7 @@ export default function createNoteApp({ api }) {
    }
 
    // core application
-   const noteRepository = createNoteRepository();
+   const noteRepository = createNoteRepository(); 
 
    // layers
    const popupLoading = createLoading();
