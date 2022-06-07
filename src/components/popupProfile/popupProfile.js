@@ -16,8 +16,11 @@ function createPopupProfile() {
          state.loading.classList.toggle('show');
       }
       
+      const handleErrors = {}
+      const handleSuccess = {}
+
       const showPhotoErrorMessage = message => {
-         const containerError = document.querySelector('.popup-edit-photo .container-error-profile');
+         const containerError = document.querySelector('.container-photo-error');
          const spanError = containerError.querySelector('span');
 
          const errors = {
@@ -39,7 +42,7 @@ function createPopupProfile() {
       }
 
       const showPhotoSuccessMessage = () => {
-         const containerSuccess = document.querySelector('.popup-edit-photo .container-success-profile');
+         const containerSuccess = document.querySelector('.container-photo-success');
          containerSuccess.classList.add('show');
       }
 
@@ -94,7 +97,7 @@ function createPopupProfile() {
       }
 
       const showSuccessMessage = () => {
-         const successMessage = state.credentialsForm.querySelector('.container-success-profile');
+         const successMessage = state.credentialsForm.querySelector('.container-credentials-success');
          successMessage.classList.add('show');
       }
 
@@ -185,6 +188,8 @@ function createPopupProfile() {
                body: fileData
             });
 
+            toggleLoading();
+
             if (status !== 200) {
                showPhotoErrorMessage(data.reason);
                return
@@ -200,8 +205,6 @@ function createPopupProfile() {
          } catch (e) {
             showPhotoErrorMessage('request error');
          }
-
-         toggleLoading();
       }
 
       // refatorar a duplicação
@@ -212,8 +215,8 @@ function createPopupProfile() {
             return
          }
 
-         document.querySelector('.popup-edit-photo .container-error-profile').classList.remove('show');
-         document.querySelector('.popup-edit-photo .container-success-profile').classList.remove('show');
+         document.querySelector('.container-photo-error').classList.remove('show');
+         document.querySelector('.container-photo-success').classList.remove('show');
 
          const reader = new FileReader();
 
@@ -321,23 +324,15 @@ function createPopupProfile() {
       }
 
       const resetPopup = () => {
-         const [usernameMessage, emailMessage] = state.popupWrapper.querySelectorAll('.input-and-message');
-         const [genericError, successMessage] = state.popupWrapper.querySelectorAll('.container-message');
          const [overlayDeletion, overlayProfile] = state.popupWrapper.querySelectorAll('.popup-overlay');
-         const containerPhotoError = document.querySelector('.popup-edit-photo .container-error-profile');
-         const containerPhotoSuccess = document.querySelector('.popup-edit-photo .container-success-profile');
-
-         usernameMessage.classList.remove('error');
-         emailMessage.classList.remove('error');
-
-         genericError.classList.remove('show');
-         successMessage.classList.remove('show');
+         const inutWithMessage = state.popupWrapper.querySelectorAll('.input-and-message.error');
+         const messages = state.popupWrapper.querySelectorAll('.container-message.show');
 
          overlayProfile.classList.remove('show');
          overlayDeletion.classList.remove('show');
 
-         containerPhotoError.classList.remove('show');
-         containerPhotoSuccess.classList.remove('show');
+         inutWithMessage.forEach(container => container.classList.remove('error'));
+         messages.forEach(message => message.classList.remove('show'));
       }
 
       const setAccessibilityProps = () => {
@@ -566,13 +561,13 @@ function createPopupProfile() {
                      </div>
                   </div>
                </form>
-               <div class="container-error-profile">
+               <div class="container-photo-error container-message">
                   <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path>
                   </svg>
                   <span></span>
                </div>
-               <div class="container-success-profile">
+               <div class="container-photo-success container-message">
                   <svg stroke="currentColor" fill="currentColor" stroke-width="0" version="1" viewBox="0 0 48 48" enable-background="new 0 0 48 48" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
                      <circle fill="#4CAF50" cx="24" cy="24" r="21"></circle><polygon fill="#fff" points="34.6,14.6 21,28.2 15.4,22.6 12.6,25.4 21,33.8 37.4,17.4"></polygon>
                   </svg>
@@ -596,13 +591,13 @@ function createPopupProfile() {
                      <div class="container-error"></div>
                   </div>
                   <div class="container-messages">
-                     <div class="container-success-profile container-message">
+                     <div class="container-credentials-success container-message">
                         <svg stroke="currentColor" fill="currentColor" stroke-width="0" version="1" viewBox="0 0 48 48" enable-background="new 0 0 48 48" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
                            <circle fill="#4CAF50" cx="24" cy="24" r="21"></circle><polygon fill="#fff" points="34.6,14.6 21,28.2 15.4,22.6 12.6,25.4 21,33.8 37.4,17.4"></polygon>
                         </svg>
                         Tudo certo! Seus dados foram atualizados.
                      </div>
-                     <div class="container-error-profile container-message">
+                     <div class="container-credentials-error container-message">
                         <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z">
                            </path>
