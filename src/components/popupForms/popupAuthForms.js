@@ -148,8 +148,6 @@ function createPopupAuthForms() {
    
             const [data, status] = await api.request({ method: "POST", route, body });
    
-            console.log(data, status);
-
             if (status !== 200) {
                handleRequestError(data.errors, currentForm);
                showAndHideLoading(currentForm);

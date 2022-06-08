@@ -2,7 +2,7 @@ import cookie from "../components/cookie/cookie.js";
 
 function createApiNetwork() {
    const state = {
-      baseUrl: 'https://good-notes-backend.herokuapp.com/',
+      baseUrl: 'http://192.168.0.3:5000/',
       headers: {
          "Content-Type": "application/json"
       }

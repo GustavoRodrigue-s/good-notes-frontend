@@ -252,12 +252,18 @@
    }
 }
 
+@media (max-width: 330px) {
+   .popup-edit-photo > .container-message {
+      margin-top: 25px;
+   }
+}
+
 @media (max-width: 314px) {
-   .popup-edit-photo {
+   .popup-edit-photo > form {
       flex-direction: column;
    }
 
-   .popup-edit-photo > .container-photo-contents {
+   .popup-edit-photo > form > .container-photo-contents {
       gap: 5px;
    }
 }
