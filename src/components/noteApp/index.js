@@ -8,7 +8,7 @@ function createNoteAuth() {
    const auth = createAuthProvider();
 
    const header = createHeader();
-   const popupProfile = createPopupProfile();
+   const popupProfile = createPopupProfile(header);
 
    const redirectUser = () => {  
       localStorage.setItem('unauthorized', true);

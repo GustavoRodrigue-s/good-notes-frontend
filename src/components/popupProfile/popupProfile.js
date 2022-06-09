@@ -1,4 +1,4 @@
-function createPopupProfile() {
+function createPopupProfile({ updateUserAvatar }) {
    const state = {
       popupWrapper: document.querySelector('.popup-wrapper-profile')
    }
@@ -202,6 +202,7 @@ function createPopupProfile() {
             }
 
             saveProfileData({ photo: data.photoData });
+            updateUserAvatar(data.photoData);
 
             handleSuccess.showPhotoSuccess();
 
@@ -228,9 +229,25 @@ function createPopupProfile() {
          shouldRequestCredentials() {
             state.formPhoto.reset();
 
+            dispatch.shouldRemoveImgPreview();
+
             sessionStorage.getItem('profileData')
                ? setSavedProfileData()
                : getProfileData();
+         },
+         shouldRemoveImgPreview() {
+            const img = state.formPhoto.querySelector('img');
+            const profileData = sessionStorage.getItem('profileData');
+
+            if (!profileData) {
+               return
+            }
+
+            const { photo } = JSON.parse(profileData);
+
+            if (!photo) {
+               img.setAttribute('src', './images/avatar_icon.svg');
+            }
          },
          shouldUpdateCredentials(e) {
             e.preventDefault();

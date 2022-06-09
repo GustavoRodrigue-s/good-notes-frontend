@@ -7,7 +7,7 @@ function createHomeApp() {
    const auth = createAuthProvider();
    const header = createHeader();
    const popupAuthForms = createPopupAuthForms();
-   const popupProfile = createPopupProfile();
+   const popupProfile = createPopupProfile(header);
 
    auth.subscribe('unauthenticated', header.render);
    auth.subscribe('unauthenticated', popupAuthForms.render);

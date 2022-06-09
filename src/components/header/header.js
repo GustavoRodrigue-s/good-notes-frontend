@@ -107,6 +107,12 @@ function createHeader() {
       return template
    }
 
+   const updateUserAvatar = photoUrl => {
+      const image = state.header.querySelector('.btn-dropDown > img');
+
+      image.setAttribute('src', photoUrl);
+   }
+
    const render = ({ authenticated, api, cookie }) => {
       const currentComponent = authenticated ? componentLoggedInUser() : componentNotLoggedInUser();
 
@@ -166,10 +172,27 @@ function createHeader() {
 
       createMenuHamburguer();
       authenticated && createMenuDropdown({ api, cookie });
+
+      dispatch.shouldSetAvatar();
+   }
+
+   const dispatch = {
+      shouldSetAvatar() {
+         const profileData = sessionStorage.getItem('profileData');
+
+         if (!profileData) {
+            return
+         }
+
+         const { photo } = JSON.parse(profileData);
+
+         photo && updateUserAvatar(photo);
+      }
    }
 
    return { 
-      render 
+      render,
+      updateUserAvatar
    }
 }
 
