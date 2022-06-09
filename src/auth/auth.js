@@ -34,7 +34,9 @@ function createAuthProvider() {
       removeLoading();
    }
 
-   const authenticated = () => {
+   const authenticated = ({ email, username, photo }) => {
+      sessionStorage.setItem('profileData', JSON.stringify({ email, username, photo }));
+
       notifyAll('authenticated', { api, cookie, authenticated: true });
 
       removeLoading();
@@ -49,7 +51,7 @@ function createAuthProvider() {
          }
 
          state.authenticated = true;
-         authenticated();
+         authenticated(data);
 
       } catch (e) {
          console.log(e);

@@ -172,6 +172,22 @@ function createHeader() {
 
       createMenuHamburguer();
       authenticated && createMenuDropdown({ api, cookie });
+
+      dispatch.shouldSetAvatar();
+   }
+
+   const dispatch = {
+      shouldSetAvatar() {
+         const profileData = sessionStorage.getItem('profileData');
+
+         if (!profileData) {
+            return
+         }
+
+         const { photo } = JSON.parse(profileData);
+
+         photo && updateUserAvatar(photo);
+      }
    }
 
    return { 
