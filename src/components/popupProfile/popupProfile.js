@@ -98,7 +98,9 @@ function createPopupProfile({ updateUserAvatar }) {
          reader.readAsDataURL(file);
       }
 
-      const setProfileData = ({ email, username, photo }) => {
+      const setProfileData = profileData => {
+         const { email, username, photo } = profileData || JSON.parse(sessionStorage.getItem('profileData')); 
+
          const { inputEmail, inputUsername } = state.credentialsForm;
          const preview = state.formPhoto.querySelector('.photoPreview');
 
@@ -111,12 +113,6 @@ function createPopupProfile({ updateUserAvatar }) {
 
          inputEmail.value = email;
          inputUsername.value = username;
-      }
-
-      const setSavedProfileData = () => {
-         const credentials = JSON.parse(sessionStorage.getItem('profileData'));
-
-         setProfileData(credentials);
       }
 
       const saveProfileData = ({ username, email, photo }) => {
@@ -175,6 +171,8 @@ function createPopupProfile({ updateUserAvatar }) {
             }
 
             saveProfileData(data.newDatas);
+            setProfileData(data.newDatas);
+
             handleSuccess.showCredentialsSuccess();
    
          }catch(e) {
@@ -232,7 +230,7 @@ function createPopupProfile({ updateUserAvatar }) {
             dispatch.shouldRemoveImgPreview();
 
             sessionStorage.getItem('profileData')
-               ? setSavedProfileData()
+               ? setProfileData()
                : getProfileData();
          },
          shouldRemoveImgPreview() {
@@ -581,52 +579,57 @@ function createPopupProfile({ updateUserAvatar }) {
                   Tudo certo! Sua foto foi atualizada.
                </div>
             </div>
-            <div class="popup-credentials">
-               <form class="edit-profile-form">
-                  <div class="input-and-message">
-                     <div class="container-input">
-                        <label for="input-username">Nome de usuário</label>
-                        <input type="text" class="input-username input-default" id="input-username" value="" name="inputUsername" autocomplete="off">
+            <div class="credentials-slider">
+               <div class="popup-credentials">
+                  <form class="edit-profile-form">
+                     <div class="input-and-message">
+                        <div class="container-input">
+                           <label for="input-username">Nome de usuário</label>
+                           <input type="text" class="input-username input-default" id="input-username" value="" name="inputUsername" autocomplete="off">
+                        </div>
+                        <div class="container-error">
+                           <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
+                              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path>
+                           </svg>
+                           <span></span>
+                        </div>
                      </div>
-                     <div class="container-error">
-                        <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
-                           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path>
-                        </svg>
-                        <span></span>
+                     <div class="input-and-message">
+                        <div class="container-input">
+                           <label for="input-email">Endereço de email</label>
+                           <input type="email" class="input-email input-default" id="input-email" value="" name="inputEmail" autocomplete="off">  
+                        </div>
+                        <div class="container-error">
+                           <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
+                              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path>
+                           </svg>
+                           <span></span>
+                        </div>
                      </div>
-                  </div>
-                  <div class="input-and-message">
-                     <div class="container-input">
-                        <label for="input-email">Endereço de email</label>
-                        <input type="email" class="input-email input-default" id="input-email" value="" name="inputEmail" autocomplete="off">  
+                     <div class="container-messages">
+                        <div class="container-credentials-success container-message">
+                           <svg stroke="currentColor" fill="currentColor" stroke-width="0" version="1" viewBox="0 0 48 48" enable-background="new 0 0 48 48" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                              <circle fill="#4CAF50" cx="24" cy="24" r="21"></circle><polygon fill="#fff" points="34.6,14.6 21,28.2 15.4,22.6 12.6,25.4 21,33.8 37.4,17.4"></polygon>
+                           </svg>
+                           Tudo certo! Seus dados foram atualizados.
+                        </div>
+                        <div class="container-credentials-error container-message">
+                           <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
+                              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z">
+                              </path>
+                           </svg> 
+                           Houve um erro, tente novamente mais tarde!
+                        </div>
                      </div>
-                     <div class="container-error">
-                        <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
-                           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path>
-                        </svg>
-                        <span></span>
+                     <div class="container-buttons">
+                        <button type="submit" class="btn-update-credentials btn-default btn-default-hover">Salvar</button>
+                        <button type="reset" class="btn-cancel btn-default">Cancelar</button>
                      </div>
-                  </div>
-                  <div class="container-messages">
-                     <div class="container-credentials-success container-message">
-                        <svg stroke="currentColor" fill="currentColor" stroke-width="0" version="1" viewBox="0 0 48 48" enable-background="new 0 0 48 48" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                           <circle fill="#4CAF50" cx="24" cy="24" r="21"></circle><polygon fill="#fff" points="34.6,14.6 21,28.2 15.4,22.6 12.6,25.4 21,33.8 37.4,17.4"></polygon>
-                        </svg>
-                        Tudo certo! Seus dados foram atualizados.
-                     </div>
-                     <div class="container-credentials-error container-message">
-                        <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
-                           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z">
-                           </path>
-                        </svg> 
-                        Houve um erro, tente novamente mais tarde!
-                     </div>
-                  </div>
-                  <div class="container-buttons">
-                     <button type="submit" class="btn-update-credentials btn-default btn-default-hover">Salvar</button>
-                     <button type="reset" class="btn-cancel btn-default">Cancelar</button>
-                  </div>
-               </form>
+                  </form>
+               </div>
+               <div>
+
+               </div>
             </div>
             <div class="popup-disable-account">
                <div class="container-texts-popup">
