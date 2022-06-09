@@ -86,17 +86,21 @@ a.link-logo {
 }
 
 .btn-dropDown-header-menu {
+   padding: 5px 0;
    text-align: left;
+   display: flex;
+   align-items: center;
+   gap: 5px;
 }
 
 .btn-dropDown-header-menu > img {
-   width: 50px;
-   height: 50px;
+   object-fit: cover;
+   border-radius: 50%;
+   width: 40px;
+   height: 100%;
 }
 
 .btn-dropDown-header-menu > svg {
-   position: absolute;
-   right: 5px;
    height: 100%;
 }
 

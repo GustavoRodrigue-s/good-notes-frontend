@@ -107,6 +107,12 @@ function createHeader() {
       return template
    }
 
+   const updateUserAvatar = photoUrl => {
+      const image = state.header.querySelector('.btn-dropDown > img');
+
+      image.setAttribute('src', photoUrl);
+   }
+
    const render = ({ authenticated, api, cookie }) => {
       const currentComponent = authenticated ? componentLoggedInUser() : componentNotLoggedInUser();
 
@@ -169,7 +175,8 @@ function createHeader() {
    }
 
    return { 
-      render 
+      render,
+      updateUserAvatar
    }
 }
 
