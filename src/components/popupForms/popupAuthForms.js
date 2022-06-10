@@ -204,7 +204,8 @@ function createPopupAuthForms() {
          setTimeout(() => inputAutoFocus.focus(), 400);
       }
 
-      const setCurrentOverlay = targetForm => {
+      const setCurrentOverlay = targetElement => {
+         const targetForm = targetElement.dataset.js;
          const [signInOverlay, signUpOverlay] = state.popupWrapper.children;
 
          const acceptedOverlayActions = {
@@ -258,11 +259,8 @@ function createPopupAuthForms() {
          }
       }
 
-      const setAccessibilityProps = e => {
-         const targetDataJs = e.target.dataset.js;
+      const setAccessibilityProps = targetButton => {
          const [btnSignIn, btnSignUp] = state.containerButtons.children;
-
-         const currentBtn = state.containerButtons.querySelector(`button[data-js="${targetDataJs}"]`);
 
          const setAtributesForBtn = (btn, label, expanded) => {
             btn.setAttribute('aria-label', label);
@@ -272,8 +270,8 @@ function createPopupAuthForms() {
          setAtributesForBtn(btnSignIn, 'Abrir Menu', false);
          setAtributesForBtn(btnSignUp, 'Abrir Menu', false);
 
-         if (currentBtn) {
-            setAtributesForBtn(currentBtn, 'Fechar Menu', true);
+         if (targetButton.dataset.js) {
+            setAtributesForBtn(targetButton, 'Fechar Menu', true);
          }
       }
 
@@ -285,42 +283,22 @@ function createPopupAuthForms() {
          resetTimeToOpen();
       }
 
-      const popupListener = e => {
-         if (e.type === 'touchstart') e.preventDefault();
-
-         dispatch.shouldSetOverlay(e);
-         dispatch.shouldShowOrHidePopup(e);
-         dispatch.shouldToggleCurrentEyePassword(e);
+      const acceptedPopupActions = {
+         changeOverlay(target) {
+            setCurrentOverlay(target);
+            setAccessibilityProps(target);
+         },
+         togglePasswordEye(target) {
+            togglePasswordEye(target.parentElement);
+         }
       }
 
       const dispatch = {
-         shouldShowOrHidePopup(e) {
+         shouldShowOrHidePopup(target) {
             if (!state.avalibleToOpen) return
 
-            const targetClass = e.target.classList[0];
-
-            const listOfElementsToToggle = ['close-popup-target', 'popup-overlay', 'button-signIn', 'button-signUp'];
-            const shouldToggle = listOfElementsToToggle.includes(targetClass);
-
-            if (shouldToggle) {
-               showAndHidePopup();
-               setAccessibilityProps(e);
-            }
-         },
-         shouldSetOverlay(e) {
-            const targetForm = e.target.dataset.js;
-
-            if (targetForm) {
-               setCurrentOverlay(targetForm);
-               setAccessibilityProps(e);
-            }
-         },
-         shouldToggleCurrentEyePassword(e) {
-            const targetElement = e.target.parentElement;
-
-            if (targetElement.classList.contains('btn-eyes')) {
-               togglePasswordEye(targetElement);
-            }
+            acceptedPopupActions.changeOverlay(target);
+            showAndHidePopup();
          },
          shouldShowSignInPopup() {
             const shouldShowThePopup = localStorage.getItem('unauthorized');
@@ -334,6 +312,20 @@ function createPopupAuthForms() {
          }
       }
 
+      const popupListener = e => {
+         if (e.type === 'touchstart') e.preventDefault();
+
+         const targetAction = e.target.dataset.action;
+
+         if (dispatch[targetAction]) {
+            dispatch[targetAction](e.target);
+         }
+
+         if (acceptedPopupActions[targetAction]) {
+            acceptedPopupActions[targetAction](e.target);
+         }
+      }
+
       dispatch.shouldShowSignInPopup();
 
       state.containerButtons.addEventListener('click', popupListener);
@@ -343,14 +335,14 @@ function createPopupAuthForms() {
 
    const render = someHooks => {
       const template = `
-      <div class="popup-overlay overlay-signIn">
+      <div class="popup-overlay overlay-signIn" data-action="shouldShowOrHidePopup">
          <div class="popup-signIn popup popup-forms" data-form="formSignIn">
             <div class="container-loading center-flex">
                <div></div>
             </div>
             <div class="popup-content">
                <div class="close">
-                  <button class="close-popup-target close-popup center-flex" tabindex="0">
+                  <button class="close-popup-target close-popup center-flex" tabindex="0" data-action="shouldShowOrHidePopup">
                      <img class="close-popup-target close-popup" src="./images/close_popup_icon.svg" alt="Fechar popup">
                   </button>
                </div>
@@ -372,8 +364,8 @@ function createPopupAuthForms() {
                         <input type="password" name="inputPassword" id="inputPassword" placeholder=" " class="input-password input-form input-default" autocomplete="off" spellcheck="false">
                         <label for="inputPassword" class="label-input-default">Senha</label>
                         <a class="btn-eyes">
-                           <i class="eye-password show"></i>
-                           <i class="no-eye-password"></i>
+                           <i class="eye-password show" data-action="togglePasswordEye"></i>
+                           <i class="no-eye-password" data-action="togglePasswordEye"></i>
                         </a>
                      </div>
                      <div class="container-error last"></div>
@@ -408,21 +400,21 @@ function createPopupAuthForms() {
                <div class="container-hasAccount">
                   <p>
                      Não tem uma conta? 
-                     <span class="create-account-span prominent-span toggle-form" data-js="showSignUpForm" role="Change Form" arial-label="Trocar para o formulário Cadastrar" tabindex="0">Criar Conta</span>
+                     <span class="create-account-span prominent-span toggle-form" data-js="showSignUpForm" data-action="changeOverlay" role="Change Form" arial-label="Trocar para o formulário Cadastrar" tabindex="0">Criar Conta</span>
                   </p>
                </div>
             </div>
          </div>
       </div>
    
-      <div class="popup-overlay overlay-signUp">
+      <div class="popup-overlay overlay-signUp" data-action="shouldShowOrHidePopup">
          <div class="popup-signUp popup popup-forms" data-form="formSignUp">
             <div class="container-loading center-flex">
                <div></div>
             </div>
             <div class="popup-content">
                <div class="close">
-                  <button class="close-popup-target close-popup center-flex" tabindex="0">
+                  <button class="close-popup-target close-popup center-flex" tabindex="0" data-action="shouldShowOrHidePopup">
                      <img class="close-popup-target close-popup" src="./images/close_popup_icon.svg" alt="Fechar popup">
                   </button>
                </div>
@@ -452,16 +444,16 @@ function createPopupAuthForms() {
                         <input type="password" name="inputPassword" placeholder=" " class="input-password input-form input-default inputs-passwords" spellcheck="false">
                         <label for="inputPassword" class="label-input-default">Senha</label>
                         <a class="btn-eyes">
-                           <i class="eye-password show"></i>
-                           <i class="no-eye-password"></i>
+                           <i class="eye-password show" data-action="togglePasswordEye"></i>
+                           <i class="no-eye-password" data-action="togglePasswordEye"></i>
                         </a>
                      </div>
                      <div class="container-inputs">
                         <input type="password" name="inputConfirmPassword" placeholder=" " class="input-password input-form input-default inputs-passwords" spellcheck="false">
                         <label for="inputPassword" class="label-input-default">Confirmar Senha</label>
                         <a class="btn-eyes">
-                           <i class="eye-password show"></i>
-                           <i class="no-eye-password"></i>
+                           <i class="eye-password show" data-action="togglePasswordEye"></i>
+                           <i class="no-eye-password" data-action="togglePasswordEye"></i>
                         </a>
                      </div>
                      <div class="container-error"></div>
@@ -490,7 +482,7 @@ function createPopupAuthForms() {
                <div class="container-hasAccount">
                   <p>
                      Eu já tenho uma conta.
-                     <span class="access-account-span prominent-span toggle-form" data-js="showSignInForm" role="Change Form" arial-label="Trocar para o formulário Entrar" tabindex="0">Entrar</span>
+                     <span class="access-account-span prominent-span toggle-form" data-js="showSignInForm" data-action="changeOverlay" role="Change Form" arial-label="Trocar para o formulário Entrar" tabindex="0">Entrar</span>
                   </p>
                </div>
             </div>
