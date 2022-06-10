@@ -11,6 +11,35 @@
    padding-bottom: 20px !important;
 }
 
+.container-slider {
+   position: relative;
+   overflow-x: hidden;
+   width: 100%;
+   display: flex;
+}
+
+.container-slider > div {
+   min-width: 100%;
+   visibility: hidden;
+   opacity: 0;
+   transition: 0.3s;
+}
+
+.container-slider > .container-email-username, .container-reset-password.show {
+   transform: translateX(-100%);
+} 
+
+.container-slider > div.show {
+   visibility: visible;
+   opacity: 1;
+}
+
+.container-slider > .container-email-username.show {
+   transform: none;
+}
+
+/* ---------- Global ---------- */
+
 .popup-profile h1 {
    font-weight: 500;
 }
@@ -24,11 +53,11 @@
 .popup-edit-photo {
    padding: 30px 0;
 }
-.popup-credentials, .popup-title, .popup-disable-account {
+.container-slider, .popup-title, .popup-disable-account {
    padding: 15px 0;
 }
 
-.popup-title, .popup-edit-photo, .popup-credentials {
+.popup-title, .popup-edit-photo, .container-slider {
    border-bottom: 1px solid #00000028;
 } 
 
@@ -88,37 +117,40 @@
    margin-top: auto;
 }
 
-:is(.popup-edit-photo, .popup-credentials, .popup-disable-account) button {
+:is(.popup-edit-photo, .container-slider, .popup-disable-account) button {
    width: 100px;
    height: 35px;
-   background: #fff;
-   color: var(--primaryColor);
-   border: 1px solid var(--secondaryBorderColor);
    font-size: 1.5rem;
 }
 
-.popup-profile button:not(.container-buttons > button:first-child) {
+:is(.popup-edit-photo, .container-slider, .popup-disable-account) button.tertiary {
+   background: #fff;
+   color: var(--primaryColor);
+   border: 1px solid var(--secondaryBorderColor);
+}
+
+.popup-profile button:not(.container-buttons button:first-child) {
    box-shadow: none;
 }
 
-:is(.button-photo > button, .popup-credentials .btn-cancel, .popup-disable-account button):hover {
+:is(.button-photo > button, .container-slider .btn-cancel, .popup-disable-account button):hover {
    border-color: var(--secondaryHoverBorderColor);
 }
 
-.edit-profile-form > div {
+:is(.edit-profile-form, .reset-password-form) > div {
    margin: 15px 0;
 }
 
-.edit-profile-form input {
+.container-slider > .container-email-username input {
    background: #F6F6F6;
    margin-top: 5px;
 }
 
-.popup-credentials label {
+.container-slider label {
    color: var(--paragraphColor);
 }
 
-.container-buttons > .btn-update-credentials {
+.container-buttons .btn-update-credentials, .btn-update-password {
    border: none;
    color: #fff;
    background: var(--primaryColor);
@@ -127,6 +159,11 @@
 .container-buttons {
    display: flex;
    margin-top: 20px;
+   justify-content: space-between;
+}
+
+.container-buttons > div:first-child {
+   display: flex;
    gap: 10px;
 }
 
@@ -138,7 +175,7 @@
 }
 
 .popup-disable-account button {
-   color: red;
+   color: red !important;
 }
 
 /* ---------- Container Message ---------- */
@@ -185,7 +222,7 @@
    position: relative;
 }
 
-.container-input > input {
+.container-input input {
    background: #F6F6F6;
 }
 
@@ -240,6 +277,54 @@
 
 .btn-delete-confirm-active:hover {
    background-color: var(--primaryErrorHoverColor) !important;
+}
+
+/* ---------- Btn Slide To reset passwordd ---------- */
+
+.secondary {
+   width: auto !important;
+   box-shadow: none !important;
+   background-color: transparent !important;
+   display: inline-flex;
+   align-items: center;
+   cursor: pointer;
+   gap: 3px;
+   font-weight: 500 !important;
+   color: var(--primaryColor) !important;
+   border-radius: 8px;
+   padding: 0 10px;
+}
+
+.secondary > img {
+   width: 20px;
+   transition: transform 0.2s;
+}
+
+.secondary:hover {
+   background-color: var(--secondaryColor) !important;
+}
+
+.secondary:hover > img {
+   transform: translateX(4px);
+}
+
+.btn-update-password {
+   width: 120px !important;
+}
+
+.btn-email-username > img {
+   transform: rotateZ(-180deg);
+}
+
+.btn-email-username:hover > img {
+   transform: rotateZ(-180deg) translateX(4px);
+}
+
+/* ---------- Reset Password ---------- */
+
+.container-input-password {
+   margin-top: 5px;
+   position: relative;
 }
 
 /* ---------- Responsive ---------- */

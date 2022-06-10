@@ -83,7 +83,7 @@ function createHeader() {
             </svg>
          </button>
          <ul class="list-dropDown">
-            <li class="user-edit" data-action="showPopupProfile" tabindex="0" aria-haspopup="true" aria-expanded="false" aria-label="Abrir caixa para editar perfil.">Editar perfil</li>
+            <li class="user-edit" tabindex="0" aria-haspopup="true" aria-expanded="false" aria-label="Abrir caixa para editar perfil." data-action="shouldShowOrHidePopup">Editar perfil</li>
             <li class="user-exit" data-action="logoutAccount" tabindex="0" aria-label="Sair da conta.">Sair</li>
          </ul>
       </div>
@@ -95,10 +95,10 @@ function createHeader() {
    const componentNotLoggedInUser = () => {
       const template = `
       <div class="container-buttonsToThePopup">
-         <button class="button-signIn btn-default" id="button-signIn" data-js="showSignInForm" aria-expanded="false" aria-haspopup="true" aria-controls="menuAccount" aria-label="Abrir Menu">
+         <button class="button-signIn btn-default" id="button-signIn" data-js="showSignInForm" data-action="shouldShowOrHidePopup" aria-expanded="false" aria-haspopup="true" aria-controls="menuAccount" aria-label="Abrir Menu">
             Entrar
          </button>
-         <button class="button-signUp btn-default btn-default-hover" data-js="showSignUpForm" id="button-signUp" aria-expanded="false" aria-haspopup="true" aria-controls="menuAccount" aria-label="Abrir Menu">
+         <button class="button-signUp btn-default btn-default-hover" data-js="showSignUpForm" data-action="shouldShowOrHidePopup" id="button-signUp" aria-expanded="false" aria-haspopup="true" aria-controls="menuAccount" aria-label="Abrir Menu">
             Registrar-se
          </button>
       </div>
