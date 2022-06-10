@@ -7,12 +7,26 @@ function createPopupProfile({ updateUserAvatar }) {
       const state = {
          credentialsForm: document.querySelector('.edit-profile-form'),
          formPhoto: document.querySelector('.profile-photo-form'),
+         resetPasswordForm: document.querySelector('.reset-password-form'),
          loading: document.querySelector('.popup-profile .container-loading')
       }
 
       const MAXIMUM_PHOTO_SIZE = 1 * 1024 * 1024; // 1MB
 
       const handleErrors = {
+         hideInputError(input, containerInput) {
+            input.addEventListener('keydrown', () => 
+               containerInput.classList.remove('error'));
+         },
+         showInputError(input, message, containerInput) {
+            const span = containerInput.querySelector('.container-error > span');
+
+            span.innerText = "" || message;
+
+            containerInput.classList.add('error');
+
+            handleErrors.hideInputError(input, containerInput);
+         },
          showPhotoError(message) {
             const containerError = document.querySelector('.container-photo-error');
             const spanError = containerError.querySelector('span');
@@ -36,34 +50,68 @@ function createPopupProfile({ updateUserAvatar }) {
                : acceptedErrors['request error'];
          },
          showCredentialsError(errors) {
-            const hideError = (input, containerInput) => {
-               input.addEventListener('keypress', () => 
-                  containerInput.classList.remove('error'));
-            }
-
-            const showError = (input, message) => {
-               const containerInput = input.parentElement.parentElement;
-               const span = containerInput.querySelector('.container-error > span');
-
-               span.innerText = "" || message;
-
-               containerInput.classList.add('error');
-
-               hideError(input, containerInput);
-            }
-
             const acceptedErrors = {
                "empty input"({ input }) {
-                  showError(state.credentialsForm[input], 'Preencha este campo!');
+                  const currentInput = state.credentialsForm[input];
+
+                  handleErrors.showInputError(
+                     currentInput,
+                     'Preencha este campo!',
+                     currentInput.parentElement.parentElement
+                  );
                },
                "email already exists"({ input }) {
-                  showError(state.credentialsForm[input], 'Este email já existe!');
+                  const currentInput = state.credentialsForm[input];
+
+                  handleErrors.showInputError(
+                     currentInput,
+                     'Este email já existe!',
+                     currentInput.parentElement.parentElement
+                  );
                },
                "username already exists"({ input }) {
-                  showError(state.credentialsForm[input], 'Este nome já existe!');
+                  const currentInput = state.credentialsForm[input];
+
+                  handleErrors.showInputError(
+                     currentInput,
+                     'Este nome já existe!',
+                     currentInput.parentElement.parentElement
+                  );
                },
                "request error"() {
                   const errorMessage = state.credentialsForm.querySelector('.container-credentials-error');
+                  errorMessage.classList.add('show');
+               }
+            }
+   
+            errors.forEach(data => {
+               acceptedErrors[data.reason]
+                  ? acceptedErrors[data.reason](data)
+                  : acceptedErrors['request error']();
+            });
+         },
+         showPasswordsError(errors) {
+            const acceptedErrors = {
+               "empty input"({ input }) {
+                  const currentInput = state.resetPasswordForm[input];
+
+                  handleErrors.showInputError(
+                     currentInput,
+                     'Preencha este campo!',
+                     currentInput.parentElement.parentElement.parentElement
+                  );
+               },
+               "wrong old password"() {
+                  const currentInput = state.resetPasswordForm.inputOldPassword;
+
+                  handleErrors.showInputError(
+                     currentInput,
+                     'Senha antiga errada!',
+                     currentInput.parentElement.parentElement.parentElement
+                  );
+               },
+               "request error"() {
+                  const errorMessage = state.resetPasswordForm.querySelector('.container-reset-password-error');
                   errorMessage.classList.add('show');
                }
             }
@@ -82,6 +130,10 @@ function createPopupProfile({ updateUserAvatar }) {
          },
          showCredentialsSuccess() {
             const successMessage = state.credentialsForm.querySelector('.container-credentials-success');
+            successMessage.classList.add('show');
+         },
+         showPasswordsSuccess() {
+            const successMessage = state.resetPasswordForm.querySelector('.container-reset-password-success');
             successMessage.classList.add('show');
          }
       }
@@ -152,6 +204,29 @@ function createPopupProfile({ updateUserAvatar }) {
          }
       }
 
+      const updatePassword = async passwords => {
+         toggleLoading();
+
+         try {
+            const [data, status] = await api.request({
+               auth: true,
+               method: 'POST',
+               route: 'updatePassword',
+               body: passwords
+            });
+
+            toggleLoading();
+
+            status !== 200
+               ? handleErrors.showPasswordsError(data.errors)
+               : handleSuccess.showPasswordsSuccess();
+
+         } catch (e) {
+            state.loading.classList.remove('show');
+            handleErrors.showPasswordsError([{ reason: 'request error' }]);
+         }
+      }
+
       const updateCredentials = async newCredentials => {
          try {
             toggleLoading();
@@ -166,7 +241,7 @@ function createPopupProfile({ updateUserAvatar }) {
             toggleLoading();
    
             if (status !== 200) {
-               handleErrors.showCredentialsError(data.reason);
+               handleErrors.showCredentialsError(data.errors);
                return
             }
 
@@ -176,7 +251,7 @@ function createPopupProfile({ updateUserAvatar }) {
             handleSuccess.showCredentialsSuccess();
    
          }catch(e) {
-            toggleLoading();
+            state.loading.classList.remove('show');
             handleErrors.showCredentialsError([{ reason: 'request error' }]);
          }
       }
@@ -205,6 +280,7 @@ function createPopupProfile({ updateUserAvatar }) {
             handleSuccess.showPhotoSuccess();
 
          } catch (e) {
+            state.loading.classList.remove('show');
             handleErrors.showPhotoError('request error');
          }
       }
@@ -293,11 +369,26 @@ function createPopupProfile({ updateUserAvatar }) {
                photoFormated.photo = photoUrl;
                uploadPhoto(photoFormated);
             });
+         },
+         shouldResetPassword(e) {
+            e.preventDefault();
+
+            const { inputOldPassword, inputNewPassword } = state.resetPasswordForm;
+            
+            if (inputNewPassword.value === '' || inputOldPassword.value === '') {
+               return
+            }
+
+            updatePassword({ 
+               oldPassword: inputOldPassword.value,
+               newPassword: inputNewPassword.value
+            });
          }
       }
 
       state.credentialsForm.addEventListener('submit', dispatch.shouldUpdateCredentials);
       state.formPhoto.addEventListener('submit', dispatch.shouldUploadPhoto);
+      state.resetPasswordForm.addEventListener('submit', dispatch.shouldResetPassword);
       state.formPhoto.inputPhoto.addEventListener('change', handlePreviewChange);
 
       return { 
@@ -620,7 +711,6 @@ function createPopupProfile({ updateUserAvatar }) {
             </div>
 
             <div class="container-slider">
-
                <div class="container-email-username show">
                   <form class="edit-profile-form">
                      <div class="input-and-message">
@@ -738,6 +828,7 @@ function createPopupProfile({ updateUserAvatar }) {
                            </button>
                         </div>
                         <div>
+                           <span class="forgot-password">Esqueceu a senha?</span>
                            <button type="submit" class="btn-update-password btn-default btn-default-hover">Alterar senha</button>
                         </div>
                      </div>

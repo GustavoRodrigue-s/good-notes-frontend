@@ -191,11 +191,11 @@
    flex-shrink: 0;
 }
 
-.container-credentials-error, .container-photo-error {
+.container-credentials-error, .container-photo-error, .container-reset-password-error {
    color: var(--primaryErrorColor);
 }
 
-.container-credentials-success, .container-photo-success {
+.container-credentials-success, .container-photo-success, .container-reset-password-success {
    color: var(--primarySuccessColor);
 }
 
@@ -325,6 +325,18 @@
 .container-input-password {
    margin-top: 5px;
    position: relative;
+}
+
+span.forgot-password {
+   margin-right: 5px;
+   padding: 5px;
+   cursor: pointer;
+   font: 1.5rem var(--fontDefault);
+   color: var(--paragraphColor);
+}
+
+span.forgot-password:hover {
+   text-decoration: underline;
 }
 
 /* ---------- Responsive ---------- */
