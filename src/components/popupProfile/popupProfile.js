@@ -159,12 +159,12 @@ function createPopupProfile({ updateUserAvatar }) {
          inputEmail.setAttribute('value', email);
          inputUsername.setAttribute('value', username);
          
+         inputEmail.value = email;
+         inputUsername.value = username;
+
          if (photo) {
             preview.setAttribute('src', photo);
          }
-
-         inputEmail.value = email;
-         inputUsername.value = username;
       }
 
       const saveProfileData = ({ username, email, photo }) => {
@@ -228,9 +228,9 @@ function createPopupProfile({ updateUserAvatar }) {
       }
 
       const updateCredentials = async newCredentials => {
+         toggleLoading();
+
          try {
-            toggleLoading();
-   
             const [data, status] = await api.request({ 
                auth: true,
                method: "POST",
@@ -354,9 +354,7 @@ function createPopupProfile({ updateUserAvatar }) {
             }
 
             const file = inputPhoto.files[0];
-            const { size, type, name } = file;
-
-            const photoFormated = { size, type, name };
+            const photoFormated = { size: file.size, type: file.type, name: file.name };
 
             if (photoFormated.size > MAXIMUM_PHOTO_SIZE) {
                handleErrors.showPhotoError('maximum photo size');
@@ -380,8 +378,8 @@ function createPopupProfile({ updateUserAvatar }) {
             }
 
             updatePassword({ 
-               oldPassword: inputOldPassword.value,
-               newPassword: inputNewPassword.value
+               oldPassword: inputOldPassword.value.trim(),
+               newPassword: inputNewPassword.value.trim()
             });
          }
       }
@@ -464,10 +462,9 @@ function createPopupProfile({ updateUserAvatar }) {
 
          state.btnShowPopup.setAttribute('aria-expanded', state.show);
 
-         state.btnShowPopup.setAttribute(
-            'aria-label', 
-            state.show ? 'Fechar popup de editar perfil' : 'Abrir popup de editar perfil'
-         );
+         const message = state.show ? 'Fechar popup de editar perfil' : 'Abrir popup de editar perfil';
+
+         state.btnShowPopup.setAttribute('aria-label', message);
       }
 
       const setTimeToOpen = () => {
@@ -484,10 +481,10 @@ function createPopupProfile({ updateUserAvatar }) {
 
          resetPopupWhenPassingForm();
 
-         const [emailAndUsername, resetPassword] = state.slider.children;
+         const [sectionEmailAndUsername, sectionResetPassword] = state.slider.children;
 
-         emailAndUsername.classList.toggle('show');
-         resetPassword.classList.toggle('show');
+         sectionEmailAndUsername.classList.toggle('show');
+         sectionResetPassword.classList.toggle('show');
       }
 
       const showAndHidePopupWrapper = () => {
@@ -529,13 +526,8 @@ function createPopupProfile({ updateUserAvatar }) {
 
          const targetAction = e.target.dataset.action;
 
-         if (dispatch[targetAction]) {
-            dispatch[targetAction]();
-         }
-
-         if (acceptedPopupActions[targetAction]) {
-            acceptedPopupActions[targetAction](e.target);
-         }
+         dispatch[targetAction] && dispatch[targetAction]();
+         acceptedPopupActions[targetAction] && acceptedPopupActions[targetAction](e.target);
       }
 
       state.popupWrapper.addEventListener('mousedown', popupListener);

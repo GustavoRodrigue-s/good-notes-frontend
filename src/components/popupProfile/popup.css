@@ -11,33 +11,6 @@
    padding-bottom: 20px !important;
 }
 
-.container-slider {
-   position: relative;
-   overflow-x: hidden;
-   width: 100%;
-   display: flex;
-}
-
-.container-slider > div {
-   min-width: 100%;
-   visibility: hidden;
-   opacity: 0;
-   transition: 0.3s;
-}
-
-.container-slider > .container-email-username, .container-reset-password.show {
-   transform: translateX(-100%);
-} 
-
-.container-slider > div.show {
-   visibility: visible;
-   opacity: 1;
-}
-
-.container-slider > .container-email-username.show {
-   transform: none;
-}
-
 /* ---------- Global ---------- */
 
 .popup-profile h1 {
@@ -49,6 +22,44 @@
    margin: 5px 0;
    color: var(--paragraphColor);
 }
+
+:is(.popup-edit-photo, .container-slider, .popup-disable-account) button {
+   width: 100px;
+   height: 35px;
+   font-size: 1.5rem;
+}
+
+:is(.popup-edit-photo, .container-slider, .popup-disable-account) button.tertiary {
+   background: #fff;
+   color: var(--primaryColor);
+   border: 1px solid var(--secondaryBorderColor);
+}
+
+.popup-profile button:not(.container-buttons button:first-child) {
+   box-shadow: none;
+}
+
+:is(.button-photo > button, .container-slider .btn-cancel, .popup-disable-account button):hover {
+   border-color: var(--secondaryHoverBorderColor);
+}
+
+:is(.edit-profile-form, .reset-password-form) > div {
+   margin: 15px 0;
+}
+
+.container-buttons .btn-update-credentials, .btn-update-password {
+   border: none;
+   color: #fff;
+   background: var(--primaryColor);
+}
+
+.container-buttons {
+   display: flex;
+   margin-top: 20px;
+   justify-content: space-between;
+}
+
+/* ---------- Profile Photo --------- */
 
 .popup-edit-photo {
    padding: 30px 0;
@@ -117,28 +128,33 @@
    margin-top: auto;
 }
 
-:is(.popup-edit-photo, .container-slider, .popup-disable-account) button {
-   width: 100px;
-   height: 35px;
-   font-size: 1.5rem;
+/* ---------- Container Slider ---------- */
+
+.container-slider {
+   position: relative;
+   overflow-x: hidden;
+   width: 100%;
+   display: flex;
 }
 
-:is(.popup-edit-photo, .container-slider, .popup-disable-account) button.tertiary {
-   background: #fff;
-   color: var(--primaryColor);
-   border: 1px solid var(--secondaryBorderColor);
+.container-slider > div {
+   min-width: 100%;
+   visibility: hidden;
+   opacity: 0;
+   transition: 0.3s;
 }
 
-.popup-profile button:not(.container-buttons button:first-child) {
-   box-shadow: none;
+.container-slider > .container-email-username, .container-reset-password.show {
+   transform: translateX(-100%);
+} 
+
+.container-slider > div.show {
+   visibility: visible;
+   opacity: 1;
 }
 
-:is(.button-photo > button, .container-slider .btn-cancel, .popup-disable-account button):hover {
-   border-color: var(--secondaryHoverBorderColor);
-}
-
-:is(.edit-profile-form, .reset-password-form) > div {
-   margin: 15px 0;
+.container-slider > .container-email-username.show {
+   transform: none;
 }
 
 .container-slider > .container-email-username input {
@@ -148,18 +164,6 @@
 
 .container-slider label {
    color: var(--paragraphColor);
-}
-
-.container-buttons .btn-update-credentials, .btn-update-password {
-   border: none;
-   color: #fff;
-   background: var(--primaryColor);
-}
-
-.container-buttons {
-   display: flex;
-   margin-top: 20px;
-   justify-content: space-between;
 }
 
 .container-email-username .container-buttons > div:first-child,
@@ -229,7 +233,7 @@
 
 .popup-confirm-to-delete-account.popup {
    max-width: 650px;
-   padding: 20px !important;
+   padding: 30px 20px !important;
 }
 
 .popup-confirm-to-delete-account .texts {
@@ -280,7 +284,7 @@
    background-color: var(--primaryErrorHoverColor) !important;
 }
 
-/* ---------- Btn Slide To reset passwordd ---------- */
+/* ---------- Btn Slide To reset password ---------- */
 
 .secondary {
    width: auto !important;
@@ -355,13 +359,10 @@ button.forgot-password:hover {
    }
 
    .container-email-username .container-buttons > div:first-child,
-   .container-reset-password .container-buttons > div:last-child {
-      width: 100%;
-      text-align: center;
-   }
-
+   .container-reset-password .container-buttons > div:last-child,
    .container-buttons > div > button {
       width: 100% !important;
+      text-align: center;
    }
 }
 
