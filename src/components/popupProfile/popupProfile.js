@@ -421,18 +421,24 @@ function createPopupProfile({ updateUserAvatar }) {
       }
 
       const togglePasswordEye = btn => {
-         const [eyePassword, noEyePassword, inputPassword] = [
-            ...btn.children, btn.parentElement.firstElementChild
-         ];
+         const inputPassword = btn.parentElement.firstElementChild;
          
          const typeInput = inputPassword.getAttribute('type') === 'password' ? 'text' : 'password';
          inputPassword.setAttribute('type', typeInput);
 
-         eyePassword.classList.toggle('show');
-         noEyePassword.classList.toggle('show');
+         btn.classList.toggle('show');
       }
 
-      const resetMessages = () => {
+      const resetPopupWhenPassingForm = () => {
+         const btnEyes = state.popupWrapper.querySelectorAll('.btn-eyes');
+
+         btnEyes.forEach(btn => {
+            const inputPassword =  btn.parentElement.firstElementChild;
+            inputPassword.setAttribute('type', 'password');
+            
+            btn.classList.remove('show');
+         });
+
          const inputWithMessage = state.popupWrapper.querySelectorAll('.input-and-message.error');
          const messages = state.popupWrapper.querySelectorAll('.container-message.show');
 
@@ -441,10 +447,10 @@ function createPopupProfile({ updateUserAvatar }) {
       }
 
       const resetPopup = () => {
-         const [ emailAndUsername, resetPassword ] = state.slider.children;
+         const [emailAndUsername, resetPassword] = state.slider.children;
          const [overlayDeletion, overlayProfile] = state.popupWrapper.querySelectorAll('.popup-overlay');
 
-         resetMessages();
+         resetPopupWhenPassingForm();
 
          overlayProfile.classList.remove('show');
          overlayDeletion.classList.remove('show');
@@ -474,10 +480,11 @@ function createPopupProfile({ updateUserAvatar }) {
 
       const slideForm = () => {
          document.querySelector('.edit-profile-form').reset();
+         document.querySelector('.reset-password-form').reset();
 
-         resetMessages();
+         resetPopupWhenPassingForm();
 
-         const [ emailAndUsername, resetPassword ] = state.slider.children;
+         const [emailAndUsername, resetPassword] = state.slider.children;
 
          emailAndUsername.classList.toggle('show');
          resetPassword.classList.toggle('show');
