@@ -15,7 +15,7 @@ function createPopupProfile({ updateUserAvatar }) {
 
       const handleErrors = {
          hideInputError(input, containerInput) {
-            input.addEventListener('keydrown', () => 
+            input.addEventListener('keydown', () => 
                containerInput.classList.remove('error'));
          },
          showInputError(input, message, containerInput) {
