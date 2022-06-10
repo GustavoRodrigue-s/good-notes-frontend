@@ -67,11 +67,19 @@
    background: url('../../../images/eye_show.svg') no-repeat center;
 }
 
+.eye-password {
+   visibility: visible;
+}
+
 .no-eye-password {
    background: url('../../../images/eye_hide.svg') no-repeat center;
 }
 
-:is(.eye-password, .no-eye-password).show {
+.btn-eyes.show > .eye-password {
+   visibility: hidden;
+}
+
+.btn-eyes.show > .no-eye-password{
    visibility: visible;
 }
 

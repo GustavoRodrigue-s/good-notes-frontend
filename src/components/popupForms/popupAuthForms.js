@@ -188,15 +188,12 @@ function createPopupAuthForms() {
       }
 
       const togglePasswordEye = btn => {
-         const [eyePassword, noEyePassword, inputPassword] = [
-            ...btn.children, btn.parentElement.firstElementChild
-         ];
+         const inputPassword = btn.parentElement.firstElementChild;
          
          const typeInput = inputPassword.getAttribute('type') === 'password' ? 'text' : 'password';
-
          inputPassword.setAttribute('type', typeInput);
-         eyePassword.classList.toggle('show');
-         noEyePassword.classList.toggle('show');
+
+         btn.classList.toggle('show');
       }
 
       const inputFocus = () => {
@@ -240,14 +237,11 @@ function createPopupAuthForms() {
 
          containerError.forEach(container => container.classList.remove('error'));
 
-         btnEyes.forEach(btns => {
-            const [eyePassword, noEyePassword, inputPassword] = [
-               ...btns.children, btns.parentElement.firstElementChild
-            ];
-
+         btnEyes.forEach(btn => {
+            const inputPassword =  btn.parentElement.firstElementChild;
             inputPassword.setAttribute('type', 'password');
-            eyePassword.classList.add('show');
-            noEyePassword.classList.remove('show');
+            
+            btn.classList.remove('show');
          });
       }
 
@@ -364,7 +358,7 @@ function createPopupAuthForms() {
                         <input type="password" name="inputPassword" id="inputPassword" placeholder=" " class="input-password input-form input-default" autocomplete="off" spellcheck="false">
                         <label for="inputPassword" class="label-input-default">Senha</label>
                         <a class="btn-eyes">
-                           <i class="eye-password show" data-action="togglePasswordEye"></i>
+                           <i class="eye-password" data-action="togglePasswordEye"></i>
                            <i class="no-eye-password" data-action="togglePasswordEye"></i>
                         </a>
                      </div>
@@ -444,7 +438,7 @@ function createPopupAuthForms() {
                         <input type="password" name="inputPassword" placeholder=" " class="input-password input-form input-default inputs-passwords" spellcheck="false">
                         <label for="inputPassword" class="label-input-default">Senha</label>
                         <a class="btn-eyes">
-                           <i class="eye-password show" data-action="togglePasswordEye"></i>
+                           <i class="eye-password" data-action="togglePasswordEye"></i>
                            <i class="no-eye-password" data-action="togglePasswordEye"></i>
                         </a>
                      </div>
@@ -452,7 +446,7 @@ function createPopupAuthForms() {
                         <input type="password" name="inputConfirmPassword" placeholder=" " class="input-password input-form input-default inputs-passwords" spellcheck="false">
                         <label for="inputPassword" class="label-input-default">Confirmar Senha</label>
                         <a class="btn-eyes">
-                           <i class="eye-password show" data-action="togglePasswordEye"></i>
+                           <i class="eye-password" data-action="togglePasswordEye"></i>
                            <i class="no-eye-password" data-action="togglePasswordEye"></i>
                         </a>
                      </div>

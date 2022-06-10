@@ -236,7 +236,8 @@ button svg, button div, button span, button img {
    height: 100%;
    display: grid !important;
    grid-template-columns: 100%;
-   place-items: center;
+   justify-items: center;
+   align-items: center;
    overflow: auto !important;
 }
 

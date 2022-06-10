@@ -22,7 +22,7 @@ function createApiNetwork() {
       const currentUrl = `${state.baseUrl}${route}`;
 
       const options = {
-         method: method || "GET",
+         method: method,
          headers: state.headers
       }
 

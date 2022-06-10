@@ -46,7 +46,7 @@ function createHeader() {
                try {
                   state.loading.classList.add('show');
       
-                  await api.request({ auth: true, route: "logout" });
+                  await api.request({ auth: true, method: 'GET', route: "logout" });
       
                   throw 'exiting...';
       

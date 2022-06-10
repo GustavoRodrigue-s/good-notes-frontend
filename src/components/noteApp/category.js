@@ -66,7 +66,7 @@ export function createCategoryNetwork(networkTemplate) {
       try {
          await networkTemplate({
             route: 'updateCategory',
-            method: 'POST',
+            method: 'PUT',
             body: { categoryId, newCategoryName: inputCategoryName.value }
          });
          
@@ -91,7 +91,7 @@ export function createCategoryNetwork(networkTemplate) {
 
          await networkTemplate({
             route: 'deleteCategory',
-            method: 'POST',
+            method: 'DELETE',
             body: { categoryId }
          })
 
@@ -105,7 +105,7 @@ export function createCategoryNetwork(networkTemplate) {
    }
 
    const getCategories = async () => {
-      const { categories } = await networkTemplate({ route: 'getCategories' });
+      const { categories } = await networkTemplate({ route: 'getCategories', method: 'GET' });
       
       notifyAll('obtainedCategories', categories);
 
