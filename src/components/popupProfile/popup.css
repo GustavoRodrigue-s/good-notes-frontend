@@ -131,6 +131,7 @@
 /* ---------- Container Slider ---------- */
 
 .container-slider {
+   visibility: hidden;
    position: relative;
    overflow-x: hidden;
    width: 100%;
@@ -148,7 +149,7 @@
    transform: translateX(-100%);
 } 
 
-.container-slider > div.show {
+.popup-overlay.show .container-slider > div.show {
    visibility: visible;
    opacity: 1;
 }

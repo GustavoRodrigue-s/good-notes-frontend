@@ -189,7 +189,7 @@ function createPopupProfile({ updateUserAvatar }) {
          try {
             toggleLoading();
 
-            const [data, status] = await api.request({ auth: true, route: "getProfile" });
+            const [data, status] = await api.request({ auth: true, method: 'GET', route: "getProfile" });
 
             if (status !== 200) {
                throw 'The tokens is not valid.';
@@ -210,7 +210,7 @@ function createPopupProfile({ updateUserAvatar }) {
          try {
             const [data, status] = await api.request({
                auth: true,
-               method: 'POST',
+               method: 'PUT',
                route: 'updatePassword',
                body: passwords
             });
@@ -233,7 +233,7 @@ function createPopupProfile({ updateUserAvatar }) {
          try {
             const [data, status] = await api.request({ 
                auth: true,
-               method: "POST",
+               method: "PUT",
                route: "updateCredentials",
                body: newCredentials 
             });

@@ -59,9 +59,8 @@ export function createNoteNetwork(networkTemplate, repository) {
       category.waitingForNotes = true;
 
       const { notes } = await networkTemplate({
-         route: 'getNotes',
-         method: 'POST',
-         body: { categoryId: category.id }
+         route: `getNotes?categoryId=${category.id}`,
+         method: 'GET'
       });
 
       notes && repository.setNotes(notes);
@@ -115,7 +114,7 @@ export function createNoteNetwork(networkTemplate, repository) {
 
          await networkTemplate({
             route: 'deleteNote',
-            method: 'POST',
+            method: 'DELETE',
             body: { categoryId: selectedCategoryId, noteId: selectedNoteId }
          })
 
@@ -138,7 +137,7 @@ export function createNoteNetwork(networkTemplate, repository) {
 
          const { lastModification } = await networkTemplate({
             route: 'updateNote',
-            method: 'POST',   
+            method: 'PUT',   
             body: { ...newNoteValues }
          });
 

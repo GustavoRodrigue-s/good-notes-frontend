@@ -44,7 +44,7 @@ function createAuthProvider() {
 
    const validateTokens = async () => {
       try {
-         const [data, status] = await api.request({ auth: true, route: "auth" });
+         const [data, status] = await api.request({ auth: true, method: 'GET', route: "auth" });
 
          if(status === 401 || status === 403) {
             throw 'The tokens is not valid.';
