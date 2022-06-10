@@ -162,7 +162,8 @@
    justify-content: space-between;
 }
 
-.container-buttons > div:first-child {
+.container-email-username .container-buttons > div:first-child,
+.container-reset-password .container-buttons > div:last-child {
    display: flex;
    gap: 10px;
 }
@@ -327,19 +328,42 @@
    position: relative;
 }
 
-span.forgot-password {
-   margin-right: 5px;
-   padding: 5px;
+button.forgot-password {
+   width: auto !important;
+   border: none;
+   background-color: transparent;
    cursor: pointer;
    font: 1.5rem var(--fontDefault);
    color: var(--paragraphColor);
 }
 
-span.forgot-password:hover {
+button.forgot-password:hover {
    text-decoration: underline;
 }
 
 /* ---------- Responsive ---------- */
+
+@media (max-width: 410px) {
+   .container-buttons {
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+   }
+
+   .container-reset-password .container-buttons {
+      flex-direction: column-reverse;
+   }
+
+   .container-email-username .container-buttons > div:first-child,
+   .container-reset-password .container-buttons > div:last-child {
+      width: 100%;
+      text-align: center;
+   }
+
+   .container-buttons > div > button {
+      width: 100% !important;
+   }
+}
 
 @media (max-width: 350px) {
    .popup-disable-account {
@@ -347,15 +371,31 @@ span.forgot-password:hover {
       align-items: flex-start;
       gap: 10px;
    }
+
+   .popup-disable-account > div {
+      width: 100%;
+   }
+
+   .popup-disable-account > .container-button-disable {
+      text-align: center;
+   }
 }
 
 @media (max-width: 330px) {
+   .container-reset-password .container-buttons button.forgot-password {
+      font-size: 1.3rem;
+   }
+
    .popup-edit-photo > .container-message {
       margin-top: 25px;
    }
 }
 
 @media (max-width: 314px) {
+   .container-reset-password .container-buttons button.forgot-password {
+      font-size: 1.2rem;
+   }
+
    .popup-edit-photo > form {
       flex-direction: column;
    }

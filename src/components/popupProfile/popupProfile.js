@@ -835,7 +835,7 @@ function createPopupProfile({ updateUserAvatar }) {
                            </button>
                         </div>
                         <div>
-                           <span class="forgot-password">Esqueceu a senha?</span>
+                           <button type="button" class="forgot-password">Esqueceu a senha?</button>
                            <button type="submit" class="btn-update-password btn-default btn-default-hover">Alterar senha</button>
                         </div>
                      </div>
