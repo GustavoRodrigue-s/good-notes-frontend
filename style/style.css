@@ -7,6 +7,7 @@
 @import url('../src/components/cookie/cookie.css');
 @import url('../src/components/popupForms/popup.css');
 @import url('../src/components/popupProfile/popup.css');
+@import url('../src/components/confirmationCode/popup.css');
 
 * {
    margin: 0;
@@ -260,9 +261,12 @@ button svg, button div, button span, button img {
 
 .popup-wrapper.show > .overlay-signIn.show > .popup-signIn,
 .popup-wrapper.show > .overlay-signUp.show > .popup-signUp,
-.popup-wrapper-cookie.show .popup,
-.popup-wrapper-confirm-delete.show .popup,
-.popup-wrapper-cloud-error.show .popup {
+:is(
+   .popup-wrapper-cookie,
+   .popup-wrapper-confirm-delete,
+   .popup-wrapper-cloud-error,
+   .popup-wrapper-confirmation-code
+).show .popup {
    transform: scale(1);
    visibility: visible;
    opacity: 1;

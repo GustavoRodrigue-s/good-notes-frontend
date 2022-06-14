@@ -1,6 +1,10 @@
-function createPopupAuthForms() {
+function createPopupAuthForms(confirmationCode) {
    const state = {
       popupWrapper: document.querySelector('.popup-wrapper-auth')
+   }
+
+   const showAndHidePopup = () => {
+      state.popupWrapper.classList.toggle('show');
    }
 
    function createForm({ api, cookie }) {
@@ -142,20 +146,23 @@ function createPopupAuthForms() {
          cookie.setCookies({ ...data.userData });
       }
 
+      // integrar o popup verification code
       const submitForm = async ({ route, currentForm, body }) => {
          try {
             showAndHideLoading(currentForm);
    
             const [data, status] = await api.request({ method: "POST", route, body });
    
+            showAndHideLoading(currentForm);
+
             if (status !== 200) {
                handleRequestError(data.errors, currentForm);
-               showAndHideLoading(currentForm);
-
                return
             }
             
-            setUserSession(data, body.keepConnected)
+            showAndHidePopup();
+            setTimeout(confirmationCode.showPopup, 300);
+            // setUserSession(data, body.keepConnected)
    
          } catch (e) {
             showAndHideLoading(currentForm);
