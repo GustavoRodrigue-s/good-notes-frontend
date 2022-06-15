@@ -113,7 +113,8 @@ function createPopupAuthForms(confirmationCode) {
             return {
                email: inputEmail.value.trim(),
                password: inputPassword.value.trim(),
-               keepConnected: inputCheckbox.checked
+               keepConnected: inputCheckbox.checked,
+               hasActivationToken: document.cookie.includes('activationToken')
             }
          },
          getFormSignUpDatas() {
@@ -165,9 +166,13 @@ function createPopupAuthForms(confirmationCode) {
 
             state.keepConnected = body.keepConnected;
 
-            if (data.userData && data.userData.activationToken || status === 301) {
-               document.cookie = `activationToken = ${data.userData.activationToken}; path=/`;
+            const hasActivationToken = data.userData && data.userData.activationToken;
 
+            if (hasActivationToken) {
+               document.cookie = `activationToken = ${data.userData.activationToken}; path=/`;
+            }
+
+            if (status === 301 || hasActivationToken) {
                showAndHidePopup();
                setTimeout(confirmationCode.showPopup, 300);
    

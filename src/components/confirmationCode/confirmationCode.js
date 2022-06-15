@@ -4,6 +4,113 @@ export default function createConfirmationCode() {
       popupWrapper: document.querySelector('.popup-wrapper-confirmation-code')
    }
 
+   function createForm(api) {
+      const state = {
+         confirmationForm: document.querySelector('form.confirmation-code-form'),
+         inputs: [...document.querySelectorAll('form.confirmation-code-form input')]
+      }
+      
+      const submitActivationCode = async activationCode => {
+         try {
+            const [data, status] = await api.request({
+               activationAuth: true,
+               method: 'POST',
+               route: 'checkActivationCode',
+               body: { activationCode }
+            })
+            
+            console.log(data, status);
+            
+            if (status === 200) {
+               notifyAll(data.userData);
+            }
+            
+         } catch(e) {
+            console.log(e);
+         }
+      }
+      
+      const handleSubmit = e => {
+         e.preventDefault();
+         
+         const code = state.inputs.reduce((acc, input) => acc += input.value, '');
+         
+         submitActivationCode(code);
+      }
+
+      const pasteAll = code => {
+         state.inputs.forEach((input, index) => {
+            input.value = code[index];
+            input.setAttribute('value', code[index]);
+         });
+      }
+
+      const focusOnEmptyInput = () => {
+         const firstEmptyInput = state.inputs.find(input => input.value === '');
+
+         firstEmptyInput.focus();
+      }
+
+      const resetInput = input => {
+         input.value = input.getAttribute('value');
+      }
+
+      const focusOnInput = input => {
+         input.focus();
+      }
+
+      const dispatch = {
+         shouldPasteAll(e) {
+            const code = e.clipboardData.getData('text');
+
+            if (code.length !== 5 || !+code) {
+               e.preventDefault();
+               return
+            }
+
+            pasteAll(code);
+         },
+         shouldFocusOnInput(e) {
+            if (e.target.tagName !== 'INPUT' || e.target.value) return
+
+            focusOnEmptyInput();
+         },
+         shouldWriteOnInput(e) {
+            const input = e.target;
+
+            if (input.value.length > 1) {
+               resetInput(input);
+
+               return
+            }
+
+            input.setAttribute('value', input.value);
+
+            const shouldFocusOnInput = input.nextElementSibling && input.value && !input.nextElementSibling.value;
+
+            shouldFocusOnInput && focusOnInput(input.nextElementSibling);
+         },
+         shouldDeletionOnInput(e) {
+            if (e.key !== 'Backspace') return
+
+            const input = e.target
+
+            const shouldFocusOnInput = input.previousElementSibling && input.value === '';
+
+            shouldFocusOnInput && focusOnInput(input.previousElementSibling);
+         }
+      }
+
+      state.confirmationForm.addEventListener('submit', handleSubmit);
+      
+      state.confirmationForm.addEventListener('input', dispatch.shouldWriteOnInput);
+      state.confirmationForm.addEventListener('keydown', dispatch.shouldDeletionOnInput);
+      state.confirmationForm.addEventListener('click', dispatch.shouldFocusOnInput);
+      state.confirmationForm.addEventListener('paste', dispatch.shouldPasteAll);
+
+      return {  }
+   }
+
    const subscribe = observerFunction => {
       state.observers.push(observerFunction);
    }
@@ -14,50 +121,10 @@ export default function createConfirmationCode() {
       }
    }
 
-   function createForm(api) {
-      const state = {
-         confirmationForm: document.querySelector('form.confirmation-code-form')
-      }
-
-      const submitActivationCode = async activationCode => {
-         try {
-            const [data, status] = await api.request({
-               activationAuth: true,
-               method: 'POST',
-               route: 'checkActivationCode',
-               body: { activationCode }
-            })
-   
-            console.log(data, status);
-
-            if (status === 200) {
-               notifyAll(data.userData);
-            }
-   
-         } catch(e) {
-            console.log(e);
-         }
-      }
-   
-      const handleSubmit = e => {
-         e.preventDefault();
-   
-         const inputs = [...state.confirmationForm.inputCode];
-
-         const code = inputs.reduce((acc, input) => acc += input.value, '');
-   
-         submitActivationCode(code);
-      }
-
-      state.confirmationForm.addEventListener('submit', handleSubmit);
-
-      return {  }
-   }
-
    const showPopup = () => {
       state.popupWrapper.classList.add('show');
    }
-   
+
    const hidePopup = () =>{
       state.popupWrapper.classList.remove('show');
    }
