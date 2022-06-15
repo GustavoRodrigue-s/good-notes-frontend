@@ -8,15 +8,27 @@ function createApiNetwork() {
       }
    }
 
-   const setAuthorization = () => {
+   const setSessionAuthorization = () => {
       const { accessToken, refreshToken } = cookie.getCookies();
    
       state.headers["Authorization"] = `${accessToken};${refreshToken}`;
    }
 
-   const requestTemplate = async ({ auth, method, route, body }) => {
+   const setActivationToken = () => {
+      const activationToken = document.cookie.split('=')[1];
+
+      console.log(activationToken);
+   
+      state.headers["Authorization"] = activationToken;
+   }
+
+   const requestTemplate = async ({ auth, activationAuth, method, route, body }) => {
       if (auth) {
-         setAuthorization();
+         setSessionAuthorization();
+      }
+
+      if (activationAuth) {
+         setActivationToken();
       }
 
       const currentUrl = `${state.baseUrl}${route}`;

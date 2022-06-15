@@ -1,6 +1,57 @@
 export default function createConfirmationCode() {
    const state = {
-      popupWrapper: document.querySelector('.popup-wrapper-confirmation-code'),
+      observers: [],
+      popupWrapper: document.querySelector('.popup-wrapper-confirmation-code')
+   }
+
+   const subscribe = observerFunction => {
+      state.observers.push(observerFunction);
+   }
+
+   const notifyAll = data => {
+      for (const observerFunction of state.observers) {
+         observerFunction(data);
+      }
+   }
+
+   function createForm(api) {
+      const state = {
+         confirmationForm: document.querySelector('form.confirmation-code-form')
+      }
+
+      const submitActivationCode = async activationCode => {
+         try {
+            const [data, status] = await api.request({
+               activationAuth: true,
+               method: 'POST',
+               route: 'checkActivationCode',
+               body: { activationCode }
+            })
+   
+            console.log(data, status);
+
+            if (status === 200) {
+               notifyAll(data.userData);
+            }
+   
+         } catch(e) {
+            console.log(e);
+         }
+      }
+   
+      const handleSubmit = e => {
+         e.preventDefault();
+   
+         const inputs = [...state.confirmationForm.inputCode];
+
+         const code = inputs.reduce((acc, input) => acc += input.value, '');
+   
+         submitActivationCode(code);
+      }
+
+      state.confirmationForm.addEventListener('submit', handleSubmit);
+
+      return {  }
    }
 
    const showPopup = () => {
@@ -11,7 +62,7 @@ export default function createConfirmationCode() {
       state.popupWrapper.classList.remove('show');
    }
 
-   const render = () => {
+   const render = ({ api }) => {
       const template = `
          <div class="popup-overlay overlay-confirmation-code" data-action="shouldHidePopup">
             <div class="popup popup-confirmation-code">
@@ -31,7 +82,7 @@ export default function createConfirmationCode() {
                   </div>
                </div>
                <div class="form">
-                  <form>
+                  <form class="confirmation-code-form">
                      <div class="container-inputs-code">
                         <input type="number" maxlength="1" name="inputCode" />
                         <input type="number" maxlength="1" name="inputCode" />
@@ -55,6 +106,8 @@ export default function createConfirmationCode() {
       `;
 
       state.popupWrapper.innerHTML = template;
+
+      createForm(api);
    }
 
    const dispath = {
@@ -80,6 +133,7 @@ export default function createConfirmationCode() {
 
    return {
       render,
-      showPopup
+      showPopup,
+      subscribe
    }
 }

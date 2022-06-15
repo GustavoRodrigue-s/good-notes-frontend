@@ -50,11 +50,12 @@ function createAuthProvider() {
             throw 'The tokens is not valid.';
          }
 
+         console.log(data, status)
+
          state.authenticated = true;
          authenticated(data);
 
       } catch (e) {
-         console.log(e);
          unauthenticated();
       }
    }
@@ -72,6 +73,10 @@ function createAuthProvider() {
    const dispatch = {
       shouldLogTheUser() {
          const { accessToken, refreshToken } = cookie.getCookies();
+
+         if (!accessToken || !refreshToken) {
+            return
+         }
       
          const itemConnected = localStorage.getItem('keepConnected');
          const keepConnected = itemConnected && JSON.parse(itemConnected);

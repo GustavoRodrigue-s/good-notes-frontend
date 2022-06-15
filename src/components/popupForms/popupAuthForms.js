@@ -139,32 +139,47 @@ function createPopupAuthForms(confirmationCode) {
          loading.classList.toggle('show');
       }
    
-      const setUserSession = (data, keepConnected) => {
-         sessionStorage.setItem('USER_FIRST_SESSION', true);
-         localStorage.setItem('keepConnected', JSON.stringify(keepConnected));
+      const setUserSession = data => {
+         document.cookie = `activationToken = ; Path=/ ; Expires=Thu, 01 Jan 1970 00:00:00 GMT`;
 
-         cookie.setCookies({ ...data.userData });
+         sessionStorage.setItem('USER_FIRST_SESSION', true);
+         localStorage.setItem('keepConnected', JSON.stringify(state.keepConnected));
+
+         cookie.setCookies({ ...data });
       }
 
-      // integrar o popup verification code
       const submitForm = async ({ route, currentForm, body }) => {
          try {
             showAndHideLoading(currentForm);
    
             const [data, status] = await api.request({ method: "POST", route, body });
-   
+
+            console.log(data)
+
             showAndHideLoading(currentForm);
 
-            if (status !== 200) {
+            if (data.errors) {
                handleRequestError(data.errors, currentForm);
                return
             }
-            
-            showAndHidePopup();
-            setTimeout(confirmationCode.showPopup, 300);
-            // setUserSession(data, body.keepConnected)
+
+            state.keepConnected = body.keepConnected;
+
+            if (data.userData && data.userData.activationToken || status === 301) {
+               document.cookie = `activationToken = ${data.userData.activationToken}; path=/`;
+
+               showAndHidePopup();
+               setTimeout(confirmationCode.showPopup, 300);
    
+               confirmationCode.subscribe(setUserSession);
+
+               return
+            }
+   
+            setUserSession(data.userData);
+
          } catch (e) {
+            console.log(e);
             showAndHideLoading(currentForm);
             handleRequestError([{ state: 'error', reason: 'request error' }], currentForm);
          }

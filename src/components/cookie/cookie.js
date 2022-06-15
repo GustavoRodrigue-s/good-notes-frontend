@@ -10,7 +10,7 @@ function createCookieHandler() {
    const setCookies = ({ accessToken, refreshToken }) => {
       document.cookie = `accessToken = ${accessToken} ; path=/`;
       document.cookie = `refreshToken = ${refreshToken} ; path=/`;
-   
+
       window.open('./index.html', '_self');
    }
 

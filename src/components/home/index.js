@@ -11,14 +11,14 @@ function createHomeApp() {
    const header = createHeader();
    const popupAuthForms = createPopupAuthForms(confirmationCode);
    const popupProfile = createPopupProfile(header, confirmationCode);
-   
-   confirmationCode.render();
 
    auth.subscribe('unauthenticated', header.render);
    auth.subscribe('unauthenticated', popupAuthForms.render);
+   auth.subscribe('unauthenticated', confirmationCode.render);
 
    auth.subscribe('authenticated', header.render);
    auth.subscribe('authenticated', popupProfile.render);
+   auth.subscribe('authenticated', confirmationCode.render);
 
    auth.verifyAuth();
 }
