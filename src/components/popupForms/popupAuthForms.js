@@ -166,6 +166,7 @@ function createPopupAuthForms(confirmationCode) {
 
             if (data.errors) {
                handleRequestError(data.errors, currentForm);
+               return
             }
 
             if (status !== 200 && status !== 301) {
