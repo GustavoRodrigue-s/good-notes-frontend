@@ -14,21 +14,9 @@ function createApiNetwork() {
       state.headers["Authorization"] = `${accessToken};${refreshToken}`;
    }
 
-   const setActivationToken = () => {
-      const activationToken = document.cookie.split('=')[1];
-
-      console.log(activationToken);
-   
-      state.headers["Authorization"] = activationToken;
-   }
-
-   const requestTemplate = async ({ auth, activationAuth, method, route, body }) => {
+   const requestTemplate = async ({ auth, method, route, body }) => {
       if (auth) {
          setSessionAuthorization();
-      }
-
-      if (activationAuth) {
-         setActivationToken();
       }
 
       const currentUrl = `${state.baseUrl}${route}`;

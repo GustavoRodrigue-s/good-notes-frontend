@@ -28,6 +28,7 @@ function createCookieHandler() {
       document.cookie = `refreshToken = ; Path=/ ; Expires=Thu, 01 Jan 1970 00:00:00 GMT`;
 
       localStorage.removeItem('keepConnected');
+      localStorage.removeItem('sessionEmail');
       sessionStorage.clear();
    }
 

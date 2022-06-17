@@ -113,8 +113,7 @@ function createPopupAuthForms(confirmationCode) {
             return {
                email: inputEmail.value.trim(),
                password: inputPassword.value.trim(),
-               keepConnected: inputCheckbox.checked,
-               hasActivationToken: document.cookie.includes('activationToken')
+               keepConnected: inputCheckbox.checked
             }
          },
          getFormSignUpDatas() {
@@ -127,7 +126,7 @@ function createPopupAuthForms(confirmationCode) {
                email: inputEmail.value.trim(),
                password: inputPassword.value.trim(),
                confirmPassword:  inputConfirmPassword.value.trim(),
-               keepConnected: false
+               keepConnected: true
             }
          }
       }
@@ -142,9 +141,9 @@ function createPopupAuthForms(confirmationCode) {
    
       const setUserSession = data => {
          document.cookie = `activationToken = ; Path=/ ; Expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+         localStorage.removeItem('sessionEmail');
 
          sessionStorage.setItem('USER_FIRST_SESSION', true);
-         localStorage.setItem('keepConnected', JSON.stringify(state.keepConnected));
 
          cookie.setCookies({ ...data });
       }
@@ -155,7 +154,7 @@ function createPopupAuthForms(confirmationCode) {
    
             const [data, status] = await api.request({ method: "POST", route, body });
 
-            console.log(data)
+            console.log(data, status)
 
             showAndHideLoading(currentForm);
 
@@ -164,24 +163,8 @@ function createPopupAuthForms(confirmationCode) {
                return
             }
 
-            state.keepConnected = body.keepConnected;
-
-            const hasActivationToken = data.userData && data.userData.activationToken;
-
-            if (hasActivationToken) {
-               document.cookie = `activationToken = ${data.userData.activationToken}; path=/`;
-            }
-
-            if (status === 301 || hasActivationToken) {
-               showAndHidePopup();
-               setTimeout(confirmationCode.showPopup, 300);
-   
-               confirmationCode.subscribe(setUserSession);
-
-               return
-            }
-   
-            setUserSession(data.userData);
+            localStorage.setItem('keepConnected', JSON.stringify(body.keepConnected));
+            dispatch.shouldLogUser(data, status);
 
          } catch (e) {
             console.log(e);
@@ -193,18 +176,46 @@ function createPopupAuthForms(confirmationCode) {
       state.formSignIn.addEventListener('submit', e => {
          e.preventDefault();
 
-         const datas = formsData.getFormSignInDatas();
+         const data = formsData.getFormSignInDatas();
    
-         submitForm({ route: 'login', currentForm: 'formSignIn', body: datas });
+         const hasActivationToken = document.cookie.includes('activationToken');
+
+         data.activationToken = hasActivationToken 
+            ? document.cookie.split('=')[1]
+            : false
+
+         submitForm({ route: 'login', currentForm: 'formSignIn', body: data });
       });
    
       state.formSignUp.addEventListener('submit', e => {
          e.preventDefault();
    
-         const datas = formsData.getFormSignUpDatas();
+         const data = formsData.getFormSignUpDatas();
    
-         submitForm({ route: 'register', currentForm: 'formSignUp', body: datas });
+         submitForm({ route: 'register', currentForm: 'formSignUp', body: data });
       });
+
+      const dispatch = {
+         shouldLogUser({ userData }, status) {
+            const accountNotActivated = userData && userData.activationToken;
+
+            if (accountNotActivated) {
+               document.cookie = `activationToken = ${userData.activationToken} ; path=/`;
+               localStorage.setItem('sessionEmail', userData.sessionEmail);
+            }
+
+            if (status === 301 || accountNotActivated) {
+               showAndHidePopup();
+               setTimeout(confirmationCode.showPopup, 300);
+   
+               confirmationCode.subscribe(setUserSession);
+
+               return
+            }
+   
+            setUserSession(userData);
+         }
+      }
    }
 
    function createPopup() {

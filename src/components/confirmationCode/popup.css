@@ -64,12 +64,15 @@
    font: min(1.5rem, 4vw) var(--fontDefault);
 }
 
-.popup-confirmation-code .footer span {
+.popup-confirmation-code .footer button {
+   border: none;
+   background-color: transparent;
+   font: 1.6rem var(--fontDefault);
    color: var(--primaryColor);
    cursor: pointer;
 }
 
-.popup-confirmation-code .footer span:hover {
+.popup-confirmation-code .footer button:hover {
    text-decoration: underline;
 }
 

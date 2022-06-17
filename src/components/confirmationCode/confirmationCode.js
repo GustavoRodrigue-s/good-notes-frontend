@@ -7,19 +7,23 @@ export default function createConfirmationCode() {
    function createForm(api) {
       const state = {
          confirmationForm: document.querySelector('form.confirmation-code-form'),
-         inputs: [...document.querySelectorAll('form.confirmation-code-form input')]
+         inputs: [...document.querySelectorAll('form.confirmation-code-form input')],
+         btnResendingEmailCode: document.querySelector('.popup-confirmation-code .btn-resending-email-code')
       }
-      
-      const submitActivationCode = async activationCode => {
+
+      const sendEmailCode = async e => {
+         e.preventDefault();
+         
+         const activationCode = state.inputs.reduce((acc, input) => acc += input.value, '');
+         const activationToken = document.cookie.split('=')[1];
+         const keepConnected = JSON.parse(localStorage.getItem('keepConnected'));
+
          try {
             const [data, status] = await api.request({
-               activationAuth: true,
                method: 'POST',
-               route: 'checkActivationCode',
-               body: { activationCode }
+               route: `checkEmailCode?activationToken=${activationToken}`,
+               body: { activationCode, keepConnected }
             })
-            
-            console.log(data, status);
             
             if (status === 200) {
                notifyAll(data.userData);
@@ -30,12 +34,24 @@ export default function createConfirmationCode() {
          }
       }
       
-      const handleSubmit = e => {
-         e.preventDefault();
-         
-         const code = state.inputs.reduce((acc, input) => acc += input.value, '');
-         
-         submitActivationCode(code);
+      const resendEmailCode = async e => {
+         if (e.type === 'touchstart') e.preventDefault();
+
+         const userEmail = localStorage.getItem('sessionEmail');
+
+         try {
+            const [data, status] = await api.request({
+               method: 'GET',
+               route: `resendEmailCode?sessionEmail=${userEmail}`
+            })
+
+            if (status === 200) {
+               document.cookie = `activationToken = ${data.userData.activationToken}; path=/`;
+            }
+
+         } catch(e) {
+            console.log(e);
+         }
       }
 
       const pasteAll = code => {
@@ -54,11 +70,11 @@ export default function createConfirmationCode() {
       const resetInput = input => {
          input.value = input.getAttribute('value');
       }
-
+      
       const focusOnInput = input => {
          input.focus();
       }
-
+      
       const dispatch = {
          shouldPasteAll(e) {
             const code = e.clipboardData.getData('text');
@@ -101,7 +117,10 @@ export default function createConfirmationCode() {
          }
       }
 
-      state.confirmationForm.addEventListener('submit', handleSubmit);
+      state.confirmationForm.addEventListener('submit', sendEmailCode);
+
+      state.btnResendingEmailCode.addEventListener('click', resendEmailCode);
+      state.btnResendingEmailCode.addEventListener('touchstart', resendEmailCode);
       
       state.confirmationForm.addEventListener('input', dispatch.shouldWriteOnInput);
       state.confirmationForm.addEventListener('keydown', dispatch.shouldDeletionOnInput);
@@ -121,8 +140,18 @@ export default function createConfirmationCode() {
       }
    }
 
+   const resetpopup = () => {
+      const form = state.popupWrapper.querySelector('form');
+      const inputs = form.querySelectorAll('input[type="number"]');
+   
+      inputs.forEach(input => input.removeAttribute('value'));
+
+      form.reset();
+   }
+
    const showPopup = () => {
       state.popupWrapper.classList.add('show');
+      resetpopup();
    }
 
    const hidePopup = () =>{
@@ -165,7 +194,7 @@ export default function createConfirmationCode() {
                <div class="footer">
                   <p>
                      Não recebeu o e-mail de confirmação?
-                     <span>Reenviar código de confirmação</span>
+                     <button type="button" class="btn-resending-email-code">Reenviar código de confirmação</button>
                   </p>
                </div>
             </div>
