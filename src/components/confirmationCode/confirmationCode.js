@@ -8,11 +8,71 @@ export default function createConfirmationCode() {
       const state = {
          confirmationForm: document.querySelector('form.confirmation-code-form'),
          inputs: [...document.querySelectorAll('form.confirmation-code-form input')],
-         btnResendingEmailCode: document.querySelector('.popup-confirmation-code .btn-resending-email-code')
+         btnResendEmailCode: document.querySelector('.popup-confirmation-code .btn-resending-email-code'),
+         btnSendEmailCode: document.querySelector('form.confirmation-code-form .btn-send-email-code')
+      }
+
+      const handleErrors = {
+         hideError() {
+            state.confirmationForm.classList.remove('error', 'input');
+            state.confirmationForm.querySelector('.container-email-code-error').classList.remove('show');
+         },
+         showError(message) {
+            handleSuccess.hideSuccess();
+
+            const containerError = state.confirmationForm.querySelector('.container-email-code-error');
+            const error = containerError.querySelector('span');
+
+            const acceptedErrors = {
+               "code incomplete"() {
+                  error.innerText = 'Preencha todos os campos!';
+                  state.confirmationForm.classList.add('input');
+               },
+               'invalid code'() {
+                  error.innerText = 'Código inválido!';
+                  state.confirmationForm.classList.add('input');
+               },
+               'no session email'() {
+                  error.innerText = 'Erro! Faça o login novamente.';
+               },
+               'request error'() {
+                  error.innerText = 'Houve um erro, tente novamente!';
+               }
+            }
+
+            containerError.classList.add('show');
+            state.confirmationForm.classList.add('error');
+
+            acceptedErrors[message] 
+               ? acceptedErrors[message]() 
+               : acceptedErrors['request error']();
+         }
+      }
+
+      const handleSuccess = {
+         hideSuccess() {
+            state.confirmationForm.classList.remove('success');
+            state.confirmationForm.querySelector('.container-email-code-success').classList.remove('show');
+         },
+         showSuccess() {
+            handleErrors.hideError();
+
+            const containerSuccess = state.confirmationForm.querySelector('.container-email-code-success');
+
+            containerSuccess.classList.add('show');
+            state.confirmationForm.classList.add('success');
+         }
+      }
+
+      const showAndHideBtnLoading = () => {
+         state.btnSendEmailCode.classList.toggle('loading');
+         state.btnResendEmailCode.classList.toggle('loading');
       }
 
       const sendEmailCode = async e => {
          e.preventDefault();
+
+         showAndHideBtnLoading();
          
          const activationCode = state.inputs.reduce((acc, input) => acc += input.value, '');
          const activationToken = document.cookie.split('=')[1];
@@ -25,12 +85,19 @@ export default function createConfirmationCode() {
                body: { activationCode, keepConnected }
             })
             
-            if (status === 200) {
-               notifyAll(data.userData);
+            showAndHideBtnLoading();
+
+            if (status !== 200) {
+               handleErrors.showError(data.reason);
+               return
             }
+
+            notifyAll(data.userData);
+            
             
          } catch(e) {
             console.log(e);
+            showAndHideBtnLoading();
          }
       }
       
@@ -39,18 +106,27 @@ export default function createConfirmationCode() {
 
          const userEmail = localStorage.getItem('sessionEmail');
 
+         showAndHideBtnLoading();
+
          try {
             const [data, status] = await api.request({
                method: 'GET',
                route: `resendEmailCode?sessionEmail=${userEmail}`
             })
 
-            if (status === 200) {
-               document.cookie = `activationToken = ${data.userData.activationToken}; path=/`;
+            showAndHideBtnLoading();
+
+            if (status !== 200) {
+               handleErrors.showError(data.reason);
+               return
             }
+
+            document.cookie = `activationToken = ${data.userData.activationToken}; path=/`;
+            handleSuccess.showSuccess();
 
          } catch(e) {
             console.log(e);
+            showAndHideBtnLoading();
          }
       }
 
@@ -74,7 +150,7 @@ export default function createConfirmationCode() {
       const focusOnInput = input => {
          input.focus();
       }
-      
+
       const dispatch = {
          shouldPasteAll(e) {
             const code = e.clipboardData.getData('text');
@@ -107,6 +183,9 @@ export default function createConfirmationCode() {
             shouldFocusOnInput && focusOnInput(input.nextElementSibling);
          },
          shouldDeletionOnInput(e) {
+            handleErrors.hideError();
+            handleSuccess.hideSuccess();
+
             if (e.key !== 'Backspace') return
 
             const input = e.target
@@ -118,10 +197,11 @@ export default function createConfirmationCode() {
       }
 
       state.confirmationForm.addEventListener('submit', sendEmailCode);
+      state.btnSendEmailCode.addEventListener('touchstart', sendEmailCode);
 
-      state.btnResendingEmailCode.addEventListener('click', resendEmailCode);
-      state.btnResendingEmailCode.addEventListener('touchstart', resendEmailCode);
-      
+      state.btnResendEmailCode.addEventListener('click', resendEmailCode);
+      state.btnResendEmailCode.addEventListener('touchstart', resendEmailCode);
+
       state.confirmationForm.addEventListener('input', dispatch.shouldWriteOnInput);
       state.confirmationForm.addEventListener('keydown', dispatch.shouldDeletionOnInput);
       state.confirmationForm.addEventListener('click', dispatch.shouldFocusOnInput);
@@ -141,8 +221,14 @@ export default function createConfirmationCode() {
    }
 
    const resetpopup = () => {
+      const [error, success] = state.popupWrapper.querySelectorAll('.container-message');
       const form = state.popupWrapper.querySelector('form');
       const inputs = form.querySelectorAll('input[type="number"]');
+
+      error.classList.remove('show')
+      success.classList.remove('show');
+
+      form.classList.remove('error', 'success', 'input');
    
       inputs.forEach(input => input.removeAttribute('value'));
 
@@ -186,8 +272,25 @@ export default function createConfirmationCode() {
                         <input type="number" maxlength="1" name="inputCode" />
                         <input type="number" maxlength="1" name="inputCode" />
                      </div>
+                     <div class="container-email-code-error container-message">
+                        <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
+                           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path>
+                        </svg>
+                        <span></span>
+                     </div>
+                     <div class="container-email-code-success container-message">
+                        <svg stroke="currentColor" fill="currentColor" stroke-width="0" version="1" viewBox="0 0 48 48" enable-background="new 0 0 48 48" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                           <circle fill="#4CAF50" cx="24" cy="24" r="21"></circle><polygon fill="#fff" points="34.6,14.6 21,28.2 15.4,22.6 12.6,25.4 21,33.8 37.4,17.4"></polygon>
+                        </svg>
+                        <span>O novo código foi enviado!</span>
+                     </div>
                      <div class="container-btn-code">
-                        <button type="submit" class="btn-default btn-default-hover">Confirmar</button>
+                        <button type="submit" class="btn-default btn-default-hover btn-send-email-code">
+                           Confirmar
+                           <div class="container-btn-loading center-flex">
+                              <div class="loading"></div>
+                           </div>
+                        </button>
                      </div>
                   </form>
                </div>

@@ -79,6 +79,8 @@ button svg, button div, button span, button img {
 /* ---------- Button Default ---------- */
 
 .btn-default {
+   position: relative;
+   overflow: hidden;
    border: none;
    cursor: pointer;
    transition: 0.3s;
@@ -91,6 +93,15 @@ button svg, button div, button span, button img {
 
 .btn-default-hover:hover {
    background: var(--primaryHoverColor);
+}
+
+.btn-default.loading {
+   pointer-events: none;
+}
+
+.btn-default.loading > .container-btn-loading {
+   visibility: visible;
+   opacity: 1;
 }
 
 /* ---------- Close Button Default ---------- */
@@ -158,7 +169,7 @@ button svg, button div, button span, button img {
 
 /* ---------- Loading ---------- */
 
-.container-loading {
+.container-loading, .container-btn-loading {
    position: absolute;
    inset: 0;
    z-index: 9999;
@@ -175,13 +186,27 @@ button svg, button div, button span, button img {
    to { transform: rotateZ(360deg) }
 }
 
-.container-loading > div, .container-auto-save .loading {
+.container-loading > div, .container-auto-save .loading, .container-btn-loading > .loading {
    height: 45px;
    width: 45px;
    border-radius: 50%;
    border: 2.5px solid rgb(209, 209, 209);
    border-top-color: rgba(0, 0, 0, 0.767);
    animation: spinLoading 0.5s linear infinite;
+}
+
+.container-btn-loading {
+   transition: 0.2s;
+   width: 100%;
+   height: 100%;
+   background-color: var(--primaryHoverColor);
+}
+
+.container-btn-loading > .loading {
+   width: 20px;
+   height: 20px;
+   border-color: rgba(255, 255, 255, 0.363);
+   border-top-color: #fff;
 }
 
 .container-loading.show {

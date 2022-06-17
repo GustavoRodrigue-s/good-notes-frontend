@@ -23,12 +23,17 @@
    margin-top: 40px;
 }
 
+.confirmation-code-form {
+   display: flex;
+   flex-direction: column;
+   gap: 20px;
+}
+
 .container-inputs-code {
    width: 100%;
    display: flex;
    justify-content: space-between;
    gap: 10px;
-   margin: 20px 0;
 }
 
 .container-inputs-code > input {
@@ -72,12 +77,38 @@
    cursor: pointer;
 }
 
+.popup-confirmation-code .footer button.loading {
+   pointer-events: none;
+}
+
 .popup-confirmation-code .footer button:hover {
    text-decoration: underline;
 }
 
+/* ---------- Messages ---------- */
+
+form.confirmation-code-form.error, form.confirmation-code-form.success {
+   gap: 10px;
+}
+
+form.confirmation-code-form.input input {
+   border-color: var(--primaryErrorColor);
+}
+
+.container-email-code-error.show {
+   display: flex;
+   color: var(--primaryErrorColor);
+}
+
+.container-email-code-success.show {
+   display: flex;
+   color: var(--primarySuccessColor);
+}
+
+/* ---------- Responsive ---------- */
+
 @media (max-width: 400px) {
-   .popup-confirmation-code p {
+   .popup-confirmation-code :is(p, .footer button) {
       font-size: 1.5rem;
    }
 }

@@ -3,8 +3,8 @@ function createPopupAuthForms(confirmationCode) {
       popupWrapper: document.querySelector('.popup-wrapper-auth')
    }
 
-   const showAndHidePopup = () => {
-      state.popupWrapper.classList.toggle('show');
+   const hidePopup = () => {
+      state.popupWrapper.classList.remove('show');
    }
 
    function createForm({ api, cookie }) {
@@ -132,11 +132,9 @@ function createPopupAuthForms(confirmationCode) {
       }
 
       const showAndHideLoading = currentForm => {
-         const content = document.querySelector(`.popup[data-form="${currentForm}"] .popup-content`);
-         const loading = document.querySelector(`.popup[data-form="${currentForm}"] .container-loading`);
+         const loading = document.querySelector(`.popup[data-form="${currentForm}"] .container-buttonSubmit > button`);
 
-         content.classList.toggle('hideToLoading');
-         loading.classList.toggle('show');
+         loading.classList.toggle('loading');
       }
    
       const setUserSession = data => {
@@ -205,7 +203,7 @@ function createPopupAuthForms(confirmationCode) {
             }
 
             if (status === 301 || accountNotActivated) {
-               showAndHidePopup();
+               hidePopup();
                setTimeout(confirmationCode.showPopup, 300);
    
                confirmationCode.subscribe(setUserSession);
@@ -426,7 +424,12 @@ function createPopupAuthForms(confirmationCode) {
                   </div>
    
                   <div class="container-buttonSubmit">
-                     <button type="submit" class="btn-default btn-default-hover">Entrar</button>
+                     <button type="submit" class="btn-default btn-default-hover">
+                        Entrar
+                        <div class="container-btn-loading center-flex">
+                           <div class="loading"></div>
+                        </div>
+                     </button>
                   </div>
                </form>
                <div class="container-hasAccount">
@@ -508,7 +511,12 @@ function createPopupAuthForms(confirmationCode) {
                   </div>
    
                   <div class="container-buttonSubmit">
-                     <button type="submit" class="btn-default btn-default-hover">Criar Conta</button>
+                     <button type="submit" class="btn-default btn-default-hover">
+                        Criar Conta
+                        <div class="container-btn-loading center-flex">
+                           <div class="loading"></div>
+                        </div>
+                     </button>
                   </div>
                </form>
                <div class="container-hasAccount">
