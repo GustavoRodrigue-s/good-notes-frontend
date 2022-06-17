@@ -174,7 +174,7 @@ function createPopupAuthForms(confirmationCode) {
             }
 
             localStorage.setItem('keepConnected', JSON.stringify(body.keepConnected));
-            dispatch.shouldLogUser(data, status);
+            dispatch.shouldLogUser(data);
 
          } catch (e) {
             handleRequestError([{ state: 'error', reason: 'request error' }], currentForm);
@@ -198,10 +198,10 @@ function createPopupAuthForms(confirmationCode) {
       });
 
       const dispatch = {
-         shouldLogUser(data, status) {
-            status === 200
-               ? setUserSession(data.userData)
-               : setUserNotActivated(data.userData);
+         shouldLogUser({ userData }) {
+            userData && userData.emailConfirmationToken
+               ? setUserNotActivated(userData)
+               : setUserSession(userData);
          }
       }
    }
