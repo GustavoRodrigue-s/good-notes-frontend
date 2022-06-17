@@ -3,20 +3,24 @@ function createCookieHandler() {
       popupWrapper: document.querySelector('.popup-wrapper-cookie')
    }
 
-   const setNewAccessToken = newToken => {
-      document.cookie = `accessToken = ${newToken} ; path=/`;
+   const setCookie = (name, value) => {
+      document.cookie = `${name} = ${value} ; path=/`;
    }
 
-   const setCookies = ({ accessToken, refreshToken }) => {
-      document.cookie = `accessToken = ${accessToken} ; path=/`;
-      document.cookie = `refreshToken = ${refreshToken} ; path=/`;
+   const deleteCookie = name => {
+      document.cookie = `${name} = ; Path=/ ; Expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+   }
+
+   const setAuthCookies = ({ accessToken, refreshToken }) => {
+      setCookie('accessToken', accessToken);
+      setCookie('refreshToken', refreshToken);
 
       window.open('./index.html', '_self');
    }
 
-   const getCookies = () => {
+   const getAuthCookies = () => {
       const cookies = document.cookie.split('; ').join('=').split('=');
-   
+
       const accessToken = cookies[cookies.indexOf('accessToken') + 1];
       const refreshToken = cookies[cookies.indexOf('refreshToken') + 1];
    
@@ -24,8 +28,8 @@ function createCookieHandler() {
    }
 
    const deleteCookies = () => {
-      document.cookie = `accessToken = ; Path=/ ; Expires=Thu, 01 Jan 1970 00:00:00 GMT`;
-      document.cookie = `refreshToken = ; Path=/ ; Expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+      deleteCookie('accessToken');
+      deleteCookie('refreshToken');
 
       localStorage.removeItem('keepConnected');
       localStorage.removeItem('sessionEmail');
@@ -104,9 +108,10 @@ function createCookieHandler() {
    state.popupWrapper.addEventListener('click', popupActionListener);
 
    return {
-      setCookies,
-      setNewAccessToken,
-      getCookies,
+      setCookie,
+      deleteCookie,
+      setAuthCookies,
+      getAuthCookies,
       deleteCookies,
       shouldShowThePopup: dispatch.shouldShowThePopup
    }

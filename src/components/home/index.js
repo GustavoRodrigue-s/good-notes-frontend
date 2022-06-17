@@ -2,15 +2,15 @@ import createAuthProvider from "../../auth/auth.js";
 import createHeader from "../header/header.js";
 import createPopupAuthForms from '../popupForms/popupAuthForms.js';
 import createPopupProfile from '../popupProfile/popupProfile.js';
-import createConfirmationCode from "../confirmationCode/confirmationCode.js";
+import createEmailConfirmation from "../emailConfirmation/emailConfirmation.js";
 
 function createHomeApp() {
-   const confirmationCode = createConfirmationCode();
+   const confirmationCode = createEmailConfirmation();
 
    const auth = createAuthProvider();
    const header = createHeader();
    const popupAuthForms = createPopupAuthForms(confirmationCode);
-   const popupProfile = createPopupProfile(header, confirmationCode);
+   const popupProfile = createPopupProfile(header);
 
    auth.subscribe('unauthenticated', header.render);
    auth.subscribe('unauthenticated', popupAuthForms.render);

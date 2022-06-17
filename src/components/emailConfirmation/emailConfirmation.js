@@ -1,36 +1,36 @@
-export default function createConfirmationCode() {
+export default function createEmailConfirmation() {
    const state = {
       observers: [],
-      popupWrapper: document.querySelector('.popup-wrapper-confirmation-code')
+      popupWrapper: document.querySelector('.popup-wrapper-email-confirmation')
    }
 
-   function createForm(api) {
+   function createForm({ api, cookie }) {
       const state = {
-         confirmationForm: document.querySelector('form.confirmation-code-form'),
-         inputs: [...document.querySelectorAll('form.confirmation-code-form input')],
-         btnResendEmailCode: document.querySelector('.popup-confirmation-code .btn-resending-email-code'),
-         btnSendEmailCode: document.querySelector('form.confirmation-code-form .btn-send-email-code')
+         emailConfirmationForm: document.querySelector('form.email-confirmation-form'),
+         inputs: [...document.querySelectorAll('form.email-confirmation-form input')],
+         btnResendEmailCode: document.querySelector('.popup-email-confirmation .btn-resending-email-code'),
+         btnSendEmailCode: document.querySelector('form.email-confirmation-form .btn-send-email-code')
       }
 
       const handleErrors = {
          hideError() {
-            state.confirmationForm.classList.remove('error', 'input');
-            state.confirmationForm.querySelector('.container-email-code-error').classList.remove('show');
+            state.emailConfirmationForm.classList.remove('error', 'input');
+            state.emailConfirmationForm.querySelector('.container-email-code-error').classList.remove('show');
          },
          showError(message) {
             handleSuccess.hideSuccess();
 
-            const containerError = state.confirmationForm.querySelector('.container-email-code-error');
+            const containerError = state.emailConfirmationForm.querySelector('.container-email-code-error');
             const error = containerError.querySelector('span');
 
             const acceptedErrors = {
                "code incomplete"() {
                   error.innerText = 'Preencha todos os campos!';
-                  state.confirmationForm.classList.add('input');
+                  state.emailConfirmationForm.classList.add('input');
                },
                'invalid code'() {
                   error.innerText = 'Código inválido!';
-                  state.confirmationForm.classList.add('input');
+                  state.emailConfirmationForm.classList.add('input');
                },
                'no session email'() {
                   error.innerText = 'Erro! Faça o login novamente.';
@@ -41,7 +41,7 @@ export default function createConfirmationCode() {
             }
 
             containerError.classList.add('show');
-            state.confirmationForm.classList.add('error');
+            state.emailConfirmationForm.classList.add('error');
 
             acceptedErrors[message] 
                ? acceptedErrors[message]() 
@@ -51,16 +51,16 @@ export default function createConfirmationCode() {
 
       const handleSuccess = {
          hideSuccess() {
-            state.confirmationForm.classList.remove('success');
-            state.confirmationForm.querySelector('.container-email-code-success').classList.remove('show');
+            state.emailConfirmationForm.classList.remove('success');
+            state.emailConfirmationForm.querySelector('.container-email-code-success').classList.remove('show');
          },
          showSuccess() {
             handleErrors.hideError();
 
-            const containerSuccess = state.confirmationForm.querySelector('.container-email-code-success');
+            const containerSuccess = state.emailConfirmationForm.querySelector('.container-email-code-success');
 
             containerSuccess.classList.add('show');
-            state.confirmationForm.classList.add('success');
+            state.emailConfirmationForm.classList.add('success');
          }
       }
 
@@ -75,13 +75,13 @@ export default function createConfirmationCode() {
          showAndHideBtnLoading();
          
          const activationCode = state.inputs.reduce((acc, input) => acc += input.value, '');
-         const activationToken = document.cookie.split('=')[1];
+         const emailConfirmationToken = document.cookie.split('=')[1];
          const keepConnected = JSON.parse(localStorage.getItem('keepConnected'));
 
          try {
             const [data, status] = await api.request({
                method: 'POST',
-               route: `checkEmailCode?activationToken=${activationToken}`,
+               route: `checkEmailConfirmationCode?emailConfirmationToken=${emailConfirmationToken}`,
                body: { activationCode, keepConnected }
             })
             
@@ -93,7 +93,6 @@ export default function createConfirmationCode() {
             }
 
             notifyAll(data.userData);
-            
             
          } catch(e) {
             console.log(e);
@@ -111,7 +110,7 @@ export default function createConfirmationCode() {
          try {
             const [data, status] = await api.request({
                method: 'GET',
-               route: `resendEmailCode?sessionEmail=${userEmail}`
+               route: `resendEmailConfirmation?sessionEmail=${userEmail}`
             })
 
             showAndHideBtnLoading();
@@ -121,7 +120,7 @@ export default function createConfirmationCode() {
                return
             }
 
-            document.cookie = `activationToken = ${data.userData.activationToken}; path=/`;
+            cookie.setCookie('emailConfirmationToken', data.userData.emailConfirmationToken);
             handleSuccess.showSuccess();
 
          } catch(e) {
@@ -196,18 +195,16 @@ export default function createConfirmationCode() {
          }
       }
 
-      state.confirmationForm.addEventListener('submit', sendEmailCode);
+      state.emailConfirmationForm.addEventListener('submit', sendEmailCode);
       state.btnSendEmailCode.addEventListener('touchstart', sendEmailCode);
 
       state.btnResendEmailCode.addEventListener('click', resendEmailCode);
       state.btnResendEmailCode.addEventListener('touchstart', resendEmailCode);
 
-      state.confirmationForm.addEventListener('input', dispatch.shouldWriteOnInput);
-      state.confirmationForm.addEventListener('keydown', dispatch.shouldDeletionOnInput);
-      state.confirmationForm.addEventListener('click', dispatch.shouldFocusOnInput);
-      state.confirmationForm.addEventListener('paste', dispatch.shouldPasteAll);
-
-      return {  }
+      state.emailConfirmationForm.addEventListener('input', dispatch.shouldWriteOnInput);
+      state.emailConfirmationForm.addEventListener('keydown', dispatch.shouldDeletionOnInput);
+      state.emailConfirmationForm.addEventListener('click', dispatch.shouldFocusOnInput);
+      state.emailConfirmationForm.addEventListener('paste', dispatch.shouldPasteAll);
    }
 
    const subscribe = observerFunction => {
@@ -236,18 +233,18 @@ export default function createConfirmationCode() {
    }
 
    const showPopup = () => {
-      state.popupWrapper.classList.add('show');
       resetpopup();
+      state.popupWrapper.classList.add('show');
    }
 
    const hidePopup = () =>{
       state.popupWrapper.classList.remove('show');
    }
 
-   const render = ({ api }) => {
+   const render = someHooks => {
       const template = `
-         <div class="popup-overlay overlay-confirmation-code" data-action="shouldHidePopup">
-            <div class="popup popup-confirmation-code">
+         <div class="popup-overlay overlay-email-confirmation" data-action="shouldHidePopup">
+            <div class="popup popup-email-confirmation">
                <div class="close">
                   <button class="close-popup-target close-popup center-flex" tabindex="0" data-action="shouldHidePopup">
                      <img class="close-popup-target close-popup" src="./images/close_popup_icon.svg" alt="Fechar popup">
@@ -264,7 +261,7 @@ export default function createConfirmationCode() {
                   </div>
                </div>
                <div class="form">
-                  <form class="confirmation-code-form">
+                  <form class="email-confirmation-form">
                      <div class="container-inputs-code">
                         <input type="number" maxlength="1" name="inputCode" />
                         <input type="number" maxlength="1" name="inputCode" />
@@ -305,8 +302,8 @@ export default function createConfirmationCode() {
       `;
 
       state.popupWrapper.innerHTML = template;
-
-      createForm(api);
+ 
+      createForm(someHooks);
    }
 
    const dispath = {

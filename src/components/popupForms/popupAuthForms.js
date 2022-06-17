@@ -90,7 +90,7 @@ function createPopupAuthForms(confirmationCode) {
                genericError.classList.add('error');
             }
          }
-      
+
          error.forEach(data => {
             acceptedErrors[data.reason] 
                ? acceptedErrors[data.reason](data)
@@ -138,12 +138,22 @@ function createPopupAuthForms(confirmationCode) {
       }
    
       const setUserSession = data => {
-         document.cookie = `activationToken = ; Path=/ ; Expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+         cookie.deleteCookie('emailConfirmationToken');
          localStorage.removeItem('sessionEmail');
 
          sessionStorage.setItem('USER_FIRST_SESSION', true);
 
-         cookie.setCookies({ ...data });
+         cookie.setAuthCookies({ ...data });
+      }
+
+      const setUserNotActivated = data => {
+         cookie.setCookie('emailConfirmationToken', data.emailConfirmationToken);
+         localStorage.setItem('sessionEmail', data.sessionEmail);
+   
+         hidePopup();
+         setTimeout(confirmationCode.showPopup, 300);
+
+         confirmationCode.subscribe(setUserSession);
       }
 
       const submitForm = async ({ route, currentForm, body }) => {
@@ -152,21 +162,20 @@ function createPopupAuthForms(confirmationCode) {
    
             const [data, status] = await api.request({ method: "POST", route, body });
 
-            console.log(data, status)
-
             showAndHideLoading(currentForm);
 
             if (data.errors) {
                handleRequestError(data.errors, currentForm);
-               return
+            }
+
+            if (status !== 200 && status !== 301) {
+               throw `Http error, status: ${status}`;
             }
 
             localStorage.setItem('keepConnected', JSON.stringify(body.keepConnected));
             dispatch.shouldLogUser(data, status);
 
          } catch (e) {
-            console.log(e);
-            showAndHideLoading(currentForm);
             handleRequestError([{ state: 'error', reason: 'request error' }], currentForm);
          }
       }
@@ -176,12 +185,6 @@ function createPopupAuthForms(confirmationCode) {
 
          const data = formsData.getFormSignInDatas();
    
-         const hasActivationToken = document.cookie.includes('activationToken');
-
-         data.activationToken = hasActivationToken 
-            ? document.cookie.split('=')[1]
-            : false
-
          submitForm({ route: 'login', currentForm: 'formSignIn', body: data });
       });
    
@@ -194,24 +197,10 @@ function createPopupAuthForms(confirmationCode) {
       });
 
       const dispatch = {
-         shouldLogUser({ userData }, status) {
-            const accountNotActivated = userData && userData.activationToken;
-
-            if (accountNotActivated) {
-               document.cookie = `activationToken = ${userData.activationToken} ; path=/`;
-               localStorage.setItem('sessionEmail', userData.sessionEmail);
-            }
-
-            if (status === 301 || accountNotActivated) {
-               hidePopup();
-               setTimeout(confirmationCode.showPopup, 300);
-   
-               confirmationCode.subscribe(setUserSession);
-
-               return
-            }
-   
-            setUserSession(userData);
+         shouldLogUser(data, status) {
+            status === 200
+               ? setUserSession(data.userData)
+               : setUserNotActivated(data.userData);
          }
       }
    }

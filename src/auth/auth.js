@@ -50,8 +50,6 @@ function createAuthProvider() {
             throw 'The tokens is not valid.';
          }
 
-         console.log(data, status)
-
          state.authenticated = true;
          authenticated(data);
 
@@ -72,9 +70,10 @@ function createAuthProvider() {
 
    const dispatch = {
       shouldLogTheUser() {
-         const { accessToken, refreshToken } = cookie.getCookies();
+         const hasTokens = 
+            document.cookie.includes('accessToken') && document.cookie.includes('refreshToken');
 
-         if (!accessToken || !refreshToken) {
+         if (!hasTokens) {
             return
          }
       
@@ -84,8 +83,7 @@ function createAuthProvider() {
          const itemSession = sessionStorage.getItem('USER_FIRST_SESSION');
          const userFirstSession = itemSession && JSON.parse(itemSession);
 
-         // rever essa regra de negócio
-         const shouldLog = accessToken && refreshToken || userFirstSession && keepConnected
+         const shouldLog = keepConnected || userFirstSession
 
          return shouldLog
       }

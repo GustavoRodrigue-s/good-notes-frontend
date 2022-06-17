@@ -1,29 +1,33 @@
-.popup-confirmation-code {
+.popup-email-confirmation {
    width: 100%;
    max-width: 400px;
    text-align: center;
 }
 
-.popup-confirmation-code .close {
+.popup-email-confirmation .close {
    top: 10px;
    right: 10px;
 }
 
-.popup-confirmation-code h1 {
+/* ---------- Title ---------- */
+
+.popup-email-confirmation h1 {
    font: 800 min(3rem, 8vw) var(--fontDefault);
 }
 
-.popup-confirmation-code p {
+.popup-email-confirmation p {
    margin-top: 10px;
    font: 1.6rem var(--fontDefault);
    color: var(--paragraphColor);
 }
 
+/* ---------- E-mail code form ---------- */
+
 .form {
    margin-top: 40px;
 }
 
-.confirmation-code-form {
+.email-confirmation-form {
    display: flex;
    flex-direction: column;
    gap: 20px;
@@ -63,13 +67,13 @@
    font: 500 1.6rem var(--fontDefault);
 }
 
-.popup-confirmation-code .footer p {
+.popup-email-confirmation .footer p {
    max-width: 300px;
    margin: auto;
    font: min(1.5rem, 4vw) var(--fontDefault);
 }
 
-.popup-confirmation-code .footer button {
+.popup-email-confirmation .footer button {
    border: none;
    background-color: transparent;
    font: 1.6rem var(--fontDefault);
@@ -77,21 +81,21 @@
    cursor: pointer;
 }
 
-.popup-confirmation-code .footer button.loading {
+.popup-email-confirmation .footer button.loading {
    pointer-events: none;
 }
 
-.popup-confirmation-code .footer button:hover {
+.popup-email-confirmation .footer button:hover {
    text-decoration: underline;
 }
 
 /* ---------- Messages ---------- */
 
-form.confirmation-code-form.error, form.confirmation-code-form.success {
+form.email-confirmation-form.error, form.email-confirmation-form.success {
    gap: 10px;
 }
 
-form.confirmation-code-form.input input {
+form.email-confirmation-form.input input {
    border-color: var(--primaryErrorColor);
 }
 
@@ -108,7 +112,7 @@ form.confirmation-code-form.input input {
 /* ---------- Responsive ---------- */
 
 @media (max-width: 400px) {
-   .popup-confirmation-code :is(p, .footer button) {
+   .popup-email-confirmation :is(p, .footer button) {
       font-size: 1.5rem;
    }
 }

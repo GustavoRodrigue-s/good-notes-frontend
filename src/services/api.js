@@ -9,7 +9,7 @@ function createApiNetwork() {
    }
 
    const setSessionAuthorization = () => {
-      const { accessToken, refreshToken } = cookie.getCookies();
+      const { accessToken, refreshToken } = cookie.getAuthCookies();
    
       state.headers["Authorization"] = `${accessToken};${refreshToken}`;
    }
