@@ -54,7 +54,6 @@ function createAuthProvider() {
          authenticated(data);
 
       } catch (e) {
-         console.log(e);
          unauthenticated();
       }
    }
@@ -71,7 +70,12 @@ function createAuthProvider() {
 
    const dispatch = {
       shouldLogTheUser() {
-         const { accessToken, refreshToken } = cookie.getCookies();
+         const hasTokens = 
+            document.cookie.includes('accessToken') && document.cookie.includes('refreshToken');
+
+         if (!hasTokens) {
+            return
+         }
       
          const itemConnected = localStorage.getItem('keepConnected');
          const keepConnected = itemConnected && JSON.parse(itemConnected);
@@ -79,8 +83,7 @@ function createAuthProvider() {
          const itemSession = sessionStorage.getItem('USER_FIRST_SESSION');
          const userFirstSession = itemSession && JSON.parse(itemSession);
 
-         // rever essa regra de negócio
-         const shouldLog = accessToken && refreshToken || userFirstSession && keepConnected
+         const shouldLog = keepConnected || userFirstSession
 
          return shouldLog
       }

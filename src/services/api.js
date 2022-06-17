@@ -8,15 +8,15 @@ function createApiNetwork() {
       }
    }
 
-   const setAuthorization = () => {
-      const { accessToken, refreshToken } = cookie.getCookies();
+   const setSessionAuthorization = () => {
+      const { accessToken, refreshToken } = cookie.getAuthCookies();
    
       state.headers["Authorization"] = `${accessToken};${refreshToken}`;
    }
 
    const requestTemplate = async ({ auth, method, route, body }) => {
       if (auth) {
-         setAuthorization();
+         setSessionAuthorization();
       }
 
       const currentUrl = `${state.baseUrl}${route}`;

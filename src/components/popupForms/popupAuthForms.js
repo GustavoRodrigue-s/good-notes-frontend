@@ -1,6 +1,10 @@
-function createPopupAuthForms() {
+function createPopupAuthForms(confirmationCode) {
    const state = {
       popupWrapper: document.querySelector('.popup-wrapper-auth')
+   }
+
+   const hidePopup = () => {
+      state.popupWrapper.classList.remove('show');
    }
 
    function createForm({ api, cookie }) {
@@ -86,7 +90,7 @@ function createPopupAuthForms() {
                genericError.classList.add('error');
             }
          }
-      
+
          error.forEach(data => {
             acceptedErrors[data.reason] 
                ? acceptedErrors[data.reason](data)
@@ -122,24 +126,34 @@ function createPopupAuthForms() {
                email: inputEmail.value.trim(),
                password: inputPassword.value.trim(),
                confirmPassword:  inputConfirmPassword.value.trim(),
-               keepConnected: false
+               keepConnected: true
             }
          }
       }
 
       const showAndHideLoading = currentForm => {
-         const content = document.querySelector(`.popup[data-form="${currentForm}"] .popup-content`);
-         const loading = document.querySelector(`.popup[data-form="${currentForm}"] .container-loading`);
+         const loading = document.querySelector(`.popup[data-form="${currentForm}"] .container-buttonSubmit > button`);
 
-         content.classList.toggle('hideToLoading');
-         loading.classList.toggle('show');
+         loading.classList.toggle('loading');
       }
    
-      const setUserSession = (data, keepConnected) => {
-         sessionStorage.setItem('USER_FIRST_SESSION', true);
-         localStorage.setItem('keepConnected', JSON.stringify(keepConnected));
+      const setUserSession = data => {
+         cookie.deleteCookie('emailConfirmationToken');
+         localStorage.removeItem('sessionEmail');
 
-         cookie.setCookies({ ...data.userData });
+         sessionStorage.setItem('USER_FIRST_SESSION', true);
+
+         cookie.setAuthCookies({ ...data });
+      }
+
+      const setUserNotActivated = data => {
+         cookie.setCookie('emailConfirmationToken', data.emailConfirmationToken);
+         localStorage.setItem('sessionEmail', data.sessionEmail);
+   
+         hidePopup();
+         setTimeout(confirmationCode.showPopup, 300);
+
+         confirmationCode.subscribe(setUserSession);
       }
 
       const submitForm = async ({ route, currentForm, body }) => {
@@ -147,18 +161,21 @@ function createPopupAuthForms() {
             showAndHideLoading(currentForm);
    
             const [data, status] = await api.request({ method: "POST", route, body });
-   
-            if (status !== 200) {
-               handleRequestError(data.errors, currentForm);
-               showAndHideLoading(currentForm);
 
-               return
-            }
-            
-            setUserSession(data, body.keepConnected)
-   
-         } catch (e) {
             showAndHideLoading(currentForm);
+
+            if (data.errors) {
+               handleRequestError(data.errors, currentForm);
+            }
+
+            if (status !== 200 && status !== 301) {
+               throw `Http error, status: ${status}`;
+            }
+
+            localStorage.setItem('keepConnected', JSON.stringify(body.keepConnected));
+            dispatch.shouldLogUser(data, status);
+
+         } catch (e) {
             handleRequestError([{ state: 'error', reason: 'request error' }], currentForm);
          }
       }
@@ -166,18 +183,26 @@ function createPopupAuthForms() {
       state.formSignIn.addEventListener('submit', e => {
          e.preventDefault();
 
-         const datas = formsData.getFormSignInDatas();
+         const data = formsData.getFormSignInDatas();
    
-         submitForm({ route: 'login', currentForm: 'formSignIn', body: datas });
+         submitForm({ route: 'login', currentForm: 'formSignIn', body: data });
       });
    
       state.formSignUp.addEventListener('submit', e => {
          e.preventDefault();
    
-         const datas = formsData.getFormSignUpDatas();
+         const data = formsData.getFormSignUpDatas();
    
-         submitForm({ route: 'register', currentForm: 'formSignUp', body: datas });
+         submitForm({ route: 'register', currentForm: 'formSignUp', body: data });
       });
+
+      const dispatch = {
+         shouldLogUser(data, status) {
+            status === 200
+               ? setUserSession(data.userData)
+               : setUserNotActivated(data.userData);
+         }
+      }
    }
 
    function createPopup() {
@@ -388,7 +413,12 @@ function createPopupAuthForms() {
                   </div>
    
                   <div class="container-buttonSubmit">
-                     <button type="submit" class="btn-default btn-default-hover">Entrar</button>
+                     <button type="submit" class="btn-default btn-default-hover">
+                        Entrar
+                        <div class="container-btn-loading center-flex">
+                           <div class="loading"></div>
+                        </div>
+                     </button>
                   </div>
                </form>
                <div class="container-hasAccount">
@@ -470,7 +500,12 @@ function createPopupAuthForms() {
                   </div>
    
                   <div class="container-buttonSubmit">
-                     <button type="submit" class="btn-default btn-default-hover">Criar Conta</button>
+                     <button type="submit" class="btn-default btn-default-hover">
+                        Criar Conta
+                        <div class="container-btn-loading center-flex">
+                           <div class="loading"></div>
+                        </div>
+                     </button>
                   </div>
                </form>
                <div class="container-hasAccount">
