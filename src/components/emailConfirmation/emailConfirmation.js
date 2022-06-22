@@ -12,6 +12,16 @@ export default function createEmailConfirmation() {
          btnSendEmailCode: document.querySelector('form.email-confirmation-form .btn-send-email-code')
       }
 
+      const showBtnLoading = () => {
+         state.btnSendEmailCode.classList.add('loading');
+         state.btnResendEmailCode.classList.add('loading');
+      }
+
+      const hideBtnLoading = () => {
+         state.btnSendEmailCode.classList.remove('loading');
+         state.btnResendEmailCode.classList.remove('loading');
+      }
+
       const handleErrors = {
          hideError() {
             state.emailConfirmationForm.classList.remove('error', 'input');
@@ -64,56 +74,74 @@ export default function createEmailConfirmation() {
          }
       }
 
-      const showAndHideBtnLoading = () => {
-         state.btnSendEmailCode.classList.toggle('loading');
-         state.btnResendEmailCode.classList.toggle('loading');
-      }
-
-      const sendEmailCode = async e => {
-         e.preventDefault();
-
-         showAndHideBtnLoading();
-         
-         const activationCode = state.inputs.reduce((acc, input) => acc += input.value, '');
-         const emailConfirmationToken = document.cookie.split('=')[1];
-         const keepConnected = JSON.parse(localStorage.getItem('keepConnected'));
+      const updateEmail = async newEmail => {
+         const emailConfirmationCode = state.inputs.reduce((acc, input) => acc += input.value, '');
+         const emailConfirmationToken = cookie.getCookie('emailConfirmationToken');
 
          try {
             const [data, status] = await api.request({
-               method: 'POST',
-               route: `checkEmailConfirmationCode?emailConfirmationToken=${emailConfirmationToken}`,
-               body: { activationCode, keepConnected }
-            })
-            
-            showAndHideBtnLoading();
+               auth: true,
+               method: 'PUT',
+               route: `updateEmail?emailConfirmationToken=${emailConfirmationToken}`,
+               body: { emailConfirmationCode, newEmail }
+            });
+
+            hideBtnLoading();
 
             if (status !== 200) {
                handleErrors.showError(data.reason);
                return
             }
 
-            notifyAll(data.userData);
-            
+            if (status === 200) {
+               hidePopup();
+               notifyAll('success', data);
+            }
+
+            cookie.deleteCookie('emailConfirmationToken');
+
          } catch(e) {
-            console.log(e);
-            showAndHideBtnLoading();
-         }
+            hideBtnLoading();
+         } 
       }
-      
-      const resendEmailCode = async e => {
-         if (e.type === 'touchstart') e.preventDefault();
 
-         const userEmail = localStorage.getItem('sessionEmail');
-
-         showAndHideBtnLoading();
+      const activateAccount = async () => {
+         const emailConfirmationCode = state.inputs.reduce((acc, input) => acc += input.value, '');
+         const emailConfirmationToken = cookie.getCookie('emailConfirmationToken');
+         const keepConnected = JSON.parse(localStorage.getItem('keepConnected'));
 
          try {
             const [data, status] = await api.request({
-               method: 'GET',
-               route: `resendEmailConfirmation?sessionEmail=${userEmail}`
+               method: 'PUT',
+               route: `activateAccount?emailConfirmationToken=${emailConfirmationToken}`,
+               body: { emailConfirmationCode, keepConnected }
+            })
+            
+            hideBtnLoading();
+
+            if (status !== 200) {
+               handleErrors.showError(data.reason);
+               return
+            }
+
+            if (status === 200) {
+               notifyAll('success', data.userData);
+            }
+            
+         } catch(e) {
+            hideBtnLoading();
+         }
+      }
+      
+      const resendEmailCode = async requestBody => {
+         try {
+            const [data, status] = await api.request({
+               method: 'PUT',
+               route: 'sendEmailConfirmation',
+               body: requestBody
             })
 
-            showAndHideBtnLoading();
+            hideBtnLoading();
 
             if (status !== 200) {
                handleErrors.showError(data.reason);
@@ -125,7 +153,7 @@ export default function createEmailConfirmation() {
 
          } catch(e) {
             console.log(e);
-            showAndHideBtnLoading();
+            hideBtnLoading();
          }
       }
 
@@ -195,11 +223,27 @@ export default function createEmailConfirmation() {
          }
       }
 
-      state.emailConfirmationForm.addEventListener('submit', sendEmailCode);
-      state.btnSendEmailCode.addEventListener('touchstart', sendEmailCode);
+      const sendCodeListener = e => {
+         e.preventDefault();
 
-      state.btnResendEmailCode.addEventListener('click', resendEmailCode);
-      state.btnResendEmailCode.addEventListener('touchstart', resendEmailCode);
+         showBtnLoading();
+
+         notifyAll('submit', { activateAccount, updateEmail });
+      }
+
+      const resendCodeListener = e => {
+         if (e.type === 'touchstart') e.preventDefault();
+
+         showBtnLoading();
+
+         notifyAll('resend', resendEmailCode);
+      }
+
+      state.emailConfirmationForm.addEventListener('submit', sendCodeListener);
+      state.btnSendEmailCode.addEventListener('touchstart', sendCodeListener);
+
+      state.btnResendEmailCode.addEventListener('click', resendCodeListener);
+      state.btnResendEmailCode.addEventListener('touchstart', resendCodeListener);
 
       state.emailConfirmationForm.addEventListener('input', dispatch.shouldWriteOnInput);
       state.emailConfirmationForm.addEventListener('keydown', dispatch.shouldDeletionOnInput);
@@ -207,13 +251,15 @@ export default function createEmailConfirmation() {
       state.emailConfirmationForm.addEventListener('paste', dispatch.shouldPasteAll);
    }
 
-   const subscribe = observerFunction => {
-      state.observers.push(observerFunction);
+   const subscribe = (event, listener) => {
+      state.observers.push({ event, listener });
    }
 
-   const notifyAll = data => {
-      for (const observerFunction of state.observers) {
-         observerFunction(data);
+   const notifyAll = (event, data) => {
+      const listeners = state.observers.filter(observer => observer.event === event);
+
+      for (const { listener } of listeners) {
+         listener(data);
       }
    }
 
@@ -239,6 +285,7 @@ export default function createEmailConfirmation() {
 
    const hidePopup = () =>{
       state.popupWrapper.classList.remove('show');
+      notifyAll('hidden popup')
    }
 
    const render = someHooks => {

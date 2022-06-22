@@ -148,19 +148,24 @@ function createPopupAuthForms(confirmationCode) {
 
       const setUserNotActivated = data => {
          cookie.setCookie('emailConfirmationToken', data.emailConfirmationToken);
-         localStorage.setItem('sessionEmail', data.sessionEmail);
    
          hidePopup();
          setTimeout(confirmationCode.showPopup, 300);
 
-         confirmationCode.subscribe(setUserSession);
+         confirmationCode.subscribe('submit', ({ activateAccount }) => activateAccount());
+         confirmationCode.subscribe('resend', resendEmailCode => resendEmailCode({ email: data.sessionEmail }));
+         confirmationCode.subscribe('success', setUserSession);
       }
 
       const submitForm = async ({ route, currentForm, body }) => {
          try {
             showAndHideLoading(currentForm);
    
-            const [data, status] = await api.request({ method: "POST", route, body });
+            const [data, status] = await api.request({
+               method: "POST",
+               route,
+               body
+            });
 
             showAndHideLoading(currentForm);
 
@@ -227,8 +232,7 @@ function createPopupAuthForms(confirmationCode) {
          setTimeout(() => inputAutoFocus.focus(), 400);
       }
 
-      const setCurrentOverlay = targetElement => {
-         const targetForm = targetElement.dataset.js;
+      const setCurrentOverlay = targetForm => {
          const [signInOverlay, signUpOverlay] = state.popupWrapper.children;
 
          const acceptedOverlayActions = {
@@ -305,7 +309,7 @@ function createPopupAuthForms(confirmationCode) {
 
       const acceptedPopupActions = {
          changeOverlay(target) {
-            setCurrentOverlay(target);
+            setCurrentOverlay(target.dataset.js);
             setAccessibilityProps(target);
          },
          togglePasswordEye(target) {

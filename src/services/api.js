@@ -59,7 +59,7 @@ function createApiNetwork() {
          if (!data.newAccessToken) {
             res([data, status]);
          } else {
-            cookie.setNewAccessToken(data.newAccessToken);
+            cookie.setCookie('accessToken', data.newAccessToken);
             getData(res, rej);
          }
       }

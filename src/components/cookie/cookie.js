@@ -11,6 +11,12 @@ function createCookieHandler() {
       document.cookie = `${name} = ; Path=/ ; Expires=Thu, 01 Jan 1970 00:00:00 GMT`;
    }
 
+   const getCookie = name => {
+      const cookies = document.cookie.split('; ').join('=').split('=');
+
+      return cookies.includes(name) ? cookies[cookies.indexOf(name) + 1] : undefined
+   }
+
    const setAuthCookies = ({ accessToken, refreshToken }) => {
       setCookie('accessToken', accessToken);
       setCookie('refreshToken', refreshToken);
@@ -108,6 +114,7 @@ function createCookieHandler() {
    state.popupWrapper.addEventListener('click', popupActionListener);
 
    return {
+      getCookie,
       setCookie,
       deleteCookie,
       setAuthCookies,
