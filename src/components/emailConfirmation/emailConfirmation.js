@@ -285,7 +285,10 @@ export default function createEmailConfirmation() {
 
    const hidePopup = () =>{
       state.popupWrapper.classList.remove('show');
+
       notifyAll('hidden popup')
+      
+      state.observers = [];
    }
 
    const render = someHooks => {
