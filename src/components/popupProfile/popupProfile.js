@@ -1,9 +1,23 @@
-function createPopupProfile({ updateUserAvatar }) {
+function createPopupProfile({ updateUserAvatar }, confirmationCode) {
    const state = {
       popupWrapper: document.querySelector('.popup-wrapper-profile')
    }
 
-   function createForms({ api }) {
+   const hidePopup = () => {
+      state.popupWrapper.classList.remove('show');
+
+      const [overlayDeletion, overlayProfile] = state.popupWrapper.querySelectorAll('.popup-overlay');
+
+      overlayDeletion.classList.remove('show');
+      overlayProfile.classList.remove('show');
+   }
+
+   const showPopup = () => {
+      state.popupWrapper.classList.add('show');
+      state.popupWrapper.querySelector('.overlay-profile').classList.add('show');
+   }
+
+   function createForms({ api, cookie }) {
       const state = {
          credentialsForm: document.querySelector('.edit-profile-form'),
          formPhoto: document.querySelector('.profile-photo-form'),
@@ -156,15 +170,11 @@ function createPopupProfile({ updateUserAvatar }) {
          const { inputEmail, inputUsername } = state.credentialsForm;
          const preview = state.formPhoto.querySelector('.photoPreview');
 
-         inputEmail.setAttribute('value', email);
-         inputUsername.setAttribute('value', username);
-         
-         inputEmail.value = email;
-         inputUsername.value = username;
+         email && inputEmail.setAttribute('value', email);
+         username && inputUsername.setAttribute('value', username);
+         photo && preview.setAttribute('src', photo);
 
-         if (photo) {
-            preview.setAttribute('src', photo);
-         }
+         state.credentialsForm.reset();
       }
 
       const saveProfileData = ({ username, email, photo }) => {
@@ -183,6 +193,33 @@ function createPopupProfile({ updateUserAvatar }) {
          ); 
 
          setProfileData({ username, email, photo });
+      }
+
+      const handleSuccessUpdate = data => {
+         saveProfileData(data);
+         setProfileData(data);
+
+         handleSuccess.showCredentialsSuccess();
+      }
+
+      const handleConfirmEmail = (token, { email }, { email: oldEmail }) => {
+         cookie.setCookie('emailConfirmationToken', token);
+
+         hidePopup();
+         setTimeout(confirmationCode.showPopup, 300);
+
+         confirmationCode.subscribe('submit', ({ updateEmail }) => updateEmail(email));
+         confirmationCode.subscribe('resend', resendEmailCode => resendEmailCode({ email: oldEmail, emailToUpdate: email }));
+         
+         confirmationCode.subscribe('success', () => {
+            handleSuccessUpdate({ email });
+
+            setTimeout(showPopup, 300);
+
+            // fazer o unscribe no futuro
+         });
+
+         confirmationCode.subscribe('hidden popup', () => setTimeout(showPopup, 300));
       }
 
       const getProfileData = async () => {
@@ -227,7 +264,7 @@ function createPopupProfile({ updateUserAvatar }) {
          }
       }
 
-      const updateCredentials = async newCredentials => {
+      const updateCredentials = async (newCredentials, lastCredentials) => {
          toggleLoading();
 
          try {
@@ -239,16 +276,19 @@ function createPopupProfile({ updateUserAvatar }) {
             });
 
             toggleLoading();
-   
-            if (status !== 200) {
+
+            if (status !== 200 && status !== 301) {
                handleErrors.showCredentialsError(data.errors);
                return
             }
 
-            saveProfileData(data.newDatas);
-            setProfileData(data.newDatas);
+            if (data.emailConfirmationToken) {
+               handleConfirmEmail(data.emailConfirmationToken, newCredentials, lastCredentials);
+            }
 
-            handleSuccess.showCredentialsSuccess();
+            if (lastCredentials.username !== newCredentials.username) {
+               handleSuccessUpdate({ username: newCredentials.username });
+            }
    
          }catch(e) {
             state.loading.classList.remove('show');
@@ -340,7 +380,7 @@ function createPopupProfile({ updateUserAvatar }) {
             const shouldUpdate = keysOfNewCredentials.every(key => lastCredentials[key] === newCredentials[key]);
    
             if (!shouldUpdate) {
-               updateCredentials(newCredentials);
+               updateCredentials(newCredentials, lastCredentials);
             }
          },
          shouldUploadPhoto(e) {
