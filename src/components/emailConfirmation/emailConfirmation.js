@@ -94,8 +94,8 @@ export default function createEmailConfirmation() {
             }
 
             if (status === 200) {
-               hidePopup();
                notifyAll('success', data);
+               hidePopup();
             }
 
             cookie.deleteCookie('emailConfirmationToken');
