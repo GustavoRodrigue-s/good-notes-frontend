@@ -27,6 +27,25 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
 
       const MAXIMUM_PHOTO_SIZE = 1 * 1024 * 1024; // 1MB
 
+      const loadings = {
+         updateStore(showOrHide) {
+            state.credentialsForm.querySelector('.btn-update-credentials').classList[showOrHide]('loading');
+         },
+         updatePassword(showOrHide) {
+            state.resetPasswordForm.querySelector('.btn-update-password').classList[showOrHide]('loading');
+         },
+         uploadPhoto(showOrHide) {
+            const previewLabelBtn = state.formPhoto.querySelector('.container-photo label');
+            const sendhotoBtn = state.formPhoto.querySelector('.button-photo > button');
+
+            previewLabelBtn.classList[showOrHide]('loading');
+            sendhotoBtn.classList[showOrHide]('loading');
+         },
+         popup(showOrHide) {
+            state.loading.classList[showOrHide]('show');
+         }
+      }
+
       const handleErrors = {
          hideInputError(input, containerInput) {
             input.addEventListener('keydown', () => 
@@ -144,16 +163,18 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
          },
          showCredentialsSuccess() {
             const successMessage = state.credentialsForm.querySelector('.container-credentials-success');
-            successMessage.classList.add('show');
+            
+            const shouldShow = state.credentialsForm.parentElement.classList.contains('show');
+
+            shouldShow && successMessage.classList.add('show');
          },
          showPasswordsSuccess() {
             const successMessage = state.resetPasswordForm.querySelector('.container-reset-password-success');
-            successMessage.classList.add('show');
-         }
-      }
+            
+            const shouldShow = state.resetPasswordForm.parentElement.classList.contains('show');
 
-      const toggleLoading = () => {
-         state.loading.classList.toggle('show');
+            shouldShow && successMessage.classList.add('show');
+         }
       }
 
       const readFileAsDataUrl = (file, callback) => {
@@ -224,7 +245,7 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
 
       const getProfileData = async () => {
          try {
-            toggleLoading();
+            loadings.popup('add');
 
             const [data, status] = await api.request({ auth: true, method: 'GET', route: "getProfile" });
 
@@ -233,16 +254,16 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
             }
 
             createProfileData(data);
-            toggleLoading();
+            loadings.popup('remove');
 
          }catch(e) {
-            toggleLoading();
+            loadings.popup('remove');
             handleErrors.showCredentialsError([{ reason: 'request error' }]);
          }
       }
 
       const updatePassword = async passwords => {
-         toggleLoading();
+         loadings.updatePassword('add');
 
          try {
             const [data, status] = await api.request({
@@ -252,20 +273,20 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
                body: passwords
             });
 
-            toggleLoading();
+            loadings.updatePassword('remove');
 
             status !== 200
                ? handleErrors.showPasswordsError(data.errors)
                : handleSuccess.showPasswordsSuccess();
 
          } catch (e) {
-            state.loading.classList.remove('show');
+            loadings.updatePassword('remove');
             handleErrors.showPasswordsError([{ reason: 'request error' }]);
          }
       }
 
       const updateCredentials = async (newCredentials, lastCredentials) => {
-         toggleLoading();
+         loadings.updateStore('add');
 
          try {
             const [data, status] = await api.request({ 
@@ -275,7 +296,7 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
                body: newCredentials 
             });
 
-            toggleLoading();
+            loadings.updateStore('remove');
 
             if (status !== 200 && status !== 301) {
                handleErrors.showCredentialsError(data.errors);
@@ -291,13 +312,13 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
             }
    
          }catch(e) {
-            state.loading.classList.remove('show');
+            loadings.updateStore('remove');
             handleErrors.showCredentialsError([{ reason: 'request error' }]);
          }
       }
 
       const uploadPhoto = async fileData => {
-         toggleLoading();
+         loadings.uploadPhoto('add');
 
          try {
             const [data, status] = await api.request({ 
@@ -307,7 +328,7 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
                body: fileData
             });
 
-            toggleLoading();
+            loadings.uploadPhoto('remove');
 
             if (status !== 200) {
                handleErrors.showPhotoError(data.reason);
@@ -320,7 +341,7 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
             handleSuccess.showPhotoSuccess();
 
          } catch (e) {
-            state.loading.classList.remove('show');
+            loadings.uploadPhoto('remove');
             handleErrors.showPhotoError('request error');
          }
       }
@@ -430,8 +451,7 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
       state.formPhoto.inputPhoto.addEventListener('change', handlePreviewChange);
 
       return { 
-         shouldRequestCredentials: dispatch.shouldRequestCredentials,
-         toggleLoading
+         shouldRequestCredentials: dispatch.shouldRequestCredentials
       }
    }
 
@@ -577,13 +597,19 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
       return {  }
    }
 
-   function createPopupConfirmDeletion({ api, cookie, toggleLoading }) {
+   function createPopupConfirmDeletion({ api, cookie }) {
       const state = {
          popupWrapper: document.querySelector('.popup-wrapper-profile'),
          confirmDeletionForm: document.querySelector('.deletion-account-form'),
          popup: document.querySelector('.popup-confirm-to-delete-account')
       }
    
+      const loadings = {
+         delete(showOrHide) {
+            state.confirmDeletionForm.querySelector('.btn-delete-confirm').classList[showOrHide]('loading');
+         }
+      }
+
       const resetPopup = () => {
          const { btnConfirm } = state.confirmDeletionForm;
    
@@ -601,21 +627,20 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
       }
    
       const confirmAccountDeletion = async () => {
-         hidePopup();
-            
+         loadings.delete('add');
+
          try {
-            toggleLoading();
-   
             await api.request({ auth: true, method: 'DELETE', route: "deleteAccount" });
    
             cookie.deleteCookies();
             window.open('./index.html', '_self');
    
          } catch(e) {
-            toggleLoading();
+            loadings.delete('remove');
          }
       }
    
+      // da para refatorar isso.
       const dispatch = {
          shouldHidePopup(targetClass) {
             const listToHidePopup = ['close-sub-popup-target'];
@@ -691,7 +716,12 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
                         </div>
                         <div class="buttons">
                            <button type="reset" class="close-sub-popup-target btn-default btn-cancel-confirm tertiary">Cancelar</button>
-                           <button type="submit" name="btnConfirm" class="btn-delete-confirm btn-default">Excluir Conta</button>
+                           <button type="submit" name="btnConfirm" class="btn-delete-confirm btn-default">
+                              Excluir Conta
+                              <div class="container-btn-loading center-flex">
+                                 <div class="loading"></div>
+                              </div>
+                           </button>
                         </div>
                      </form>
                   </div>
@@ -719,6 +749,9 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
                      <input type="file" name="inputFile" class="inputPhoto" id="inputPhoto" />
                      <label for="inputPhoto" title="Selecionar foto">
                         <img class="photoPreview" src="./images/avatar_icon.svg" alt="avatar icon" />
+                        <div class="container-btn-loading center-flex">
+                           <div class="loading"></div>
+                        </div>
                      </label>
                   </div>
                   <div class="container-photo-contents">
@@ -793,7 +826,12 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
                      </div>
                      <div class="container-buttons">
                         <div>
-                           <button type="submit" class="btn-update-credentials btn-default btn-default-hover">Salvar</button>
+                           <button type="submit" class="btn-update-credentials btn-default btn-default-hover">
+                              Salvar
+                              <div class="container-btn-loading center-flex">
+                                 <div class="loading"></div>
+                              </div>
+                           </button>
                            <button type="reset" class="btn-cancel btn-default tertiary">Cancelar</button>
                         </div>
                         <div>
@@ -868,7 +906,12 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
                         </div>
                         <div>
                            <button type="button" class="forgot-password">Esqueceu a senha?</button>
-                           <button type="submit" class="btn-update-password btn-default btn-default-hover">Alterar senha</button>
+                           <button type="submit" class="btn-update-password btn-default btn-default-hover">
+                              Alterar senha
+                              <div class="container-btn-loading center-flex">
+                                 <div class="loading"></div>
+                              </div>
+                           </button>
                         </div>
                      </div>
                   </form>
@@ -891,7 +934,7 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
       state.popupWrapper.innerHTML = template;
 
       const forms = createForms(someHooks);
-      const popupDeletion = createPopupConfirmDeletion({ ...someHooks, ...forms });
+      const popupDeletion = createPopupConfirmDeletion(someHooks);
 
       createPopup(forms, popupDeletion);
    }

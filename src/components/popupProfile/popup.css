@@ -106,8 +106,24 @@
 }
 
 .container-photo > label {
+   position: relative;
+   overflow: hidden;
    padding: 2px;
    cursor: pointer;
+}
+
+.container-photo > label > .container-btn-loading {
+   border-radius: 50%;
+   background-color: rgba(0, 0, 0, 0.2);
+}
+
+.container-photo > label.loading {
+   pointer-events: none;
+}
+
+.container-photo > label.loading > .container-btn-loading {
+   visibility: visible;
+   opacity: 1;
 }
 
 .inputPhoto {
@@ -284,6 +300,10 @@
 
 .btn-delete-confirm-active:hover {
    background-color: var(--primaryErrorHoverColor) !important;
+}
+
+.btn-delete-confirm > .container-btn-loading {
+   background-color: var(--primaryErrorHoverColor);
 }
 
 /* ---------- Btn Slide To reset password ---------- */
