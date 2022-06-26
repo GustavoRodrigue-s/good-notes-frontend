@@ -100,41 +100,19 @@ function createPopupAuthForms(confirmationCode) {
    
       state.formSignUp.inputEmail.addEventListener('invalid', e => {
          e.preventDefault();
-   
+
          if (e.target.validity.typeMismatch) {
             handleRequestError([{ state: 'error', reason: 'invalid email' }]);
          }
       });
 
-      const formsData = {
-         getFormSignInDatas() {
-            const { inputEmail, inputPassword, inputCheckbox } = state.formSignIn;
-
-            return {
-               email: inputEmail.value.trim(),
-               password: inputPassword.value.trim(),
-               keepConnected: inputCheckbox.checked
-            }
+      const loadings = {
+         btnSignIn(showOrHide) {
+            state.formSignIn.querySelector('button[type="submit"]').classList[showOrHide]('loading');
          },
-         getFormSignUpDatas() {
-            const { 
-               inputUsername, inputEmail, inputPassword, inputConfirmPassword 
-            } = state.formSignUp;
-
-            return {
-               username: inputUsername.value.trim(),
-               email: inputEmail.value.trim(),
-               password: inputPassword.value.trim(),
-               confirmPassword:  inputConfirmPassword.value.trim(),
-               keepConnected: true
-            }
+         btnSignUp(showOrHide) {
+            state.formSignUp.querySelector('button[type="submit"]').classList[showOrHide]('loading');
          }
-      }
-
-      const showAndHideLoading = currentForm => {
-         const loading = document.querySelector(`.popup[data-form="${currentForm}"] .container-buttonSubmit > button`);
-
-         loading.classList.toggle('loading');
       }
    
       const setUserSession = data => {
@@ -157,9 +135,9 @@ function createPopupAuthForms(confirmationCode) {
          confirmationCode.subscribe('success', setUserSession);
       }
 
-      const submitForm = async ({ route, currentForm, body }) => {
+      const submitForm = async ({ route, body, form, loading }) => {
          try {
-            showAndHideLoading(currentForm);
+            loading('add');
    
             const [data, status] = await api.request({
                method: "POST",
@@ -167,10 +145,10 @@ function createPopupAuthForms(confirmationCode) {
                body
             });
 
-            showAndHideLoading(currentForm);
+            loading('remove');
 
             if (data.errors) {
-               handleRequestError(data.errors, currentForm);
+               handleRequestError(data.errors, form);
                return
             }
 
@@ -182,25 +160,64 @@ function createPopupAuthForms(confirmationCode) {
             dispatch.shouldLogUser(data);
 
          } catch (e) {
-            handleRequestError([{ state: 'error', reason: 'request error' }], currentForm);
+            loading('remove');
+            handleRequestError([{ state: 'error', reason: 'request error' }], form);
          }
       }
    
-      state.formSignIn.addEventListener('submit', e => {
+      const formsData = {
+         getFormSignInData() {
+            const { inputEmail, inputPassword, inputCheckbox } = state.formSignIn;
+
+            return {
+               email: inputEmail.value.trim(),
+               password: inputPassword.value.trim(),
+               keepConnected: inputCheckbox.checked
+            }
+         },
+         getFormSignUpData() {
+            const { 
+               inputUsername, inputEmail, inputPassword, inputConfirmPassword 
+            } = state.formSignUp;
+
+            return {
+               username: inputUsername.value.trim(),
+               email: inputEmail.value.trim(),
+               password: inputPassword.value.trim(),
+               confirmPassword:  inputConfirmPassword.value.trim(),
+               keepConnected: true
+            }
+         }
+      }
+
+      const prepareSignInRequest = e => {
          e.preventDefault();
 
-         const data = formsData.getFormSignInDatas();
+         const data = formsData.getFormSignInData();
    
-         submitForm({ route: 'login', currentForm: 'formSignIn', body: data });
-      });
-   
-      state.formSignUp.addEventListener('submit', e => {
+         submitForm({ 
+            route: 'login',
+            form: 'formSignIn',
+            body: data,
+            loading: loadings.btnSignIn 
+         });
+      }
+
+      const prepareSignUpRequest = e => {
          e.preventDefault();
    
-         const data = formsData.getFormSignUpDatas();
+         const data = formsData.getFormSignUpData();
    
-         submitForm({ route: 'register', currentForm: 'formSignUp', body: data });
-      });
+         submitForm({ 
+            route: 'register',
+            form: 'formSignUp',
+            body: data,
+            loading: loadings.btnSignUp
+         });
+      }
+
+      state.formSignIn.addEventListener('submit', prepareSignInRequest);
+      state.formSignUp.addEventListener('submit', prepareSignUpRequest);
 
       const dispatch = {
          shouldLogUser({ userData }) {
@@ -337,33 +354,27 @@ function createPopupAuthForms(confirmationCode) {
       }
 
       const popupListener = e => {
-         if (e.type === 'touchstart') e.preventDefault();
+         const action = e.target.dataset.action;
 
-         const targetAction = e.target.dataset.action;
-
-         if (dispatch[targetAction]) {
-            dispatch[targetAction](e.target);
+         if (dispatch[action]) {
+            dispatch[action](e.target);
          }
 
-         if (acceptedPopupActions[targetAction]) {
-            acceptedPopupActions[targetAction](e.target);
+         if (acceptedPopupActions[action]) {
+            acceptedPopupActions[action](e.target);
          }
       }
 
       dispatch.shouldShowSignInPopup();
 
-      state.containerButtons.addEventListener('click', popupListener);
-      state.containerButtons.addEventListener('touchstart', popupListener);
-      state.popupWrapper.addEventListener('mousedown', popupListener);
+      state.containerButtons.addEventListener('pointerup', popupListener);
+      state.popupWrapper.addEventListener('pointerup', popupListener);
    }
 
    const render = someHooks => {
       const template = `
       <div class="popup-overlay overlay-signIn" data-action="shouldShowOrHidePopup">
          <div class="popup-signIn popup popup-forms" data-form="formSignIn">
-            <div class="container-loading center-flex">
-               <div></div>
-            </div>
             <div class="popup-content">
                <div class="close">
                   <button class="close-popup-target close-popup center-flex" tabindex="0" data-action="shouldShowOrHidePopup">
@@ -438,9 +449,6 @@ function createPopupAuthForms(confirmationCode) {
    
       <div class="popup-overlay overlay-signUp" data-action="shouldShowOrHidePopup">
          <div class="popup-signUp popup popup-forms" data-form="formSignUp">
-            <div class="container-loading center-flex">
-               <div></div>
-            </div>
             <div class="popup-content">
                <div class="close">
                   <button class="close-popup-target close-popup center-flex" tabindex="0" data-action="shouldShowOrHidePopup">

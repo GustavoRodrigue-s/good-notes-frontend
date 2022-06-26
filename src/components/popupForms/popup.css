@@ -132,11 +132,16 @@
    color: var(--paragraphColor);
 }
 
+.container-inputCheckbox > label {
+   user-select: none;
+}
+
 .container-inputCheckbox > input {
    margin-right: 5px;
 }
 
 .prominent-span {
+   user-select: none;
    color: var(--primaryColor);
    cursor: pointer;
 }

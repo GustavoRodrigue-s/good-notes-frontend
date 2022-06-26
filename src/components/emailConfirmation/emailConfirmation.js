@@ -232,7 +232,7 @@ export default function createEmailConfirmation() {
       }
 
       const resendCodeListener = e => {
-         if (e.type === 'touchstart') e.preventDefault();
+         e.preventDefault();
 
          showBtnLoading();
 
@@ -240,10 +240,9 @@ export default function createEmailConfirmation() {
       }
 
       state.emailConfirmationForm.addEventListener('submit', sendCodeListener);
-      state.btnSendEmailCode.addEventListener('touchstart', sendCodeListener);
 
-      state.btnResendEmailCode.addEventListener('click', resendCodeListener);
-      state.btnResendEmailCode.addEventListener('touchstart', resendCodeListener);
+      state.btnSendEmailCode.addEventListener('pointerup', sendCodeListener);
+      state.btnResendEmailCode.addEventListener('pointerup', resendCodeListener);
 
       state.emailConfirmationForm.addEventListener('input', dispatch.shouldWriteOnInput);
       state.emailConfirmationForm.addEventListener('keydown', dispatch.shouldDeletionOnInput);
@@ -365,17 +364,12 @@ export default function createEmailConfirmation() {
    const wrapperListener = e => {
       const action = e.target.dataset.action;
 
-      if (!dispath[action]) {
-         return
+      if (dispath[action]) {
+         dispath[action]();
       }
-
-      if (e.type === 'touchstart') e.preventDefault();
-
-      dispath[action]();
    }
 
-   state.popupWrapper.addEventListener('mousedown', wrapperListener);
-   state.popupWrapper.addEventListener('touchstart', wrapperListener);
+   state.popupWrapper.addEventListener('pointerup', wrapperListener);
 
    return {
       render,

@@ -582,17 +582,19 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
       }
 
       const popupListener = e => {
-         if (e.type === 'touchstart') e.preventDefault();
-
          const targetAction = e.target.dataset.action;
 
-         dispatch[targetAction] && dispatch[targetAction]();
-         acceptedPopupActions[targetAction] && acceptedPopupActions[targetAction](e.target);
+         if (dispatch[targetAction]) {
+            dispatch[targetAction]();
+         }
+
+         if (acceptedPopupActions[targetAction]) {
+            acceptedPopupActions[targetAction](e.target);
+         }
       }
 
-      state.popupWrapper.addEventListener('mousedown', popupListener);
-      state.btnShowPopup.addEventListener('click', popupListener);
-      state.btnShowPopup.addEventListener('touchstart', popupListener);
+      state.popupWrapper.addEventListener('pointerup', popupListener);
+      state.btnShowPopup.addEventListener('pointerup', popupListener);
 
       return {  }
    }
@@ -640,13 +642,9 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
          }
       }
    
-      // da para refatorar isso.
       const dispatch = {
-         shouldHidePopup(targetClass) {
-            const listToHidePopup = ['close-sub-popup-target'];
-            const shouldToHide = listToHidePopup.includes(targetClass);
-   
-            shouldToHide && hidePopup();
+         shouldHidePopup() {
+            hidePopup();
          },
          shouldActiveTheButton() {
             const { username } = JSON.parse(sessionStorage.getItem('profileData'));
@@ -670,14 +668,14 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
       } 
    
       const popupListener = e => {
-         if (e.type === 'touchstart') e.preventDefault();
+         const action = e.target.dataset.action;
    
-         const targetClass = e.target.classList[0];
-   
-         dispatch.shouldHidePopup(targetClass);
+         if (dispatch[action]) {
+            dispatch[action]();
+         }
       }
    
-      state.popup.addEventListener('click', popupListener);
+      state.popup.addEventListener('pointerup', popupListener);
    
       state.confirmDeletionForm.inputUsername.addEventListener('input', dispatch.shouldActiveTheButton);
       state.confirmDeletionForm.addEventListener('submit', dispatch.shouldConfirmDeletion);
@@ -692,8 +690,8 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
       <div class="popup-overlay overlay-confirm-delete" data-action="shouldShowOrHidePopup">
          <div class="popup-confirm-to-delete-account popup">
             <div class="close">
-               <button class="close-sub-popup-target close-popup center-flex" tabindex="0">
-                  <img class="close-sub-popup-target close-popup" src="./images/close_popup_icon.svg" alt="Fechar popup">
+               <button class="close-sub-popup-target close-popup center-flex" tabindex="0" data-action="shouldHidePopup">
+                  <img class="close-popup" src="./images/close_popup_icon.svg" alt="Fechar popup">
                </button>
             </div>
             <div class="popup-content">
@@ -715,7 +713,7 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
                            <input type="text" name="inputUsername" class="input-confirm-delete input-default" autocomplete="off">
                         </div>
                         <div class="buttons">
-                           <button type="reset" class="close-sub-popup-target btn-default btn-cancel-confirm tertiary">Cancelar</button>
+                           <button type="reset" class="close-sub-popup-target btn-default btn-cancel-confirm tertiary" data-action="shouldHidePopup">Cancelar</button>
                            <button type="submit" name="btnConfirm" class="btn-delete-confirm btn-default">
                               Excluir Conta
                               <div class="container-btn-loading center-flex">

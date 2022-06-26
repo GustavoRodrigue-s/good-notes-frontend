@@ -1,6 +1,8 @@
 header {
    font-family: var(--fontDefault); 
-   position: relative;
+   position: sticky;
+   top: 0;
+   z-index: 99999;
    background: #fff;
    border-bottom: 1px solid var(--colorLine); 
    padding: 5px 34px; 

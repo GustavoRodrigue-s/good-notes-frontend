@@ -47,8 +47,8 @@ function createCookieHandler() {
          <div class="popup-overlay">
             <div class="popup-cookie popup">
                <div class="close">
-                  <button class="close-popup-target close-popup center-flex" tabindex="0">
-                     <img class="close-popup-target close-popup" src="./images/close_popup_icon.svg" alt="Fechar popup">
+                  <button class="close-popup-target close-popup center-flex" tabindex="0" data-action="shouldHideThePopup">
+                     <img class="close-popup" src="./images/close_popup_icon.svg" alt="Fechar popup">
                   </button>
                </div>
                <div class="header">
@@ -70,7 +70,7 @@ function createCookieHandler() {
                   </div>
                </div>
                <div class="container-btn" tabindex="-1">
-                  <button class="accept-cookies btn-default btn-default-hover" tabindex="0">Aceitar Cookies</button>
+                  <button class="accept-cookies btn-default btn-default-hover" tabindex="0" data-action="shouldHideThePopup">Aceitar Cookies</button>
                </div>
             </div>
          </div>
@@ -91,27 +91,26 @@ function createCookieHandler() {
       requestAnimationFrame(() => state.popupWrapper.classList.add('show'));
    }
 
-   const popupActionListener = e => {
-      const targetClass = e.target.classList[0];
-
-      dispatch.shouldHideThePopup(targetClass);
-   }
-
    const dispatch = {
       shouldShowThePopup() {
          const cookieConfirm = localStorage.getItem('cookieConfirm');
          
          !cookieConfirm && showPopup();
       },
-      shouldHideThePopup(targetClass) {
-         const listToClosePopup = ['close-popup-target', 'accept-cookies'];
-         const shouldHide = listToClosePopup.includes(targetClass);
-
-         shouldHide && hidePopup();
+      shouldHideThePopup() {
+         hidePopup();
       }
    }
 
-   state.popupWrapper.addEventListener('click', popupActionListener);
+   const popupActionListener = e => {
+      const action = e.target.dataset.action;
+
+      if (dispatch[action]) {
+         dispatch[action]();
+      }
+   }
+
+   state.popupWrapper.addEventListener('pointerup', popupActionListener);
 
    return {
       getCookie,

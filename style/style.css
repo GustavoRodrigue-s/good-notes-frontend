@@ -34,18 +34,23 @@
 }
 
 html {
+   touch-action: none;
+   -ms-touch-action: none;
    font-size: 62.5%;
+   overflow: hidden;
+   -webkit-tap-highlight-color: rgba(255, 255, 255, 0); 
 }
 
 html, body {
    height: 100%;
-   overflow-x: hidden;
 }
 
 body {
    font: 1.6em 'Inter', sans-serif;
    font-family: var(--fontDefault);
    scroll-behavior: smooth;
+   -webkit-overflow-scrolling: touch;
+   overflow-y: auto;
 }
 
 ul, ol {
@@ -79,6 +84,8 @@ button svg, button div, button span, button img {
 /* ---------- Button Default ---------- */
 
 .btn-default {
+   user-select: none;
+   -webkit-tap-highlight-color:  rgba(255, 255, 255, 0); 
    position: relative;
    overflow: hidden;
    border: none;

@@ -94,16 +94,13 @@ export default function createMobileNav() {
    }
 
    const navListener = e => {
-      if (e.type === 'touchstart') e.preventDefault();
-
       const currentLi = e.target.parentElement;
       const action = currentLi.dataset.js;
 
       dispatch.shouldSelectedTheButton(currentLi, action);
    }
 
-   state.navList.addEventListener('touchstart', navListener);
-   state.navList.addEventListener('click', navListener);
+   state.navList.addEventListener('pointerup', navListener);
 
    return { 
       showCategories: acceptedSectionActions.showCategories,
