@@ -164,10 +164,6 @@
 }
 
 @media (max-width: 430px) {
-   html {
-      font-size: 55%;
-   }
-
    main {
       height: calc(100% - 111px);
    }

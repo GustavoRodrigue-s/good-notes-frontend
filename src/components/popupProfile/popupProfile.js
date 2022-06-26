@@ -83,6 +83,8 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
                : acceptedErrors['request error'];
          },
          showCredentialsError(errors) {
+            handleSuccess.hideCredentialsSuccess();
+
             const acceptedErrors = {
                "empty input"({ input }) {
                   const currentInput = state.credentialsForm[input];
@@ -156,6 +158,7 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
             });
          }
       }
+
       const handleSuccess = {
          showPhotoSuccess() {
             const containerSuccess = document.querySelector('.container-photo-success');
@@ -167,6 +170,10 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
             const shouldShow = state.credentialsForm.parentElement.classList.contains('show');
 
             shouldShow && successMessage.classList.add('show');
+         },
+         hideCredentialsSuccess() {
+            const successMessage = state.credentialsForm.querySelector('.container-credentials-success');
+            successMessage.classList.remove('show');
          },
          showPasswordsSuccess() {
             const successMessage = state.resetPasswordForm.querySelector('.container-reset-password-success');

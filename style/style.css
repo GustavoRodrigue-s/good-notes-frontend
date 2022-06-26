@@ -529,3 +529,9 @@ span.tooltip::before {
       transition: 0.2s !important;
    }
 }
+
+@media (max-width: 430px) {
+   html {
+      font-size: 55%;
+   }
+}

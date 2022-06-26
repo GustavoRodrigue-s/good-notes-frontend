@@ -415,10 +415,6 @@ button.forgot-password:hover {
 }
 
 @media (max-width: 314px) {
-   .container-reset-password .container-buttons button.forgot-password {
-      font-size: 1.2rem;
-   }
-
    .popup-edit-photo > form {
       flex-direction: column;
    }
