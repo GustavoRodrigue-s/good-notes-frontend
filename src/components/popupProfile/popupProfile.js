@@ -589,13 +589,8 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
       const popupListener = e => {
          const targetAction = e.target.dataset.action;
 
-         if (dispatch[targetAction]) {
-            dispatch[targetAction]();
-         }
-
-         if (acceptedPopupActions[targetAction]) {
-            acceptedPopupActions[targetAction](e.target);
-         }
+         dispatch[targetAction]?.();
+         acceptedPopupActions[targetAction]?.(e.target);
       }
 
       state.popupWrapper.addEventListener('pointerup', popupListener);
@@ -853,7 +848,7 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
                         <div class="container-input">
                            <label for="input-old-password">Senha antiga</label>
                            <div class="container-input-password">
-                              <input type="password" class="input-old-password input-default" id="input-old-password" value="" name="inputOldPassword" autocomplete="off">
+                              <input type="password" class="input-old-password input-default input-password" id="input-old-password" value="" name="inputOldPassword" autocomplete="off">
                               <a class="btn-eyes">
                                  <i class="eye-password show" data-action="togglePasswordEye"></i>
                                  <i class="no-eye-password" data-action="togglePasswordEye"></i>
@@ -871,7 +866,7 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
                         <div class="container-input">
                            <label for="input-new-password">Nova senha</label>
                            <div class="container-input-password">
-                              <input type="password" class="input-new-password input-default" id="input-new-password" value="" name="inputNewPassword" autocomplete="off">
+                              <input type="password" class="input-new-password input-default input-password" id="input-new-password" value="" name="inputNewPassword" autocomplete="off">
                               <a class="btn-eyes">
                                  <i class="eye-password show" data-action="togglePasswordEye"></i>
                                  <i class="no-eye-password" data-action="togglePasswordEye"></i>

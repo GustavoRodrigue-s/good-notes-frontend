@@ -503,9 +503,7 @@ export function createCategoryItem() {
    }
 
    const categoryItemListener = ({ e, action, getCategory }) => {
-      if (dispatch[action]) {
-         dispatch[action](getCategory(e));
-      }
+      dispatch[action]?.(getCategory(e));
 
       if (acceptedCategoryActions[action]) {
          acceptedCategoryActions.categoryElement = getCategory(e);

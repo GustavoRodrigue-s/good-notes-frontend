@@ -292,62 +292,62 @@ export default function createEmailConfirmation() {
 
    const render = someHooks => {
       const template = `
-         <div class="popup-overlay overlay-email-confirmation" data-action="shouldHidePopup">
-            <div class="popup popup-email-confirmation">
-               <div class="close">
-                  <button class="close-popup-target close-popup center-flex" tabindex="0" data-action="shouldHidePopup">
-                     <img class="close-popup-target close-popup" src="./images/close_popup_icon.svg" alt="Fechar popup">
-                  </button>
+      <div class="popup-overlay overlay-email-confirmation" data-action="hide">
+         <div class="popup popup-email-confirmation">
+            <div class="close">
+               <button class="close-popup-target close-popup center-flex" tabindex="0" data-action="hide">
+                  <img class="close-popup-target close-popup" src="./images/close_popup_icon.svg" alt="Fechar popup">
+               </button>
+            </div>
+            <div class="title">
+               <div>
+                  <h1>Confirmar E-mail</h1>
                </div>
-               <div class="title">
-                  <div>
-                     <h1>Confirmar E-mail</h1>
-                  </div>
-                  <div>
-                     <p>
-                        Para confirmar o seu cadastro, digite o código de confirmação enviado para o seu e-mail.
-                     </p>
-                  </div>
-               </div>
-               <div class="form">
-                  <form class="email-confirmation-form">
-                     <div class="container-inputs-code">
-                        <input type="number" maxlength="1" name="inputCode" />
-                        <input type="number" maxlength="1" name="inputCode" />
-                        <input type="number" maxlength="1" name="inputCode" />
-                        <input type="number" maxlength="1" name="inputCode" />
-                        <input type="number" maxlength="1" name="inputCode" />
-                     </div>
-                     <div class="container-email-code-error container-message">
-                        <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
-                           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path>
-                        </svg>
-                        <span></span>
-                     </div>
-                     <div class="container-email-code-success container-message">
-                        <svg stroke="currentColor" fill="currentColor" stroke-width="0" version="1" viewBox="0 0 48 48" enable-background="new 0 0 48 48" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                           <circle fill="#4CAF50" cx="24" cy="24" r="21"></circle><polygon fill="#fff" points="34.6,14.6 21,28.2 15.4,22.6 12.6,25.4 21,33.8 37.4,17.4"></polygon>
-                        </svg>
-                        <span>O novo código foi enviado!</span>
-                     </div>
-                     <div class="container-btn-code">
-                        <button type="submit" class="btn-default btn-default-hover btn-send-email-code">
-                           Confirmar
-                           <div class="container-btn-loading center-flex">
-                              <div class="loading"></div>
-                           </div>
-                        </button>
-                     </div>
-                  </form>
-               </div>
-               <div class="footer">
+               <div>
                   <p>
-                     Não recebeu o e-mail de confirmação?
-                     <button type="button" class="btn-resending-email-code">Reenviar código de confirmação</button>
+                     Para confirmar o seu cadastro, digite o código de confirmação enviado para o seu e-mail.
                   </p>
                </div>
             </div>
+            <div class="form">
+               <form class="email-confirmation-form">
+                  <div class="container-inputs-code">
+                     <input type="number" maxlength="1" name="inputCode" />
+                     <input type="number" maxlength="1" name="inputCode" />
+                     <input type="number" maxlength="1" name="inputCode" />
+                     <input type="number" maxlength="1" name="inputCode" />
+                     <input type="number" maxlength="1" name="inputCode" />
+                  </div>
+                  <div class="container-email-code-error container-message">
+                     <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path>
+                     </svg>
+                     <span></span>
+                  </div>
+                  <div class="container-email-code-success container-message">
+                     <svg stroke="currentColor" fill="currentColor" stroke-width="0" version="1" viewBox="0 0 48 48" enable-background="new 0 0 48 48" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                        <circle fill="#4CAF50" cx="24" cy="24" r="21"></circle><polygon fill="#fff" points="34.6,14.6 21,28.2 15.4,22.6 12.6,25.4 21,33.8 37.4,17.4"></polygon>
+                     </svg>
+                     <span>O novo código foi enviado!</span>
+                  </div>
+                  <div class="container-btn-code">
+                     <button type="submit" class="btn-default btn-default-hover btn-send-email-code">
+                        Confirmar
+                        <div class="container-btn-loading center-flex">
+                           <div class="loading"></div>
+                        </div>
+                     </button>
+                  </div>
+               </form>
+            </div>
+            <div class="footer">
+               <p>
+                  Não recebeu o e-mail de confirmação?
+                  <button type="button" class="btn-resending-email-code">Reenviar código de confirmação</button>
+               </p>
+            </div>
          </div>
+      </div>
       `;
 
       state.popupWrapper.innerHTML = template;
@@ -355,8 +355,8 @@ export default function createEmailConfirmation() {
       createForm(someHooks);
    }
 
-   const dispath = {
-      shouldHidePopup() {
+   const acceptedPopupActions = {
+      hide() {
          hidePopup();
       }
    }
@@ -364,9 +364,7 @@ export default function createEmailConfirmation() {
    const wrapperListener = e => {
       const action = e.target.dataset.action;
 
-      if (dispath[action]) {
-         dispath[action]();
-      }
+      acceptedPopupActions[action]?.();
    }
 
    state.popupWrapper.addEventListener('pointerup', wrapperListener);

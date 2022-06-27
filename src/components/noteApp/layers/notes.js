@@ -261,9 +261,7 @@ export function createNoteNetwork(networkTemplate, repository) {
    }
 
    const networkListener = ({ action }) => {
-      if (dispatch[action]) {
-         dispatch[action]();
-      }
+      dispatch[action]?.();
    }
 
    return { 
@@ -445,9 +443,7 @@ export function createCurrentNote(repository) {
    const currentNoteListener = e => {
       const action = e.target.dataset.js;
 
-      if (acceptedCurrentNoteActions[action]) {
-         acceptedCurrentNoteActions[action](e);
-      }
+      acceptedCurrentNoteActions[action]?.(e);
 
       notifyAll('click', { action });
    }
@@ -718,9 +714,7 @@ export function createNoteItem() {
    }
 
    const noteItemListener = ({ e, action, noteListTitle }) => {
-      if (dispatch[action]) {
-         dispatch[action](e.target, noteListTitle);
-      }
+      dispatch[action]?.(e.target, noteListTitle);
    }
 
    return {

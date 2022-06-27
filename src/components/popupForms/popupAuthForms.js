@@ -1,10 +1,14 @@
-function createPopupAuthForms(confirmationCode) {
+function createPopupAuthForms(confirmationCode, resetPassword) {
    const state = {
       popupWrapper: document.querySelector('.popup-wrapper-auth')
    }
 
    const hidePopup = () => {
       state.popupWrapper.classList.remove('show');
+   }
+
+   const showPopup = () => {
+      state.popupWrapper.classList.add('show');
    }
 
    function createForm({ api, cookie }) {
@@ -133,6 +137,7 @@ function createPopupAuthForms(confirmationCode) {
          confirmationCode.subscribe('submit', ({ activateAccount }) => activateAccount());
          confirmationCode.subscribe('resend', resendEmailCode => resendEmailCode({ email: data.sessionEmail }));
          confirmationCode.subscribe('success', setUserSession);
+         confirmationCode.subscribe('hidden popup', () => setTimeout(showPopup, 300));
       }
 
       const submitForm = async ({ route, body, form, loading }) => {
@@ -331,6 +336,10 @@ function createPopupAuthForms(confirmationCode) {
          },
          togglePasswordEye(target) {
             togglePasswordEye(target.parentElement);
+         },
+         showResetPassword() {
+            hidePopup();
+            resetPassword.showPopup();
          }
       }
 
@@ -356,13 +365,8 @@ function createPopupAuthForms(confirmationCode) {
       const popupListener = e => {
          const action = e.target.dataset.action;
 
-         if (dispatch[action]) {
-            dispatch[action](e.target);
-         }
-
-         if (acceptedPopupActions[action]) {
-            acceptedPopupActions[action](e.target);
-         }
+         dispatch[action]?.(e.target);
+         acceptedPopupActions[action]?.(e.target);
       }
 
       dispatch.shouldShowSignInPopup();
@@ -414,7 +418,7 @@ function createPopupAuthForms(confirmationCode) {
                         </label>
                      </div>
                      <div class="container-forgot-password">
-                        <span class="prominent-span" tabindex="0">Esqueceu a senha?</span>
+                        <span class="prominent-span" tabindex="0" data-action="showResetPassword">Esqueceu a senha?</span>
                      </div>
                   </div>
    

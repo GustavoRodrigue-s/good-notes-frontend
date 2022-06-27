@@ -105,9 +105,7 @@ function createCookieHandler() {
    const popupActionListener = e => {
       const action = e.target.dataset.action;
 
-      if (dispatch[action]) {
-         dispatch[action]();
-      }
+      dispatch[action]?.();
    }
 
    state.popupWrapper.addEventListener('pointerup', popupActionListener);
