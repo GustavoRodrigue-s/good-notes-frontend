@@ -49,7 +49,6 @@ body {
    font: 1.6em 'Inter', sans-serif;
    font-family: var(--fontDefault);
    scroll-behavior: smooth;
-   -webkit-overflow-scrolling: touch;
    overflow-y: auto;
 }
 

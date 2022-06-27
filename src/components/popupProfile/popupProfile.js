@@ -243,8 +243,6 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
             handleSuccessUpdate({ email });
 
             setTimeout(showPopup, 300);
-
-            // fazer o unscribe no futuro
          });
 
          confirmationCode.subscribe('hidden popup', () => setTimeout(showPopup, 300));
