@@ -12,14 +12,9 @@ export default function createEmailConfirmation() {
          btnSendEmailCode: document.querySelector('form.email-confirmation-form .btn-send-email-code')
       }
 
-      const showBtnLoading = () => {
-         state.btnSendEmailCode.classList.add('loading');
-         state.btnResendEmailCode.classList.add('loading');
-      }
-
-      const hideBtnLoading = () => {
-         state.btnSendEmailCode.classList.remove('loading');
-         state.btnResendEmailCode.classList.remove('loading');
+      const showOrHideLoading = showOrHide => {
+         state.btnSendEmailCode.classList[showOrHide]('loading');
+         state.btnResendEmailCode.classList[showOrHide]('loading');
       }
 
       const handleErrors = {
@@ -86,7 +81,7 @@ export default function createEmailConfirmation() {
                body: { emailConfirmationCode, newEmail }
             });
 
-            hideBtnLoading();
+            showOrHideLoading('remove');
 
             if (status !== 200) {
                handleErrors.showError(data.reason);
@@ -101,7 +96,7 @@ export default function createEmailConfirmation() {
             cookie.deleteCookie('emailConfirmationToken');
 
          } catch(e) {
-            hideBtnLoading();
+            showOrHideLoading('remove');
          } 
       }
 
@@ -117,7 +112,7 @@ export default function createEmailConfirmation() {
                body: { emailConfirmationCode, keepConnected }
             })
             
-            hideBtnLoading();
+            showOrHideLoading('remove');
 
             if (status !== 200) {
                handleErrors.showError(data.reason);
@@ -129,7 +124,7 @@ export default function createEmailConfirmation() {
             }
             
          } catch(e) {
-            hideBtnLoading();
+            showOrHideLoading('remove');
          }
       }
       
@@ -141,7 +136,7 @@ export default function createEmailConfirmation() {
                body: requestBody
             })
 
-            hideBtnLoading();
+            showOrHideLoading('remove');
 
             if (status !== 200) {
                handleErrors.showError(data.reason);
@@ -153,7 +148,7 @@ export default function createEmailConfirmation() {
 
          } catch(e) {
             console.log(e);
-            hideBtnLoading();
+            showOrHideLoading('remove');
          }
       }
 
@@ -226,7 +221,7 @@ export default function createEmailConfirmation() {
       const sendCodeListener = e => {
          e.preventDefault();
 
-         showBtnLoading();
+         showOrHideLoading('add');
 
          notifyAll('submit', { activateAccount, updateEmail });
       }
@@ -234,7 +229,7 @@ export default function createEmailConfirmation() {
       const resendCodeListener = e => {
          e.preventDefault();
 
-         showBtnLoading();
+         showOrHideLoading('add');
 
          notifyAll('resend', resendEmailCode);
       }

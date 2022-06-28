@@ -10,7 +10,7 @@ function createHomeApp() {
    const auth = createAuthProvider();
    const header = createHeader();
    const confirmationCode = createEmailConfirmation();
-   const resetPassword = createResetPassword();
+   const resetPassword = createResetPassword(confirmationCode);
    const popupAuthForms = createPopupAuthForms(confirmationCode, resetPassword);
    const popupProfile = createPopupProfile(header, confirmationCode, resetPassword);
 

@@ -1,6 +1,56 @@
-export default function createResetPassword() {
+export default function createResetPassword(confirmationCode) {
    const state = {
       wrapper: document.querySelector('.popup-wrapper-reset-password')
+   }
+
+   function createForm({ api, cookie }) {
+      const state = {
+         form: document.querySelector('.popup-wrapper-reset-password form'),
+         btnSubmit: document.querySelector('.popup-wrapper-reset-password .container-btn > button')
+      }
+
+      const showOrHideLoading = showOrHide => {
+         state.btnSubmit.classList[showOrHide]('loading');
+      }
+
+      const sendEmailConfirmation = async email => {
+         showOrHideLoading('add');
+
+         try {
+            const [data, status] = await api.request({
+               method: 'PUT',
+               route: 'sendEmailConfirmation',
+               body: { email }
+            })
+
+            console.log(data, status);
+
+            if (status !== 200) {
+               throw data
+            }
+
+            cookie.setCookie('emailConfirmationToken', data.userData.emailConfirmationToken);
+
+         } catch (e) {
+            console.log(e);
+         }
+      }
+
+      // por algum motivo a request está duplicando
+      const handleSubmitForm = e => {
+         console.log(e.type);
+
+         e.preventDefault();
+
+         const { inputEmail, inputPassword } = state.form;
+
+         const email = inputEmail.value.trim();
+
+         sendEmailConfirmation(email);
+      }
+      
+      state.form.addEventListener('submit', handleSubmitForm);
+      // state.btnSubmit.addEventListener('pointerup', handleSubmitForm);
    }
 
    const showPopup = () => {
@@ -11,7 +61,7 @@ export default function createResetPassword() {
       state.wrapper.classList.remove('show');
    }
 
-   const render = () => {
+   const render = hooks => {
       const template = `
       <div class="popup-overlay overlay-reset-password" data-action="hide">
          <div class="popup popup-reset-password">
@@ -47,7 +97,12 @@ export default function createResetPassword() {
                      </div>
                   </div>
                   <div class="container-btn">
-                     <button type="submit" class="btn-default btn-default-hover">Redefinir senha</button>
+                     <button type="submit" name="btnSubmit" class="btn-default btn-default-hover">
+                        Redefinir senha
+                        <div class="container-btn-loading center-flex">
+                           <div class="loading"></div>
+                        </div>
+                     </button>
                   </div>
                </form>
             </div>
@@ -56,6 +111,8 @@ export default function createResetPassword() {
       `;
 
       state.wrapper.innerHTML = template;
+
+      createForm(hooks);
    }
 
    const acceptedPopupAction = {
