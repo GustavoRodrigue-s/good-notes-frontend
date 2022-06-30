@@ -5,52 +5,91 @@ export default function createResetPassword(confirmationCode) {
 
    function createForm({ api, cookie }) {
       const state = {
-         form: document.querySelector('.popup-wrapper-reset-password form'),
-         btnSubmit: document.querySelector('.popup-wrapper-reset-password .container-btn > button')
+         form: document.querySelector('.popup-wrapper-reset-password form')
       }
 
       const showOrHideLoading = showOrHide => {
-         state.btnSubmit.classList[showOrHide]('loading');
+         state.form.btnSubmit.classList[showOrHide]('loading');
       }
 
-      const sendEmailConfirmation = async email => {
+      const handleError = {
+         showError(message) {
+            // handleSuccess.hideSuccess();
+
+            const containerError = state.form.querySelector('.container-recover-account-error');
+            const error = containerError.querySelector('span');
+
+            const acceptedErrors = {
+               'request error'() {
+                  error.innerText = 'Houve um erro, tente novamente!';
+               }
+            }
+
+            containerError.classList.add('show');
+            state.emailConfirmationForm.classList.add('error');
+
+            acceptedErrors[message] 
+               ? acceptedErrors[message]() 
+               : acceptedErrors['request error']();
+         }
+      }  
+
+      const handleSuccess = {
+
+      }
+
+      const handleConfirmEmail = token => {
+         cookie.setCookie('emailConfirmationToken', token);
+
+         hidePopup();
+         setTimeout(confirmationCode.showPopup, 300);
+
+         confirmationCode.subscribe('submit', ({ resetPassword }) => resetPassword());
+         // confirmationCode.subscribe('resend', resendEmailCode => resendEmailCode({ email }));
+         confirmationCode.subscribe('success', () => setTimeout(showPopup, 300));
+
+         confirmationCode.subscribe('hidden popup', () => setTimeout(showPopup, 300));
+      }
+
+      const forgotPassword = async credentials => {
          showOrHideLoading('add');
 
          try {
             const [data, status] = await api.request({
                method: 'PUT',
-               route: 'sendEmailConfirmation',
-               body: { email }
+               route: 'forgotPassword',
+               body: credentials
             })
+
+            showOrHideLoading('remove');
 
             console.log(data, status);
 
             if (status !== 200) {
-               throw data
+               // handleError.showError(data.reason);
+               return
             }
-
-            cookie.setCookie('emailConfirmationToken', data.userData.emailConfirmationToken);
+            
+            handleConfirmEmail(data.userData.emailConfirmationToken, credentials);
 
          } catch (e) {
             console.log(e);
+            showOrHideLoading('remove');
          }
       }
 
-      // por algum motivo a request está duplicando
       const handleSubmitForm = e => {
-         console.log(e.type);
-
          e.preventDefault();
-
+         
          const { inputEmail, inputPassword } = state.form;
 
          const email = inputEmail.value.trim();
+         const newPassword = inputPassword.value.trim();
 
-         sendEmailConfirmation(email);
+         forgotPassword({ email, password: newPassword });
       }
       
       state.form.addEventListener('submit', handleSubmitForm);
-      // state.btnSubmit.addEventListener('pointerup', handleSubmitForm);
    }
 
    const showPopup = () => {
@@ -84,11 +123,11 @@ export default function createResetPassword(confirmationCode) {
                <form>
                   <div class="containers-inputs">
                      <div class="container-inputs">
-                        <input type="email" name="inputEmail" class="input-default" id="input-email" placeholder=" " autocomplete="off" />
+                        <input type="email" name="inputEmail" class="input-default" placeholder=" " autocomplete="off" />
                         <label for="input-email" class="label-input-default">E-mail</label>
                      </div>
                      <div class="container-inputs">
-                        <input type="password" name="inputPassword" class="input-default input-password" id="input-password" placeholder=" " autocomplete="off" />
+                        <input type="password" name="inputPassword" class="input-default input-password" placeholder=" " autocomplete="off" />
                         <label for="input-password" class="label-input-default">Nova senha</label>
                         <a class="btn-eyes" data-action="togglePasswordEye">
                            <i class="eye-password" data-action="togglePasswordEye"></i>

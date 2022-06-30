@@ -69,9 +69,15 @@ export default function createEmailConfirmation() {
          }
       }
 
-      const updateEmail = async newEmail => {
+      const getRequestData = () => {
          const emailConfirmationCode = state.inputs.reduce((acc, input) => acc += input.value, '');
          const emailConfirmationToken = cookie.getCookie('emailConfirmationToken');
+
+         return { emailConfirmationCode, emailConfirmationToken }
+      }
+
+      const updateEmail = async newEmail => {
+         const { emailConfirmationCode, emailConfirmationToken } = getRequestData();         
 
          try {
             const [data, status] = await api.request({
@@ -100,9 +106,36 @@ export default function createEmailConfirmation() {
          } 
       }
 
+      const resetPassword = async () => {
+         const { emailConfirmationCode, emailConfirmationToken } = getRequestData();  
+
+         try {
+            const [data, status] = await api.request({
+               method: 'PUT',
+               route: `resetPassword?emailConfirmationToken=${emailConfirmationToken}`,
+               body: { emailConfirmationCode }
+            })
+
+            showOrHideLoading('remove');
+
+            console.log(data, status);
+
+            if (status !== 200) {
+               return
+            }
+
+            if (status === 200) {
+               notifyAll('success', data);
+               hidePopup();
+            }
+
+         } catch (e) {
+            showOrHideLoading('remove');
+         }
+      }
+
       const activateAccount = async () => {
-         const emailConfirmationCode = state.inputs.reduce((acc, input) => acc += input.value, '');
-         const emailConfirmationToken = cookie.getCookie('emailConfirmationToken');
+         const { emailConfirmationCode, emailConfirmationToken } = getRequestData();  
          const keepConnected = JSON.parse(localStorage.getItem('keepConnected'));
 
          try {
@@ -223,7 +256,7 @@ export default function createEmailConfirmation() {
 
          showOrHideLoading('add');
 
-         notifyAll('submit', { activateAccount, updateEmail });
+         notifyAll('submit', { activateAccount, updateEmail, resetPassword });
       }
 
       const resendCodeListener = e => {
@@ -235,8 +268,6 @@ export default function createEmailConfirmation() {
       }
 
       state.emailConfirmationForm.addEventListener('submit', sendCodeListener);
-
-      state.btnSendEmailCode.addEventListener('pointerup', sendCodeListener);
       state.btnResendEmailCode.addEventListener('pointerup', resendCodeListener);
 
       state.emailConfirmationForm.addEventListener('input', dispatch.shouldWriteOnInput);

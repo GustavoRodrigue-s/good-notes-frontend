@@ -301,6 +301,8 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
                body: newCredentials 
             });
 
+            console.log(data, status);
+
             loadings.updateStore('remove');
 
             if (status !== 200 && status !== 301) {
@@ -317,6 +319,7 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
             }
    
          }catch(e) {
+            console.log(e);
             loadings.updateStore('remove');
             handleErrors.showCredentialsError([{ reason: 'request error' }]);
          }
@@ -398,15 +401,30 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
                email: inputEmail.value.trim(),
                username: inputUsername.value.trim()
             };
-            
+   
+            const resp = {};
+
             const lastCredentials = JSON.parse(sessionStorage.getItem('profileData'));
    
             const keysOfNewCredentials = Object.keys(newCredentials);
    
-            const shouldUpdate = keysOfNewCredentials.every(key => lastCredentials[key] === newCredentials[key]);
+            const shouldUpdate = keysOfNewCredentials.every(key => {
+               if (!(lastCredentials[key] === newCredentials[key])) {
+                  resp.currentField = key;
+                  resp[key] = newCredentials[key];
+               }
+
+               return lastCredentials[key] === newCredentials[key]
+            });
    
+            if (resp.email && resp.username) {
+               resp.currentField = 'emailAndUsername';
+            }
+
+            console.log(shouldUpdate, resp);
+
             if (!shouldUpdate) {
-               updateCredentials(newCredentials, lastCredentials);
+               updateCredentials(resp, lastCredentials);
             }
          },
          shouldUploadPhoto(e) {
