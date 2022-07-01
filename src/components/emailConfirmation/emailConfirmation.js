@@ -161,13 +161,16 @@ export default function createEmailConfirmation() {
          }
       }
       
+      // talvez apenas mudar a rota
       const resendEmailCode = async requestBody => {
          try {
             const [data, status] = await api.request({
                method: 'PUT',
-               route: 'sendEmailConfirmation',
+               route: 'sendEmailToActivateAccount',
                body: requestBody
             })
+
+            console.log(data, status);
 
             showOrHideLoading('remove');
 

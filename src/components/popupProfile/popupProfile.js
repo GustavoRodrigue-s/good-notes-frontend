@@ -230,21 +230,20 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
          handleSuccess.showCredentialsSuccess();
       }
 
-      const handleConfirmEmail = (token, { email }, { email: oldEmail }) => {
+      const handleConfirmEmail = (token, { email }) => {
          cookie.setCookie('emailConfirmationToken', token);
 
          hidePopup();
          setTimeout(confirmationCode.showPopup, 300);
 
          confirmationCode.subscribe('submit', ({ updateEmail }) => updateEmail(email));
-         confirmationCode.subscribe('resend', resendEmailCode => resendEmailCode({ email: oldEmail, emailToUpdate: email }));
+         confirmationCode.subscribe('resend', resendEmailCode => resendEmailCode({ email }));
          
          confirmationCode.subscribe('success', () => {
             handleSuccessUpdate({ email });
-
             setTimeout(showPopup, 300);
          });
-
+         
          confirmationCode.subscribe('hidden popup', () => setTimeout(showPopup, 300));
       }
 
@@ -274,7 +273,7 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
             const [data, status] = await api.request({
                auth: true,
                method: 'PUT',
-               route: 'updatePassword',
+               route: 'updateStore',
                body: passwords
             });
 
@@ -290,18 +289,16 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
          }
       }
 
-      const updateCredentials = async (newCredentials, lastCredentials) => {
+      const updateCredentials = async newCredentials => {
          loadings.updateStore('add');
 
          try {
             const [data, status] = await api.request({ 
                auth: true,
                method: "PUT",
-               route: "updateCredentials",
+               route: "updateStore",
                body: newCredentials 
             });
-
-            console.log(data, status);
 
             loadings.updateStore('remove');
 
@@ -311,15 +308,14 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
             }
 
             if (data.emailConfirmationToken) {
-               handleConfirmEmail(data.emailConfirmationToken, newCredentials, lastCredentials);
+               handleConfirmEmail(data.emailConfirmationToken, newCredentials);
             }
 
-            if (lastCredentials.username !== newCredentials.username) {
+            if (newCredentials.changedFields.includes('username')) {
                handleSuccessUpdate({ username: newCredentials.username });
             }
    
          }catch(e) {
-            console.log(e);
             loadings.updateStore('remove');
             handleErrors.showCredentialsError([{ reason: 'request error' }]);
          }
@@ -402,30 +398,23 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
                username: inputUsername.value.trim()
             };
    
-            const resp = {};
-
             const lastCredentials = JSON.parse(sessionStorage.getItem('profileData'));
-   
+            
             const keysOfNewCredentials = Object.keys(newCredentials);
-   
-            const shouldUpdate = keysOfNewCredentials.every(key => {
-               if (!(lastCredentials[key] === newCredentials[key])) {
-                  resp.currentField = key;
-                  resp[key] = newCredentials[key];
-               }
-
-               return lastCredentials[key] === newCredentials[key]
-            });
-   
-            if (resp.email && resp.username) {
-               resp.currentField = 'emailAndUsername';
+            
+            const changedFields = keysOfNewCredentials.filter(key => 
+               lastCredentials[key] !== newCredentials[key]);
+            
+            if (changedFields.length === 0) {
+               return
             }
 
-            console.log(shouldUpdate, resp);
+            const fieldsToUpdate = changedFields.reduce((acc, field) => {
+               acc[field] = newCredentials[field];
+               return acc
+            }, {});
 
-            if (!shouldUpdate) {
-               updateCredentials(resp, lastCredentials);
-            }
+            updateCredentials({ ...fieldsToUpdate, changedFields });
          },
          shouldUploadPhoto(e) {
             e.preventDefault();
@@ -452,7 +441,7 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
                uploadPhoto(photoFormated);
             });
          },
-         shouldResetPassword(e) {
+         shouldUpdatePassword(e) {
             e.preventDefault();
 
             const { inputOldPassword, inputNewPassword } = state.resetPasswordForm;
@@ -462,15 +451,16 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
             }
 
             updatePassword({ 
-               oldPassword: inputOldPassword.value.trim(),
-               newPassword: inputNewPassword.value.trim()
+               password: inputOldPassword.value.trim(),
+               newPassword: inputNewPassword.value.trim(),
+               changedFields: ['password']
             });
          }
       }
 
       state.credentialsForm.addEventListener('submit', dispatch.shouldUpdateCredentials);
       state.formPhoto.addEventListener('submit', dispatch.shouldUploadPhoto);
-      state.resetPasswordForm.addEventListener('submit', dispatch.shouldResetPassword);
+      state.resetPasswordForm.addEventListener('submit', dispatch.shouldUpdatePassword);
       state.formPhoto.inputPhoto.addEventListener('change', handlePreviewChange);
 
       return { 
