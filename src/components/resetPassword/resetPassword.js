@@ -38,16 +38,27 @@ export default function createResetPassword(confirmationCode) {
 
       }
 
-      const handleConfirmEmail = token => {
+      const handleConfirmEmail = (token, credentials) => {
          cookie.setCookie('emailConfirmationToken', token);
 
          hidePopup();
          setTimeout(confirmationCode.showPopup, 300);
 
-         confirmationCode.subscribe('submit', ({ resetPassword }) => resetPassword());
-         // confirmationCode.subscribe('resend', resendEmailCode => resendEmailCode({ email }));
-         confirmationCode.subscribe('success', () => setTimeout(showPopup, 300));
+         confirmationCode.subscribe('submit', sendEmailCode => 
+            sendEmailCode({
+               endpoint: 'resetPassword',
+               body: {} 
+            })
+         );
+            
+         confirmationCode.subscribe('resend', resendEmailCode => 
+            resendEmailCode({
+               endpoint: 'forgotPassword',
+               body: credentials 
+            })
+         );
 
+         confirmationCode.subscribe('success', () => setTimeout(showPopup, 300));
          confirmationCode.subscribe('hidden popup', () => setTimeout(showPopup, 300));
       }
 

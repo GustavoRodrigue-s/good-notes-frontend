@@ -76,15 +76,15 @@ export default function createEmailConfirmation() {
          return { emailConfirmationCode, emailConfirmationToken }
       }
 
-      const updateEmail = async newEmail => {
+      const sendEmailCode = async ({ auth, endpoint, body }) => {
          const { emailConfirmationCode, emailConfirmationToken } = getRequestData();         
 
          try {
             const [data, status] = await api.request({
-               auth: true,
+               auth,
                method: 'PUT',
-               route: `updateEmail?emailConfirmationToken=${emailConfirmationToken}`,
-               body: { emailConfirmationCode, newEmail }
+               route: `${endpoint}?emailConfirmationToken=${emailConfirmationToken}`,
+               body: { emailConfirmationCode, ...body }
             });
 
             showOrHideLoading('remove');
@@ -105,72 +105,15 @@ export default function createEmailConfirmation() {
             showOrHideLoading('remove');
          } 
       }
-
-      const resetPassword = async () => {
-         const { emailConfirmationCode, emailConfirmationToken } = getRequestData();  
-
-         try {
-            const [data, status] = await api.request({
-               method: 'PUT',
-               route: `resetPassword?emailConfirmationToken=${emailConfirmationToken}`,
-               body: { emailConfirmationCode }
-            })
-
-            showOrHideLoading('remove');
-
-            console.log(data, status);
-
-            if (status !== 200) {
-               return
-            }
-
-            if (status === 200) {
-               notifyAll('success', data);
-               hidePopup();
-            }
-
-         } catch (e) {
-            showOrHideLoading('remove');
-         }
-      }
-
-      const activateAccount = async () => {
-         const { emailConfirmationCode, emailConfirmationToken } = getRequestData();  
-         const keepConnected = JSON.parse(localStorage.getItem('keepConnected'));
-
-         try {
-            const [data, status] = await api.request({
-               method: 'PUT',
-               route: `activateAccount?emailConfirmationToken=${emailConfirmationToken}`,
-               body: { emailConfirmationCode, keepConnected }
-            })
-            
-            showOrHideLoading('remove');
-
-            if (status !== 200) {
-               handleErrors.showError(data.reason);
-               return
-            }
-
-            if (status === 200) {
-               notifyAll('success', data.userData);
-            }
-            
-         } catch(e) {
-            showOrHideLoading('remove');
-         }
-      }
       
-      // talvez apenas mudar a rota
-      const resendEmailCode = async requestBody => {
+      const resendEmailCode = async ({ auth, endpoint, body }) => {
          try {
             const [data, status] = await api.request({
+               auth,
                method: 'PUT',
-               route: 'sendEmailToActivateAccount',
-               body: requestBody
+               route: endpoint,
+               body
             })
-
-            console.log(data, status);
 
             showOrHideLoading('remove');
 
@@ -183,7 +126,6 @@ export default function createEmailConfirmation() {
             handleSuccess.showSuccess();
 
          } catch(e) {
-            console.log(e);
             showOrHideLoading('remove');
          }
       }
@@ -259,7 +201,7 @@ export default function createEmailConfirmation() {
 
          showOrHideLoading('add');
 
-         notifyAll('submit', { activateAccount, updateEmail, resetPassword });
+         notifyAll('submit', sendEmailCode);
       }
 
       const resendCodeListener = e => {

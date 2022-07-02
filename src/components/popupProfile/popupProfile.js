@@ -236,15 +236,31 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
          hidePopup();
          setTimeout(confirmationCode.showPopup, 300);
 
-         confirmationCode.subscribe('submit', ({ updateEmail }) => updateEmail(email));
-         confirmationCode.subscribe('resend', resendEmailCode => resendEmailCode({ email }));
+         confirmationCode.subscribe('submit', sendEmailCode => 
+            sendEmailCode({
+               auth: true,
+               endpoint: 'updateEmail',
+               body: { newEmail: email } 
+            })
+         );
+
+         confirmationCode.subscribe('resend', resendEmailCode => 
+            resendEmailCode({
+               auth: true,
+               endpoint: 'updateStore',
+               body: { email, changedFields: ['email'] }
+            })
+         );
          
          confirmationCode.subscribe('success', () => {
             handleSuccessUpdate({ email });
             setTimeout(showPopup, 300);
          });
          
-         confirmationCode.subscribe('hidden popup', () => setTimeout(showPopup, 300));
+         confirmationCode.subscribe('hidden popup', () => {
+            state.credentialsForm.reset();
+            setTimeout(showPopup, 300)
+         });
       }
 
       const getProfileData = async () => {
@@ -307,8 +323,8 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
                return
             }
 
-            if (data.emailConfirmationToken) {
-               handleConfirmEmail(data.emailConfirmationToken, newCredentials);
+            if (data.userData?.emailConfirmationToken) {
+               handleConfirmEmail(data.userData.emailConfirmationToken, newCredentials);
             }
 
             if (newCredentials.changedFields.includes('username')) {

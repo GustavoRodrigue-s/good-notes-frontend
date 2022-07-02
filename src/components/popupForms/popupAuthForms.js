@@ -120,12 +120,11 @@ function createPopupAuthForms(confirmationCode, resetPassword) {
       }
    
       const setUserSession = data => {
-         cookie.deleteCookie('emailConfirmationToken');
          localStorage.removeItem('sessionEmail');
 
          sessionStorage.setItem('USER_FIRST_SESSION', true);
 
-         cookie.setAuthCookies({ ...data });
+         cookie.setAuthCookies(data);
       }
 
       const setUserNotActivated = data => {
@@ -134,9 +133,23 @@ function createPopupAuthForms(confirmationCode, resetPassword) {
          hidePopup();
          setTimeout(confirmationCode.showPopup, 300);
 
-         confirmationCode.subscribe('submit', ({ activateAccount }) => activateAccount());
-         confirmationCode.subscribe('resend', resendEmailCode => resendEmailCode({ email: data.sessionEmail }));
-         confirmationCode.subscribe('success', setUserSession);
+         confirmationCode.subscribe('submit', sendEmailCode => {
+            const keepConnected = JSON.parse(localStorage.getItem('keepConnected'));
+
+            sendEmailCode({ 
+               endpoint: 'activateAccount',
+               body: { keepConnected } 
+            });
+         });
+
+         confirmationCode.subscribe('resend', resendEmailCode => 
+            resendEmailCode({
+               endpoint: 'sendEmailToActivateAccount',
+               body: { email: data.sessionEmail }
+            })
+         );
+
+         confirmationCode.subscribe('success', data => setUserSession(data.userData));
          confirmationCode.subscribe('hidden popup', () => setTimeout(showPopup, 300));
       }
 
@@ -225,10 +238,10 @@ function createPopupAuthForms(confirmationCode, resetPassword) {
       state.formSignUp.addEventListener('submit', prepareSignUpRequest);
 
       const dispatch = {
-         shouldLogUser({ userData }) {
-            userData && userData.emailConfirmationToken
-               ? setUserNotActivated(userData)
-               : setUserSession(userData);
+         shouldLogUser(data) {
+            data.userData?.emailConfirmationToken
+               ? setUserNotActivated(data.userData)
+               : setUserSession(data.userData);
          }
       }
    }
