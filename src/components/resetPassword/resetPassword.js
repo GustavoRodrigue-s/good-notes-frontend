@@ -12,28 +12,68 @@ export default function createResetPassword(confirmationCode) {
          state.form.btnSubmit.classList[showOrHide]('loading');
       }
 
-      // adaptar para erros de input
-      const handleError = {
-         showError(input, message) {
-            // handleSuccess.hideSuccess();
+      const handleErrors = {
+         showInputError(input, message, containerInput) {
+            const span = containerInput.querySelector('.container-error > span');
 
-            const containerError = state.form.querySelector('.container-recover-account-error');
-            const error = containerError.querySelector('span');
+            span.innerText = "" || message;
 
+            containerInput.classList.add('error');
+
+            input.onkeydown = () => containerInput.classList.remove('error');
+         },
+         hideErrors() {
+            const formError = state.form.querySelector('.container-recover-account-error');
+
+            const [
+               errorEmail, errorPassword
+            ] = state.form.querySelectorAll('.input-and-message');
+
+            errorEmail.classList.remove('error');
+            errorPassword.classList.remove('error');
+
+            formError.classList.remove('show');
+         },
+         showError(errors) {
             const acceptedErrors = {
-               'request error'() {
-                  error.innerText = 'Houve um erro, tente novamente!';
+               "empty input"({ input }) {
+                  const currentInput = state.form[input];
+
+                  handleErrors.showInputError(
+                     currentInput,
+                     'Preencha este campo!',
+                     currentInput.parentElement.parentElement
+                  );
+               },
+               "user not exists"() {
+                  const currentInput = state.form.inputEmail;
+
+                  handleErrors.showInputError(
+                     currentInput,
+                     'E-mail não encontrado!',
+                     currentInput.parentElement.parentElement
+                  )
+               },
+               "request error"() {
+                  const errorMessage = state.form.querySelector('.container-recover-account-error');
+                  errorMessage.classList.add('show');
                }
             }
 
-            acceptedErrors[message] 
-               ? acceptedErrors[message]() 
-               : acceptedErrors['request error']();
+            errors.forEach(data => {
+               acceptedErrors[data.reason]
+                  ? acceptedErrors[data.reason](data)
+                  : acceptedErrors['request error']();
+            });
          }
       }  
 
       const handleSuccess = {
+         showOrHideSuccess(showOrHide) {
+            const containerSuccess = state.form.querySelector('.container-recover-account-success');
 
+            containerSuccess.classList[showOrHide]('show');
+         }
       }
 
       const handleConfirmEmail = (token, credentials) => {
@@ -56,7 +96,11 @@ export default function createResetPassword(confirmationCode) {
             })
          );
 
-         confirmationCode.subscribe('success', () => setTimeout(showPopup, 300));
+         confirmationCode.subscribe('success', () => {
+            handleSuccess.showOrHideSuccess('add');
+            setTimeout(showPopup, 300);
+         });
+
          confirmationCode.subscribe('hidden popup', () => setTimeout(showPopup, 300));
       }
 
@@ -72,17 +116,15 @@ export default function createResetPassword(confirmationCode) {
 
             showOrHideLoading('remove');
 
-            console.log(data, status);
-
             if (status !== 200) {
-               // handleError.showError(data.reason);
+               handleErrors.showError(data.errors);
                return
             }
             
             handleConfirmEmail(data.userData.emailConfirmationToken, credentials);
 
          } catch (e) {
-            console.log(e);
+            handleErrors.showError([{ reason: 'request error' }]);
             showOrHideLoading('remove');
          }
       }
@@ -90,6 +132,9 @@ export default function createResetPassword(confirmationCode) {
       const handleSubmitForm = e => {
          e.preventDefault();
          
+         handleSuccess.showOrHideSuccess('remove');
+         handleErrors.hideErrors();
+
          const { inputEmail, inputPassword } = state.form;
 
          const email = inputEmail.value.trim();
@@ -131,18 +176,46 @@ export default function createResetPassword(confirmationCode) {
             <div class="container-form">
                <form>
                   <div class="containers-inputs">
-                     <div class="container-inputs">
-                        <input type="email" name="inputEmail" class="input-default" placeholder=" " autocomplete="off" />
-                        <label for="input-email" class="label-input-default">E-mail</label>
+                     <div class="input-and-message">
+                        <div class="container-inputs">
+                           <input type="email" name="inputEmail" class="input-default" placeholder=" " autocomplete="off" />
+                           <label for="input-email" class="label-input-default">E-mail</label>
+                        </div>
+                        <div class="container-error">
+                           <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
+                              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path>
+                           </svg>
+                           <span></span>
+                        </div>
                      </div>
-                     <div class="container-inputs">
-                        <input type="password" name="inputPassword" class="input-default input-password" placeholder=" " autocomplete="off" />
-                        <label for="input-password" class="label-input-default">Nova senha</label>
-                        <a class="btn-eyes" data-action="togglePasswordEye">
-                           <i class="eye-password" data-action="togglePasswordEye"></i>
-                           <i class="no-eye-password" data-action="togglePasswordEye"></i>
-                        </a>
+                     <div class="input-and-message">
+                        <div class="container-inputs">
+                           <input type="password" name="inputPassword" class="input-default input-password" placeholder=" " autocomplete="off" />
+                           <label for="input-password" class="label-input-default">Nova senha</label>
+                           <a class="btn-eyes" data-action="togglePasswordEye">
+                              <i class="eye-password" data-action="togglePasswordEye"></i>
+                              <i class="no-eye-password" data-action="togglePasswordEye"></i>
+                           </a>
+                        </div>
+                        <div class="container-error">
+                           <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
+                              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path>
+                           </svg>
+                           <span></span>
+                        </div>
                      </div>
+                  </div>
+                  <div class="container-recover-account-error container-message">
+                     <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path>
+                     </svg>
+                     <span>Houve um erro, tente novamente!</span>
+                  </div>
+                  <div class="container-recover-account-success container-message">
+                     <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path>
+                     </svg>
+                     <span>Sua senha foi alterada!</span>
                   </div>
                   <div class="container-btn">
                      <button type="submit" name="btnSubmit" class="btn-default btn-default-hover">

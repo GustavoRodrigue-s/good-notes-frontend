@@ -20,12 +20,12 @@ function createPopupAuthForms(confirmationCode, resetPassword) {
       const hideErrorMessage = (input, containerErrorAndInput) => {
          const [genericErrorSignIn, genericErrorSignUp] = document.querySelectorAll('form > .generic-container')
 
-         input.addEventListener('keydown', () => {
+         input.onkeydown = () => {
             containerErrorAndInput.classList.remove('error');
 
             genericErrorSignIn.classList.remove('error');
             genericErrorSignUp.classList.remove('error');
-         });
+         };
       }
 
       const showMessageError = (input, message) => {
