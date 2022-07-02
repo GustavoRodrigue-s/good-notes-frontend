@@ -12,8 +12,9 @@ export default function createResetPassword(confirmationCode) {
          state.form.btnSubmit.classList[showOrHide]('loading');
       }
 
+      // adaptar para erros de input
       const handleError = {
-         showError(message) {
+         showError(input, message) {
             // handleSuccess.hideSuccess();
 
             const containerError = state.form.querySelector('.container-recover-account-error');
@@ -24,9 +25,6 @@ export default function createResetPassword(confirmationCode) {
                   error.innerText = 'Houve um erro, tente novamente!';
                }
             }
-
-            containerError.classList.add('show');
-            state.emailConfirmationForm.classList.add('error');
 
             acceptedErrors[message] 
                ? acceptedErrors[message]() 
