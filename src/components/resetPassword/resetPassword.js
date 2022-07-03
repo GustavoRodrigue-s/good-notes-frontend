@@ -1,6 +1,8 @@
 export default function createResetPassword(confirmationCode) {
    const state = {
-      wrapper: document.querySelector('.popup-wrapper-reset-password')
+      wrapper: document.querySelector('.popup-wrapper-reset-password'),
+      formForgotPassword: null,
+      previousPopup: null
    }
 
    function createForm({ api, cookie }) {
@@ -144,9 +146,33 @@ export default function createResetPassword(confirmationCode) {
       }
       
       state.form.addEventListener('submit', handleSubmitForm);
+
+      return {
+         hideErrors: handleErrors.hideErrors,
+         hideSuccess: handleSuccess.showOrHideSuccess
+      }
    }
 
-   const showPopup = () => {
+   const resetPopup = () => {
+      const formForgotPassword = state.wrapper.querySelector('form');
+
+      const btnEye = formForgotPassword.querySelector('.btn-eyes');
+      const inputPassword = formForgotPassword.inputPassword;
+
+      formForgotPassword.reset();
+      
+      btnEye.classList.remove('show');
+      inputPassword.setAttribute('type', 'password');
+
+      state.formForgotPassword.hideErrors();
+      state.formForgotPassword.hideSuccess('remove');
+   }
+
+   const showPopup = (previousPopup, shouldReset) => {
+      state.previousPopup ??= previousPopup;
+
+      shouldReset && resetPopup();
+
       state.wrapper.classList.add('show');
    }
 
@@ -233,12 +259,16 @@ export default function createResetPassword(confirmationCode) {
 
       state.wrapper.innerHTML = template;
 
-      createForm(hooks);
+      state.formForgotPassword = createForm(hooks);
    }
 
    const acceptedPopupAction = {
       hide() {
          hidePopup();
+
+         if (state.previousPopup) {
+            setTimeout(state.previousPopup.showPopup, 300);
+         }
       },
       togglePasswordEye(btn) {
          const inputPassword = btn.parentElement.parentElement.firstElementChild;

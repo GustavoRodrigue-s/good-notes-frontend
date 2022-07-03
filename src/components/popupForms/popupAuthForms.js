@@ -352,7 +352,7 @@ function createPopupAuthForms(confirmationCode, resetPassword) {
          },
          showResetPassword() {
             hidePopup();
-            resetPassword.showPopup();
+            resetPassword.showPopup({ showPopup }, true);
          }
       }
 
