@@ -81,6 +81,8 @@ export default function createResetPassword(confirmationCode) {
       const handleConfirmEmail = (token, credentials) => {
          cookie.setCookie('emailConfirmationToken', token);
 
+         confirmationCode.setMessage('reset password');
+
          hidePopup();
          setTimeout(confirmationCode.showPopup, 300);
 

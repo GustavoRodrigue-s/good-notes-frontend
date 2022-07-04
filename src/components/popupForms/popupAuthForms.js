@@ -130,6 +130,8 @@ function createPopupAuthForms(confirmationCode, resetPassword) {
       const setUserNotActivated = data => {
          cookie.setCookie('emailConfirmationToken', data.emailConfirmationToken);
    
+         confirmationCode.setMessage('activate account');
+
          hidePopup();
          setTimeout(confirmationCode.showPopup, 300);
 

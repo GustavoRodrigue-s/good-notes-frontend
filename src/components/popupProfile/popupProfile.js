@@ -232,13 +232,15 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
       const handleConfirmEmail = (token, { email }) => {
          cookie.setCookie('emailConfirmationToken', token);
 
+         confirmationCode.setMessage('confirm email');
+
          hidePopup();
          setTimeout(confirmationCode.showPopup, 300);
 
          confirmationCode.subscribe('submit', sendEmailCode => 
             sendEmailCode({
                auth: true,
-               endpoint: 'updateEmail',
+               endpoint: 'confirmEmail',
                body: { newEmail: email } 
             })
          );

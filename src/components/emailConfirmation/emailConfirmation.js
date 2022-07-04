@@ -248,6 +248,28 @@ export default function createEmailConfirmation() {
       form.reset();
    }
 
+   const setMessage = message => {
+      const requestTitle = state.popupWrapper.querySelector('.title h1');
+      const requestType = state.popupWrapper.querySelector('.title .request-type');
+
+      const messages = {
+         'activate account'() {
+            requestTitle.innerText = 'Confirmar sua Conta';
+            requestType.innerText = 'ativar a sua conta';
+         },
+         'reset password'() {
+            requestTitle.innerText = 'Confirmar Nova Senha';
+            requestType.innerText = 'redefinir sua senha';
+         },
+         'confirm email'() {
+            requestTitle.innerText = 'Confirmar Novo E-mail';
+            requestType.innerText = 'confirmar seu novo e-mail';
+         }
+      }
+
+      messages[message] && messages[message]();
+   }
+
    const showPopup = () => {
       resetpopup();
       state.popupWrapper.classList.add('show');
@@ -272,11 +294,11 @@ export default function createEmailConfirmation() {
             </div>
             <div class="title">
                <div>
-                  <h1>Confirmar E-mail</h1>
+                  <h1></h1>
                </div>
                <div>
-                  <p>
-                     Para confirmar o seu cadastro, digite o código de confirmação enviado para o seu e-mail.
+                  <p class="subtitle">
+                     Digite o código de confirmação enviado para o seu e-mail para <strong class="request-type"></strong>.
                   </p>
                </div>
             </div>
@@ -343,6 +365,7 @@ export default function createEmailConfirmation() {
    return {
       render,
       showPopup,
-      subscribe
+      subscribe,
+      setMessage
    }
 }

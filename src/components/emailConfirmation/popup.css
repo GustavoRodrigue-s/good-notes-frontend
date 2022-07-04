@@ -12,13 +12,17 @@
 /* ---------- Title ---------- */
 
 .popup-email-confirmation h1 {
-   font: 800 min(3rem, 8vw) var(--fontDefault);
+   font: 800 min(2.5rem, 6vw) var(--fontDefault);
 }
 
 .popup-email-confirmation p {
    margin-top: 10px;
    font: 1.6rem var(--fontDefault);
    color: var(--paragraphColor);
+}
+
+.popup-email-confirmation .subtitle {
+   font-size: min(1.6rem, 4vw);
 }
 
 /* ---------- E-mail code form ---------- */
@@ -112,7 +116,7 @@ form.email-confirmation-form.input input {
 /* ---------- Responsive ---------- */
 
 @media (max-width: 400px) {
-   .popup-email-confirmation :is(p, .footer button) {
+   .popup-email-confirmation :is(p, .footer button):not(.popup-email-confirmation .subtitle) {
       font-size: 1.5rem;
    }
 }
