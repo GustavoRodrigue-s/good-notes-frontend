@@ -197,7 +197,7 @@ export default function createResetPassword(confirmationCode) {
                </div>
                <div>
                   <p>
-                     Nós enviaremos um e-mail de confirmação para redefinir a senha.
+                     Nós enviaremos um e-mail para confirmar sua nova senha.
                   </p>
                </div>
             </div>
