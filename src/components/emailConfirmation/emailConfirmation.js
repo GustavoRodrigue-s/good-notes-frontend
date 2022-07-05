@@ -23,8 +23,6 @@ export default function createEmailConfirmation() {
             state.emailConfirmationForm.querySelector('.container-email-code-error').classList.remove('show');
          },
          showError(message) {
-            handleSuccess.hideSuccess();
-
             const containerError = state.emailConfirmationForm.querySelector('.container-email-code-error');
             const error = containerError.querySelector('span');
 
@@ -60,8 +58,6 @@ export default function createEmailConfirmation() {
             state.emailConfirmationForm.querySelector('.container-email-code-success').classList.remove('show');
          },
          showSuccess() {
-            handleErrors.hideError();
-
             const containerSuccess = state.emailConfirmationForm.querySelector('.container-email-code-success');
 
             containerSuccess.classList.add('show');
@@ -201,6 +197,9 @@ export default function createEmailConfirmation() {
 
          showOrHideLoading('add');
 
+         handleErrors.hideError();
+         handleSuccess.hideSuccess();
+
          notifyAll('submit', sendEmailCode);
       }
 
@@ -208,6 +207,9 @@ export default function createEmailConfirmation() {
          e.preventDefault();
 
          showOrHideLoading('add');
+
+         handleErrors.hideError();
+         handleSuccess.hideSuccess();
 
          notifyAll('resend', resendEmailCode);
       }

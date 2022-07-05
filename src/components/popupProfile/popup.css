@@ -214,7 +214,7 @@
    flex-shrink: 0;
 }
 
-.container-credentials-error, .container-photo-error, .container-reset-password-error {
+.container-credentials-error, .container-photo-error, .container-reset-password-error, .container-account-deletion-error {
    color: var(--primaryErrorColor);
 }
 
@@ -236,13 +236,18 @@
    color: var(--paragraphColor);
 }
 
-.popup-confirm-to-delete-account p > strong {
+.popup-confirm-to-delete-account p:first-child > strong {
+   color: #000;
+}
+
+.popup-confirm-to-delete-account p:last-child > strong {
    color: var(--primaryColor);
 }
 
-.container-input {
+.popup-confirm-to-delete-account .container-input {
    width: 100%;
    position: relative;
+   padding-bottom: 10px;
 }
 
 .container-input input {
@@ -262,7 +267,7 @@
 }
 
 .controls .buttons {
-   margin-top: 20px;
+   margin-top: 10px;
    display: flex;
    justify-content: flex-end;
    gap: 10px;

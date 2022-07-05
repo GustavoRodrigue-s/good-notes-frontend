@@ -165,6 +165,14 @@
 
 /* ---------- State Message ---------- */  
 
+.popup-signIn form.error .input-and-message input {
+   border-color: var(--primaryErrorColor);
+}
+
+.popup-signIn form.error .input-and-message label {
+   color: var(--primaryErrorColor) !important;
+}
+
 .input-and-message.error .container-error {
    display: flex;
 }

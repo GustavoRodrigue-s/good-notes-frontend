@@ -47,8 +47,19 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
       }
 
       const handleErrors = {
-         hideInputError(input, containerInput) {
-            input.onkeydown = () => containerInput.classList.remove('error');
+         hidePhotoError() {
+            const containerError = document.querySelector('.container-photo-error');
+            containerError.classList.remove('show');
+         },
+         hideStoreErrors() {
+            const inputError = document.querySelectorAll('.popup-wrapper-profile .input-and-message.error');
+            const passwordError = state.resetPasswordForm.querySelector('.container-reset-password-error');
+            const credentialsError = state.credentialsForm.querySelector('.container-credentials-error');
+
+            inputError.forEach(container => container.classList.remove('error'));
+
+            passwordError.classList.remove('show');
+            credentialsError.classList.remove('show');
          },
          showInputError(input, message, containerInput) {
             const span = containerInput.querySelector('.container-error > span');
@@ -57,7 +68,7 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
 
             containerInput.classList.add('error');
 
-            handleErrors.hideInputError(input, containerInput);
+            input.onkeydown = () => containerInput.classList.remove('error');
          },
          showPhotoError(message) {
             const containerError = document.querySelector('.container-photo-error');
@@ -79,10 +90,14 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
 
             acceptedErrors[message]
                ? acceptedErrors[message]()
-               : acceptedErrors['request error'];
+               : acceptedErrors['request error']();
          },
          showCredentialsError(errors) {
-            handleSuccess.hideCredentialsSuccess();
+            const shouldShow = state.credentialsForm.parentElement.classList.contains('show');
+
+            if (!shouldShow) {
+               return
+            }
 
             const acceptedErrors = {
                "empty input"({ input }) {
@@ -125,6 +140,12 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
             });
          },
          showPasswordsError(errors) {
+            const shouldShow = state.resetPasswordForm.parentElement.classList.contains('show');
+
+            if (!shouldShow) {
+               return
+            }
+
             const acceptedErrors = {
                "empty input"({ input }) {
                   const currentInput = state.resetPasswordForm[input];
@@ -159,9 +180,16 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
       }
 
       const handleSuccess = {
-         showPhotoSuccess() {
+         hideStoreSuccess() {
+            const passwordSuccess = state.resetPasswordForm.querySelector('.container-reset-password-success');
+            const credentialsSuccess = state.credentialsForm.querySelector('.container-credentials-success');
+
+            passwordSuccess.classList.remove('show');
+            credentialsSuccess.classList.remove('show');
+         },
+         showOrHidePhotoSuccess(showOrHide) {
             const containerSuccess = document.querySelector('.container-photo-success');
-            containerSuccess.classList.add('show');
+            containerSuccess.classList[showOrHide]('show');
          },
          showCredentialsSuccess() {
             const successMessage = state.credentialsForm.querySelector('.container-credentials-success');
@@ -169,10 +197,6 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
             const shouldShow = state.credentialsForm.parentElement.classList.contains('show');
 
             shouldShow && successMessage.classList.add('show');
-         },
-         hideCredentialsSuccess() {
-            const successMessage = state.credentialsForm.querySelector('.container-credentials-success');
-            successMessage.classList.remove('show');
          },
          showPasswordsSuccess() {
             const successMessage = state.resetPasswordForm.querySelector('.container-reset-password-success');
@@ -284,6 +308,9 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
       }
 
       const updatePassword = async passwords => {
+         handleSuccess.hideStoreSuccess();
+         handleErrors.hideStoreErrors();
+
          loadings.updatePassword('add');
 
          try {
@@ -307,6 +334,9 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
       }
 
       const updateCredentials = async newCredentials => {
+         handleSuccess.hideStoreSuccess();
+         handleErrors.hideStoreErrors();
+
          loadings.updateStore('add');
 
          try {
@@ -339,6 +369,8 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
       }
 
       const uploadPhoto = async fileData => {
+         handleErrors.hidePhotoError();
+
          loadings.uploadPhoto('add');
 
          try {
@@ -359,7 +391,9 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
             saveProfileData({ photo: data.photoData });
             updateUserAvatar(data.photoData);
 
-            handleSuccess.showPhotoSuccess();
+            handleSuccess.showOrHidePhotoSuccess('add');
+
+            state.formPhoto.reset();
 
          } catch (e) {
             loadings.uploadPhoto('remove');
@@ -374,11 +408,10 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
             return
          }
 
-         document.querySelector('.container-photo-error').classList.remove('show');
-         document.querySelector('.container-photo-success').classList.remove('show');
+         handleErrors.hidePhotoError();
+         handleSuccess.showOrHidePhotoSuccess('remove');
 
-         readFileAsDataUrl(e.target.files[0], photoUrl => 
-            preview.setAttribute('src', photoUrl)); 
+         readFileAsDataUrl(e.target.files[0], photoUrl => preview.src = photoUrl); 
       }
 
       const dispatch = {
@@ -481,7 +514,11 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
       state.formPhoto.inputPhoto.addEventListener('change', handlePreviewChange);
 
       return { 
-         shouldRequestCredentials: dispatch.shouldRequestCredentials
+         shouldRequestCredentials: dispatch.shouldRequestCredentials,
+         hideStoreErrors: handleErrors.hideStoreErrors,
+         hideStoreSuccess: handleSuccess.hideStoreSuccess,
+         hidePhotoError: handleErrors.hidePhotoError,
+         showOrHidePhotoSuccess: handleSuccess.showOrHidePhotoSuccess
       }
    }
 
@@ -527,11 +564,10 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
             btn.classList.remove('show');
          });
 
-         const inputWithMessage = state.popupWrapper.querySelectorAll('.input-and-message.error');
-         const messages = state.popupWrapper.querySelectorAll('.container-message.show');
-
-         inputWithMessage.forEach(container => container.classList.remove('error'));
-         messages.forEach(message => message.classList.remove('show'));
+         forms.hideStoreErrors();
+         forms.hidePhotoError();
+         forms.hideStoreSuccess();
+         forms.showOrHidePhotoSuccess('remove');
       }
 
       const resetPopup = () => {
@@ -637,11 +673,20 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
          }
       }
 
+      const handleErrors = {
+         showOrHideError(showOrHide) {
+            const deletionError = state.confirmDeletionForm.querySelector('.container-message');
+            deletionError.classList[showOrHide]('show');
+         }
+      }
+
       const resetPopup = () => {
          const { btnConfirm } = state.confirmDeletionForm;
    
          state.confirmDeletionForm.reset();
          btnConfirm.classList.remove('btn-delete-confirm-active');
+
+         handleErrors.showOrHideError('remove');
       }
    
       const hidePopup = () => {
@@ -649,20 +694,32 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
          
          overlayDeletion.classList.remove('show');
          setTimeout(() => overlayProfile.classList.add('show'), 300);
-   
-         resetPopup();
       }
    
       const confirmAccountDeletion = async () => {
+         handleErrors.showOrHideError('remove');
+
          loadings.delete('add');
 
          try {
-            await api.request({ auth: true, method: 'DELETE', route: "deleteAccount" });
+            const [data, status] = await api.request({
+               auth: true,
+               method: 'DELETE',
+               route: "deleteAccount" 
+            });
    
+            loadings.delete('remove');
+
+            if (status !== 200) {
+               handleErrors.showOrHideError('add');
+               return
+            }
+
             cookie.deleteCookies();
             window.open('./index.html', '_self');
    
          } catch(e) {
+            handleErrors.showOrHideError('add');
             loadings.delete('remove');
          }
       }
@@ -670,6 +727,12 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
       const dispatch = {
          shouldHidePopup() {
             hidePopup();
+
+            const overlayDeletion = state.popup.parentElement;
+
+            const shouldResetThePopup = overlayDeletion.classList.contains('show');
+
+            shouldResetThePopup && resetPopup();
          },
          shouldActiveTheButton() {
             const { username } = JSON.parse(sessionStorage.getItem('profileData'));
@@ -726,7 +789,7 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
                <div class="body">
                   <div class="texts">
                      <p>
-                        A exclusão da conta é irreversível, seus dados e notas serão completamente apagados. Ao excluir sua conta, você será redirecionado para a página principal.
+                        A exclusão da conta é <strong>irreversível</strong>, seus dados e notas serão completamente apagados. Ao excluir sua conta, você será redirecionado para a página principal.
                      </p>
                      <p>
                         Tem certeza que deseja excluir sua conta? Para confirmar digite o seu (<strong>Nome de usuário</strong>) abaixo.
@@ -736,6 +799,13 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
                      <form class="deletion-account-form">
                         <div class="container-input">
                            <input type="text" name="inputUsername" class="input-confirm-delete input-default" autocomplete="off">
+                        </div>
+                        <div class="container-account-deletion-error container-message">
+                           <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
+                              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z">
+                              </path>
+                           </svg> 
+                           Houve um erro, tente novamente mais tarde!
                         </div>
                         <div class="buttons">
                            <button type="reset" class="close-sub-popup-target btn-default btn-cancel-confirm tertiary" data-action="shouldHidePopup">Cancelar</button>
