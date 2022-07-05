@@ -1,4 +1,4 @@
-export default function createResetPassword(confirmationCode) {
+export default function createRecoverAccount(confirmationCode) {
    const state = {
       wrapper: document.querySelector('.popup-wrapper-reset-password'),
       formForgotPassword: null,

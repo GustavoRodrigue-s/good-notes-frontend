@@ -1,4 +1,4 @@
-function createPopupProfile({ updateUserAvatar }, confirmationCode) {
+function createPopupProfile(header, confirmationCode, recoverAccount) {
    const state = {
       popupWrapper: document.querySelector('.popup-wrapper-profile')
    }
@@ -389,7 +389,7 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
             }
 
             saveProfileData({ photo: data.photoData });
-            updateUserAvatar(data.photoData);
+            header.updateUserAvatar(data.photoData);
 
             handleSuccess.showOrHidePhotoSuccess('add');
 
@@ -635,6 +635,9 @@ function createPopupProfile({ updateUserAvatar }, confirmationCode) {
          },
          togglePasswordEye(target) {
             togglePasswordEye(target.parentElement);
+         },
+         showResetPassword() {
+            console.log('Showing...');
          }
       }
 

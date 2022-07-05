@@ -1,4 +1,4 @@
-function createPopupAuthForms(confirmationCode, resetPassword) {
+function createPopupAuthForms(confirmationCode, recoverAccount) {
    const state = {
       popupWrapper: document.querySelector('.popup-wrapper-auth')
    }
@@ -388,9 +388,9 @@ function createPopupAuthForms(confirmationCode, resetPassword) {
          togglePasswordEye(target) {
             togglePasswordEye(target.parentElement);
          },
-         showResetPassword() {
+         showRecoverAccount() {
             hidePopup();
-            resetPassword.showPopup({ showPopup }, true);
+            recoverAccount.showPopup({ showPopup }, true);
          }
       }
 
@@ -490,7 +490,7 @@ function createPopupAuthForms(confirmationCode, resetPassword) {
                         </label>
                      </div>
                      <div class="container-forgot-password">
-                        <span class="prominent-span" tabindex="0" data-action="showResetPassword">Esqueceu a senha?</span>
+                        <span class="prominent-span" tabindex="0" data-action="showRecoverAccount">Esqueceu a senha?</span>
                      </div>
                   </div>
    

@@ -3,21 +3,21 @@ import createHeader from "../header/header.js";
 import createPopupAuthForms from '../popupForms/popupAuthForms.js';
 import createPopupProfile from '../popupProfile/popupProfile.js';
 import createEmailConfirmation from "../emailConfirmation/emailConfirmation.js";
-import createResetPassword from '../resetPassword/resetPassword.js';
+import createRecoverAccount from '../recoverAccount/recoverAccount.js';
 
 function createHomeApp() {
 
    const auth = createAuthProvider();
    const header = createHeader();
    const confirmationCode = createEmailConfirmation();
-   const resetPassword = createResetPassword(confirmationCode);
-   const popupAuthForms = createPopupAuthForms(confirmationCode, resetPassword);
-   const popupProfile = createPopupProfile(header, confirmationCode, resetPassword);
+   const recoverAccount = createRecoverAccount(confirmationCode);
+   const popupAuthForms = createPopupAuthForms(confirmationCode, recoverAccount);
+   const popupProfile = createPopupProfile(header, confirmationCode, recoverAccount);
 
    const renderStandardComponents = hooks => {
       header.render(hooks);
       confirmationCode.render(hooks);
-      resetPassword.render(hooks);
+      recoverAccount.render(hooks);
    }
 
    auth.subscribe('unauthenticated', renderStandardComponents);
