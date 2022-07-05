@@ -215,9 +215,9 @@ export default function createRecoverAccount(confirmationCode) {
                <form>
                   <div class="containers-inputs">
                      <div class="input-and-message">
+                        <label for="input-email">E-mail</label>
                         <div class="container-inputs">
                            <input type="email" name="inputEmail" class="input-default" placeholder=" " autocomplete="off" />
-                           <label for="input-email" class="label-input-default">E-mail</label>
                         </div>
                         <div class="container-error">
                            <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
@@ -227,9 +227,9 @@ export default function createRecoverAccount(confirmationCode) {
                         </div>
                      </div>
                      <div class="input-and-message">
+                        <label for="input-password">Nova senha</label>
                         <div class="container-inputs">
                            <input type="password" name="inputPassword" class="input-default input-password" placeholder=" " autocomplete="off" />
-                           <label for="input-password" class="label-input-default">Nova senha</label>
                            <a class="btn-eyes" data-action="togglePasswordEye">
                               <i class="eye-password" data-action="togglePasswordEye"></i>
                               <i class="no-eye-password" data-action="togglePasswordEye"></i>

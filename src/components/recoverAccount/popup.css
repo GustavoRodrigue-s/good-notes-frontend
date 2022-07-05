@@ -22,12 +22,28 @@
    color: var(--paragraphColor);
 }
 
-.popup-reset-password .containers-inputs {
-   margin-top: 30px;
+.popup-reset-password .input-and-message {
+   text-align: left;
 }
 
-.popup-reset-password .containers-inputs > div, .popup-reset-password .container-btn {
+.popup-reset-password .input-and-message input {
+   background-color: #f6f6f6;
+}
+
+.popup-reset-password .input-and-message > label {
+   color: var(--paragraphColor);
+}
+
+.popup-reset-password .containers-inputs {
    margin-top: 20px;
+}
+
+.popup-reset-password .container-btn {
+   margin-top: 20px;
+}
+
+.popup-reset-password .containers-inputs > div {
+   margin-top: 15px;
 }
 
 .popup-reset-password .container-btn > button {

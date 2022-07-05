@@ -366,10 +366,11 @@ button svg, button div, button span, button img {
    top: 50%;
    left: 20px;
    transform: translateY(-50%);
-   transition: 0.2s;
+   transition: 0.2s ease;
    font-size: 1.6rem;
    cursor: text;
    background-color: #fff;
+   will-change: font-size;
 }
 
 .input-default:focus + label, .container-inputs label:focus,
@@ -382,7 +383,7 @@ button svg, button div, button span, button img {
    z-index: 10;
 }
 
-.input-default:not(:focus) + label, .input-default:not(:focus) {
+.input-default:not(:focus) + label, .input-default:not(:focus, :hover) {
    color: var(--paragraphColor);
    border-color: #00000028;
 } 
