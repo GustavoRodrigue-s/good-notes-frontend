@@ -339,9 +339,7 @@ export function createCategoryList() {
       state.nextArrow.classList.remove('show');
    }
 
-   const goToTheNoteList = e => {
-      if (e.type === 'touchstart') e.preventDefault();
-
+   const goToTheNoteList = () => {
       notifyAll('arrowClicked');
    }
 
@@ -382,8 +380,7 @@ export function createCategoryList() {
    state.btnAddCategory.addEventListener('click', dispatch.shouldCreateElement);
    state.inputSearch.addEventListener('input', dispatch.shouldSearchItem);
 
-   state.nextArrow.addEventListener('click', goToTheNoteList);
-   state.nextArrow.addEventListener('touchstart', goToTheNoteList);
+   state.nextArrow.addEventListener('pointerup', goToTheNoteList);
 
    return { 
       showArrow,
@@ -506,16 +503,12 @@ export function createCategoryItem() {
    }
 
    const categoryItemListener = ({ e, action, getCategory }) => {
-
-      if (dispatch[action]) {
-         dispatch[action](getCategory(e));
-      }
+      dispatch[action]?.(getCategory(e));
 
       if (acceptedCategoryActions[action]) {
          acceptedCategoryActions.categoryElement = getCategory(e);
          acceptedCategoryActions[action]();
       }
-
    }
 
    return { 

@@ -1,4 +1,4 @@
-function createPopupAuthForms(confirmationCode) {
+function createPopupAuthForms(confirmationCode, recoverAccount) {
    const state = {
       popupWrapper: document.querySelector('.popup-wrapper-auth')
    }
@@ -7,107 +7,141 @@ function createPopupAuthForms(confirmationCode) {
       state.popupWrapper.classList.remove('show');
    }
 
+   const showPopup = () => {
+      state.popupWrapper.classList.add('show');
+   }
+
    function createForm({ api, cookie }) {
       const state = {
          formSignIn: document.querySelector('.form-signIn'),
          formSignUp: document.querySelector('.form-signUp')
       }
 
-      const hideErrorMessage = (input, containerErrorAndInput) => {
-         const [genericErrorSignIn, genericErrorSignUp] = document.querySelectorAll('form > .generic-container')
+      const handleErrors = {
+         showInputError(input, message, containerInput) {
+            const span = containerInput.querySelector('.container-error > span');
 
-         input.addEventListener('keydown', () => {
-            containerErrorAndInput.classList.remove('error');
+            span.innerText = "" || message;
 
-            genericErrorSignIn.classList.remove('error');
-            genericErrorSignUp.classList.remove('error');
-         });
-      }
+            containerInput.classList.add('error');
+         
+            input.onkeydown = () => containerInput.classList.remove('error');
+         },
+         hideErrors(form) {
+            const errorForm = form.querySelector('.generic-container');
+            const inputErrors = form.querySelectorAll('.input-and-message.error');
+   
+            errorForm.classList.remove('error');
 
-      const showMessageError = (input, message) => {
-         const containerErrorAndInput = input.parentElement.parentElement;
-         const containerError = containerErrorAndInput.lastElementChild;
-      
-         const template = `
-            <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
-               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z">
-               </path>
-            </svg>
-            ${message}
-         `;
-      
-         containerError.innerHTML = message === '' ? '' : template;
+            inputErrors.forEach(error => error.classList.remove('error'));
+         },
+         showError(error, currentForm) {
+            const acceptedErrors = {
+               "empty input"({ input }) {
+                  const currentInput = state[currentForm][input];
+   
+                  handleErrors.showInputError(
+                     currentInput,
+                     'Preencha este campo!',
+                     currentInput.parentElement.parentElement
+                  );
+               },
+               "empty inputs"() {
+                  const { inputPassword, inputConfirmPassword } = state.formSignUp;
+         
+                  handleErrors.showInputError(
+                     inputPassword,
+                     'Preencha os dois campos!',
+                     inputPassword.parentElement.parentElement   
+                  );
 
-         containerErrorAndInput.classList.add('error');
-      
-         hideErrorMessage(input, containerErrorAndInput);
-      }
-      
-      const handleRequestError = (error, currentForm) => {
-         const acceptedErrors = {
-            "empty input"({ input }) {
-               const currentInput = state[currentForm][input];
+                  handleErrors.showInputError(
+                     inputConfirmPassword,
+                     'Preencha os dois campos!',
+                     inputConfirmPassword.parentElement.parentElement   
+                  );
+               },
+               "wrong credentials"() {
+                  const { inputEmail, inputPassword } = state.formSignIn;
+         
+                  state.formSignIn.classList.add('error');
 
-               showMessageError(currentInput, 'Preencha este campo!');
-            },
-            "empty inputs"() {
-               const { inputPassword, inputConfirmPassword } = state.formSignUp;
-      
-               showMessageError(inputPassword, 'Preencha os dois campos!');
-               showMessageError(inputConfirmPassword, 'Preencha os dois campos!');
-            },
-            "wrong credentials"() {
-               const { inputEmail, inputPassword } = state.formSignIn;
-      
-               showMessageError(inputEmail, '');
-               showMessageError(inputPassword, 'Email ou senha incorretos!');
-      
-               const removeError = () => {
-                  inputEmail.parentElement.parentElement.classList.remove('error');
-                  inputPassword.parentElement.parentElement.classList.remove('error');
+                  handleErrors.showInputError(
+                     inputPassword,
+                     'Email ou senha incorretos!',
+                     inputPassword.parentElement.parentElement
+                  );
+         
+                  const removeError = () => {
+                     state.formSignIn.classList.remove('error');
+                     inputEmail.parentElement.parentElement.classList.remove('error');
+                     inputPassword.parentElement.parentElement.classList.remove('error');
+                  }
+         
+                  inputEmail.onkeydown = removeError;
+                  inputPassword.onkeydown = removeError;
+               },
+               "invalid email"() {
+                  handleErrors.showInputError(
+                     state.formSignUp.inputEmail,
+                     'Digite um e-mail válido!',
+                     state.formSignUp.inputEmail.parentElement.parentElement
+                  );
+               },
+               "username already exists"() {
+                  handleErrors.showInputError(
+                     state.formSignUp.inputUsername,
+                     'Este nome já existe!',
+                     state.formSignUp.inputUsername.parentElement.parentElement
+                  );
+               },
+               "email already exists"() {
+                  handleErrors.showInputError(
+                     state.formSignUp.inputEmail,
+                     "Este email já existe!",
+                     state.formSignUp.inputEmail.parentElement.parentElement
+                  );
+               },
+               "differents passwords"() {
+                  const { inputPassword, inputConfirmPassword } = state.formSignUp;
+         
+                  handleErrors.showInputError(
+                     inputPassword,
+                     'Senhas diferentes!',
+                     inputPassword.parentElement.parentElement
+                  );
+
+                  handleErrors.showInputError(
+                     inputConfirmPassword,
+                     'Senhas diferentes!',
+                     inputConfirmPassword.parentElement.parentElement
+                  );
+               },
+               "request error"() {
+                  const error = state[currentForm].querySelector('.generic-container');
+                  error.classList.add('error');
                }
-      
-               inputEmail.addEventListener('keydown', removeError);
-               inputPassword.addEventListener('keydown', removeError);
-            },
-            "invalid email"() {
-               showMessageError(state.formSignUp.inputEmail, 'Digite um e-mail válido!');
-            },
-            "username already exists"() {
-               showMessageError(state.formSignUp.inputUsername, 'Este nome já existe!');
-            },
-            "email already exists"() {
-               showMessageError(state.formSignUp.inputEmail, "Este email já existe!");
-            },
-            "differents passwords"() {
-               const { inputPassword, inputConfirmPassword } = state.formSignUp;
-      
-               showMessageError(inputPassword, 'Senhas diferentes!');
-               showMessageError(inputConfirmPassword, 'Senhas diferentes!');
-            },
-            "request error"() {
-               const genericError = state[currentForm].querySelector('.generic-container');
-               genericError.classList.add('error');
             }
+   
+            error.forEach(data => {
+               acceptedErrors[data.reason] 
+                  ? acceptedErrors[data.reason](data)
+                  : acceptedErrors['request error']();
+            });
          }
+      }
 
-         error.forEach(data => {
-            acceptedErrors[data.reason] 
-               ? acceptedErrors[data.reason](data)
-               : acceptedErrors['request error']();
-         });
+      const loadings = {
+         btnSignIn(showOrHide) {
+            state.formSignIn.querySelector('button[type="submit"]').classList[showOrHide]('loading');
+         },
+         btnSignUp(showOrHide) {
+            state.formSignUp.querySelector('button[type="submit"]').classList[showOrHide]('loading');
+         }
       }
    
-      state.formSignUp.inputEmail.addEventListener('invalid', e => {
-         e.preventDefault();
-   
-         if (e.target.validity.typeMismatch) {
-            handleRequestError([{ state: 'error', reason: 'invalid email' }]);
-         }
-      });
-
       const formsData = {
-         getFormSignInDatas() {
+         getFormSignInData() {
             const { inputEmail, inputPassword, inputCheckbox } = state.formSignIn;
 
             return {
@@ -116,7 +150,7 @@ function createPopupAuthForms(confirmationCode) {
                keepConnected: inputCheckbox.checked
             }
          },
-         getFormSignUpDatas() {
+         getFormSignUpData() {
             const { 
                inputUsername, inputEmail, inputPassword, inputConfirmPassword 
             } = state.formSignUp;
@@ -131,35 +165,45 @@ function createPopupAuthForms(confirmationCode) {
          }
       }
 
-      const showAndHideLoading = currentForm => {
-         const loading = document.querySelector(`.popup[data-form="${currentForm}"] .container-buttonSubmit > button`);
-
-         loading.classList.toggle('loading');
-      }
-   
       const setUserSession = data => {
-         cookie.deleteCookie('emailConfirmationToken');
          localStorage.removeItem('sessionEmail');
 
          sessionStorage.setItem('USER_FIRST_SESSION', true);
 
-         cookie.setAuthCookies({ ...data });
+         cookie.setAuthCookies(data);
       }
 
       const setUserNotActivated = data => {
          cookie.setCookie('emailConfirmationToken', data.emailConfirmationToken);
    
+         confirmationCode.setMessage('activate account');
+
          hidePopup();
          setTimeout(confirmationCode.showPopup, 300);
 
-         confirmationCode.subscribe('submit', ({ activateAccount }) => activateAccount());
-         confirmationCode.subscribe('resend', resendEmailCode => resendEmailCode({ email: data.sessionEmail }));
-         confirmationCode.subscribe('success', setUserSession);
+         confirmationCode.subscribe('submit', sendEmailCode => {
+            const keepConnected = JSON.parse(localStorage.getItem('keepConnected'));
+
+            sendEmailCode({ 
+               endpoint: 'activateAccount',
+               body: { keepConnected } 
+            });
+         });
+
+         confirmationCode.subscribe('resend', resendEmailCode => 
+            resendEmailCode({
+               endpoint: 'sendEmailToActivateAccount',
+               body: { email: data.sessionEmail }
+            })
+         );
+
+         confirmationCode.subscribe('success', data => setUserSession(data.userData));
+         confirmationCode.subscribe('hidden popup', () => setTimeout(showPopup, 300));
       }
 
-      const submitForm = async ({ route, currentForm, body }) => {
+      const submitForm = async ({ route, body, form, loading }) => {
          try {
-            showAndHideLoading(currentForm);
+            loading('add');
    
             const [data, status] = await api.request({
                method: "POST",
@@ -167,10 +211,10 @@ function createPopupAuthForms(confirmationCode) {
                body
             });
 
-            showAndHideLoading(currentForm);
+            loading('remove');
 
             if (data.errors) {
-               handleRequestError(data.errors, currentForm);
+               handleErrors.showError(data.errors, form);
                return
             }
 
@@ -182,31 +226,60 @@ function createPopupAuthForms(confirmationCode) {
             dispatch.shouldLogUser(data);
 
          } catch (e) {
-            handleRequestError([{ state: 'error', reason: 'request error' }], currentForm);
+            loading('remove');
+            handleErrors.showError([{ state: 'error', reason: 'request error' }], form);
          }
       }
-   
-      state.formSignIn.addEventListener('submit', e => {
+
+      const prepareSignInRequest = e => {
          e.preventDefault();
 
-         const data = formsData.getFormSignInDatas();
+         state.formSignIn.classList.remove('error');
+         handleErrors.hideErrors(state.formSignIn);
+
+         const data = formsData.getFormSignInData();
    
-         submitForm({ route: 'login', currentForm: 'formSignIn', body: data });
-      });
-   
-      state.formSignUp.addEventListener('submit', e => {
+         submitForm({ 
+            route: 'login',
+            form: 'formSignIn',
+            body: data,
+            loading: loadings.btnSignIn 
+         });
+      }
+
+      const prepareSignUpRequest = e => {
          e.preventDefault();
    
-         const data = formsData.getFormSignUpDatas();
+         handleErrors.hideErrors(state.formSignUp);
+
+         const data = formsData.getFormSignUpData();
    
-         submitForm({ route: 'register', currentForm: 'formSignUp', body: data });
+         submitForm({ 
+            route: 'register',
+            form: 'formSignUp',
+            body: data,
+            loading: loadings.btnSignUp
+         });
+      }
+
+      state.formSignIn.addEventListener('submit', prepareSignInRequest);
+      state.formSignUp.addEventListener('submit', prepareSignUpRequest);
+
+      state.formSignUp.inputEmail.addEventListener('invalid', e => {
+         e.preventDefault();
+
+         const isNotValidEmail = e.target.validity.typeMismatch;
+
+         if (isNotValidEmail) {
+            handleErrors.showError([{ state: 'error', reason: 'invalid email' }]);
+         }
       });
 
       const dispatch = {
-         shouldLogUser({ userData }) {
-            userData && userData.emailConfirmationToken
-               ? setUserNotActivated(userData)
-               : setUserSession(userData);
+         shouldLogUser(data) {
+            data.userData?.emailConfirmationToken
+               ? setUserNotActivated(data.userData)
+               : setUserSession(data.userData);
          }
       }
    }
@@ -265,6 +338,8 @@ function createPopupAuthForms(confirmationCode) {
          signInForm.reset();
          signUpForm.reset();
 
+         signInForm.classList.remove('error');
+
          containerError.forEach(container => container.classList.remove('error'));
 
          btnEyes.forEach(btn => {
@@ -299,9 +374,7 @@ function createPopupAuthForms(confirmationCode) {
          }
       }
 
-      const showAndHidePopup = () => {
-         resetPopup();
-         
+      const showOrHidePopup = () => {
          state.popupWrapper.classList.toggle('show');
 
          resetTimeToOpen();
@@ -314,6 +387,10 @@ function createPopupAuthForms(confirmationCode) {
          },
          togglePasswordEye(target) {
             togglePasswordEye(target.parentElement);
+         },
+         showRecoverAccount() {
+            hidePopup();
+            recoverAccount.showPopup({ showPopup }, true);
          }
       }
 
@@ -322,7 +399,12 @@ function createPopupAuthForms(confirmationCode) {
             if (!state.avalibleToOpen) return
 
             acceptedPopupActions.changeOverlay(target);
-            showAndHidePopup();
+
+            const shouldResetThePopup = !(state.popupWrapper.classList.contains('show'));
+
+            shouldResetThePopup && resetPopup();
+
+            showOrHidePopup();
          },
          shouldShowSignInPopup() {
             const shouldShowThePopup = localStorage.getItem('unauthorized');
@@ -330,40 +412,33 @@ function createPopupAuthForms(confirmationCode) {
             if (shouldShowThePopup) {
                localStorage.removeItem('unauthorized');
 
-               showAndHidePopup();
+               const shouldResetThePopup = !(state.popupWrapper.classList.contains('show'));
+
+               shouldResetThePopup && resetPopup();
+
+               showOrHidePopup();
                setCurrentOverlay('showSignInForm');
             }
          }
       }
 
       const popupListener = e => {
-         if (e.type === 'touchstart') e.preventDefault();
+         const action = e.target.dataset.action;
 
-         const targetAction = e.target.dataset.action;
-
-         if (dispatch[targetAction]) {
-            dispatch[targetAction](e.target);
-         }
-
-         if (acceptedPopupActions[targetAction]) {
-            acceptedPopupActions[targetAction](e.target);
-         }
+         dispatch[action]?.(e.target);
+         acceptedPopupActions[action]?.(e.target);
       }
 
       dispatch.shouldShowSignInPopup();
 
-      state.containerButtons.addEventListener('click', popupListener);
-      state.containerButtons.addEventListener('touchstart', popupListener);
-      state.popupWrapper.addEventListener('mousedown', popupListener);
+      state.containerButtons.addEventListener('pointerup', popupListener);
+      state.popupWrapper.addEventListener('pointerup', popupListener);
    }
 
    const render = someHooks => {
       const template = `
-      <div class="popup-overlay overlay-signIn" data-action="shouldShowOrHidePopup">
+      <div class="popup-overlay overlay-signIn">
          <div class="popup-signIn popup popup-forms" data-form="formSignIn">
-            <div class="container-loading center-flex">
-               <div></div>
-            </div>
             <div class="popup-content">
                <div class="close">
                   <button class="close-popup-target close-popup center-flex" tabindex="0" data-action="shouldShowOrHidePopup">
@@ -380,7 +455,13 @@ function createPopupAuthForms(confirmationCode) {
                         <input type="text" name="inputEmail" id="inputEmail" placeholder=" " class="input-email input-form input-default" autocomplete="off" autofocus>
                         <label for="inputEmail" class="label-input-default">E-mail / Nome</label>
                      </div>
-                     <div class="container-error"></div>
+                     <div class="container-error">
+                        <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
+                           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z">
+                           </path>
+                        </svg>
+                        <span></span>
+                     </div>
                   </div>
                   
                   <div class="input-and-message">
@@ -392,7 +473,13 @@ function createPopupAuthForms(confirmationCode) {
                            <i class="no-eye-password" data-action="togglePasswordEye"></i>
                         </a>
                      </div>
-                     <div class="container-error last"></div>
+                     <div class="container-error last">
+                        <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
+                           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z">
+                           </path>
+                        </svg>
+                        <span></span>
+                     </div>
                   </div>
    
                   <div class="orthers-form-options">
@@ -403,7 +490,7 @@ function createPopupAuthForms(confirmationCode) {
                         </label>
                      </div>
                      <div class="container-forgot-password">
-                        <span class="prominent-span" tabindex="0">Esqueceu a senha?</span>
+                        <span class="prominent-span" tabindex="0" data-action="showRecoverAccount">Esqueceu a senha?</span>
                      </div>
                   </div>
    
@@ -436,11 +523,8 @@ function createPopupAuthForms(confirmationCode) {
          </div>
       </div>
    
-      <div class="popup-overlay overlay-signUp" data-action="shouldShowOrHidePopup">
+      <div class="popup-overlay overlay-signUp">
          <div class="popup-signUp popup popup-forms" data-form="formSignUp">
-            <div class="container-loading center-flex">
-               <div></div>
-            </div>
             <div class="popup-content">
                <div class="close">
                   <button class="close-popup-target close-popup center-flex" tabindex="0" data-action="shouldShowOrHidePopup">
@@ -457,7 +541,13 @@ function createPopupAuthForms(confirmationCode) {
                         <input type="text" name="inputUsername" placeholder=" " class="input-username input-form input-default" autocomplete="off">
                         <label for="inputUsername" class="label-input-default">Nome do Usuário</label> 
                      </div>
-                     <div class="container-error"></div>
+                     <div class="container-error">
+                        <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
+                           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z">
+                           </path>
+                        </svg>
+                        <span></span>
+                     </div>
                   </div>
    
                   <div class="input-and-message">
@@ -465,7 +555,13 @@ function createPopupAuthForms(confirmationCode) {
                         <input type="email" name="inputEmail" placeholder=" " class="input-email input-form input-default" autocomplete="off">
                         <label for="inputEmail" class="label-input-default">E-mail</label>
                      </div>
-                     <div class="container-error"></div>
+                     <div class="container-error">
+                        <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
+                           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z">
+                           </path>
+                        </svg>
+                        <span></span>
+                     </div>
                   </div>
    
                   <div class="container-inputs-password input-and-message">
@@ -485,7 +581,13 @@ function createPopupAuthForms(confirmationCode) {
                            <i class="no-eye-password" data-action="togglePasswordEye"></i>
                         </a>
                      </div>
-                     <div class="container-error"></div>
+                     <div class="container-error">
+                        <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
+                           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z">
+                           </path>
+                        </svg>
+                        <span></span>
+                     </div>
                   </div>
    
                   <div class="container-info-terms">

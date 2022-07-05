@@ -40,10 +40,6 @@
 
 /* ---------- Eye Input Password ---------- */
 
-.popup .input-password {
-   padding: 0 40px 0 20px;
-}
-
 .btn-eyes {
    background-color: transparent;
    width: 30px;
@@ -67,7 +63,7 @@
    background: url('../../../images/eye_show.svg') no-repeat center;
 }
 
-.eye-password {
+.popup-wrapper.show .eye-password {
    visibility: visible;
 }
 
@@ -79,7 +75,7 @@
    visibility: hidden;
 }
 
-.btn-eyes.show > .no-eye-password{
+.btn-eyes.show > .no-eye-password {
    visibility: visible;
 }
 
@@ -132,11 +128,16 @@
    color: var(--paragraphColor);
 }
 
+.container-inputCheckbox > label {
+   user-select: none;
+}
+
 .container-inputCheckbox > input {
    margin-right: 5px;
 }
 
 .prominent-span {
+   user-select: none;
    color: var(--primaryColor);
    cursor: pointer;
 }
@@ -163,6 +164,14 @@
 }
 
 /* ---------- State Message ---------- */  
+
+.popup-signIn form.error .input-and-message input {
+   border-color: var(--primaryErrorColor);
+}
+
+.popup-signIn form.error .input-and-message label {
+   color: var(--primaryErrorColor) !important;
+}
 
 .input-and-message.error .container-error {
    display: flex;

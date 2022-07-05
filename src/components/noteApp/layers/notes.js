@@ -261,9 +261,7 @@ export function createNoteNetwork(networkTemplate, repository) {
    }
 
    const networkListener = ({ action }) => {
-      if (dispatch[action]) {
-         dispatch[action]();
-      }
+      dispatch[action]?.();
    }
 
    return { 
@@ -445,19 +443,17 @@ export function createCurrentNote(repository) {
    const currentNoteListener = e => {
       const action = e.target.dataset.js;
 
-      if (acceptedCurrentNoteActions[action]) {
-         acceptedCurrentNoteActions[action](e);
-      }
+      acceptedCurrentNoteActions[action]?.(e);
 
       notifyAll('click', { action });
    }
 
    state.currentNoteForm.addEventListener('submit', e => e.preventDefault());
 
-   state.currentNote.addEventListener('click', currentNoteListener);
+   state.currentNote.addEventListener('pointerup', currentNoteListener);
    state.currentNote.addEventListener('input', automaticallySaveChanges);
 
-   state.toolBar.addEventListener('click', btnTextEditor);
+   state.toolBar.addEventListener('pointerup', btnTextEditor);
    state.toolBar.addEventListener('change', selectionsTextEditor);
 
    return { 
@@ -653,10 +649,9 @@ export function createNoteList(repository) {
       notifyAll('click', { e, action, noteListTitle });
    }
    
-   state.noteList.addEventListener('click', noteListListener);
-   state.arrowPrevious.addEventListener('click', backToCategories);
-   state.arrowPrevious.addEventListener('touchstart', backToCategories);
-   state.btnAddNote.addEventListener('click', noteListListener);
+   state.noteList.addEventListener('pointerup', noteListListener);
+   state.arrowPrevious.addEventListener('pointerup', backToCategories);
+   state.btnAddNote.addEventListener('pointerup', noteListListener);
 
    return { 
       subscribe,
@@ -719,9 +714,7 @@ export function createNoteItem() {
    }
 
    const noteItemListener = ({ e, action, noteListTitle }) => {
-      if (dispatch[action]) {
-         dispatch[action](e.target, noteListTitle);
-      }
+      dispatch[action]?.(e.target, noteListTitle);
    }
 
    return {

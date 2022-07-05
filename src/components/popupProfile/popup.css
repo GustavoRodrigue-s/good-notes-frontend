@@ -106,8 +106,24 @@
 }
 
 .container-photo > label {
+   position: relative;
+   overflow: hidden;
    padding: 2px;
    cursor: pointer;
+}
+
+.container-photo > label > .container-btn-loading {
+   border-radius: 50%;
+   background-color: rgba(0, 0, 0, 0.2);
+}
+
+.container-photo > label.loading {
+   pointer-events: none;
+}
+
+.container-photo > label.loading > .container-btn-loading {
+   visibility: visible;
+   opacity: 1;
 }
 
 .inputPhoto {
@@ -198,7 +214,7 @@
    flex-shrink: 0;
 }
 
-.container-credentials-error, .container-photo-error, .container-reset-password-error {
+.container-credentials-error, .container-photo-error, .container-reset-password-error, .container-account-deletion-error {
    color: var(--primaryErrorColor);
 }
 
@@ -220,13 +236,18 @@
    color: var(--paragraphColor);
 }
 
-.popup-confirm-to-delete-account p > strong {
+.popup-confirm-to-delete-account p:first-child > strong {
+   color: #000;
+}
+
+.popup-confirm-to-delete-account p:last-child > strong {
    color: var(--primaryColor);
 }
 
-.container-input {
+.popup-confirm-to-delete-account .container-input {
    width: 100%;
    position: relative;
+   padding-bottom: 10px;
 }
 
 .container-input input {
@@ -246,7 +267,7 @@
 }
 
 .controls .buttons {
-   margin-top: 20px;
+   margin-top: 10px;
    display: flex;
    justify-content: flex-end;
    gap: 10px;
@@ -284,6 +305,10 @@
 
 .btn-delete-confirm-active:hover {
    background-color: var(--primaryErrorHoverColor) !important;
+}
+
+.btn-delete-confirm > .container-btn-loading {
+   background-color: var(--primaryErrorHoverColor);
 }
 
 /* ---------- Btn Slide To reset password ---------- */
@@ -395,10 +420,6 @@ button.forgot-password:hover {
 }
 
 @media (max-width: 314px) {
-   .container-reset-password .container-buttons button.forgot-password {
-      font-size: 1.2rem;
-   }
-
    .popup-edit-photo > form {
       flex-direction: column;
    }

@@ -12,14 +12,9 @@ export default function createEmailConfirmation() {
          btnSendEmailCode: document.querySelector('form.email-confirmation-form .btn-send-email-code')
       }
 
-      const showBtnLoading = () => {
-         state.btnSendEmailCode.classList.add('loading');
-         state.btnResendEmailCode.classList.add('loading');
-      }
-
-      const hideBtnLoading = () => {
-         state.btnSendEmailCode.classList.remove('loading');
-         state.btnResendEmailCode.classList.remove('loading');
+      const showOrHideLoading = showOrHide => {
+         state.btnSendEmailCode.classList[showOrHide]('loading');
+         state.btnResendEmailCode.classList[showOrHide]('loading');
       }
 
       const handleErrors = {
@@ -28,8 +23,6 @@ export default function createEmailConfirmation() {
             state.emailConfirmationForm.querySelector('.container-email-code-error').classList.remove('show');
          },
          showError(message) {
-            handleSuccess.hideSuccess();
-
             const containerError = state.emailConfirmationForm.querySelector('.container-email-code-error');
             const error = containerError.querySelector('span');
 
@@ -65,8 +58,6 @@ export default function createEmailConfirmation() {
             state.emailConfirmationForm.querySelector('.container-email-code-success').classList.remove('show');
          },
          showSuccess() {
-            handleErrors.hideError();
-
             const containerSuccess = state.emailConfirmationForm.querySelector('.container-email-code-success');
 
             containerSuccess.classList.add('show');
@@ -74,19 +65,25 @@ export default function createEmailConfirmation() {
          }
       }
 
-      const updateEmail = async newEmail => {
+      const getRequestData = () => {
          const emailConfirmationCode = state.inputs.reduce((acc, input) => acc += input.value, '');
          const emailConfirmationToken = cookie.getCookie('emailConfirmationToken');
 
+         return { emailConfirmationCode, emailConfirmationToken }
+      }
+
+      const sendEmailCode = async ({ auth, endpoint, body }) => {
+         const { emailConfirmationCode, emailConfirmationToken } = getRequestData();         
+
          try {
             const [data, status] = await api.request({
-               auth: true,
+               auth,
                method: 'PUT',
-               route: `updateEmail?emailConfirmationToken=${emailConfirmationToken}`,
-               body: { emailConfirmationCode, newEmail }
+               route: `${endpoint}?emailConfirmationToken=${emailConfirmationToken}`,
+               body: { emailConfirmationCode, ...body }
             });
 
-            hideBtnLoading();
+            showOrHideLoading('remove');
 
             if (status !== 200) {
                handleErrors.showError(data.reason);
@@ -101,47 +98,20 @@ export default function createEmailConfirmation() {
             cookie.deleteCookie('emailConfirmationToken');
 
          } catch(e) {
-            hideBtnLoading();
+            showOrHideLoading('remove');
          } 
       }
-
-      const activateAccount = async () => {
-         const emailConfirmationCode = state.inputs.reduce((acc, input) => acc += input.value, '');
-         const emailConfirmationToken = cookie.getCookie('emailConfirmationToken');
-         const keepConnected = JSON.parse(localStorage.getItem('keepConnected'));
-
-         try {
-            const [data, status] = await api.request({
-               method: 'PUT',
-               route: `activateAccount?emailConfirmationToken=${emailConfirmationToken}`,
-               body: { emailConfirmationCode, keepConnected }
-            })
-            
-            hideBtnLoading();
-
-            if (status !== 200) {
-               handleErrors.showError(data.reason);
-               return
-            }
-
-            if (status === 200) {
-               notifyAll('success', data.userData);
-            }
-            
-         } catch(e) {
-            hideBtnLoading();
-         }
-      }
       
-      const resendEmailCode = async requestBody => {
+      const resendEmailCode = async ({ auth, endpoint, body }) => {
          try {
             const [data, status] = await api.request({
+               auth,
                method: 'PUT',
-               route: 'sendEmailConfirmation',
-               body: requestBody
+               route: endpoint,
+               body
             })
 
-            hideBtnLoading();
+            showOrHideLoading('remove');
 
             if (status !== 200) {
                handleErrors.showError(data.reason);
@@ -152,8 +122,7 @@ export default function createEmailConfirmation() {
             handleSuccess.showSuccess();
 
          } catch(e) {
-            console.log(e);
-            hideBtnLoading();
+            showOrHideLoading('remove');
          }
       }
 
@@ -226,24 +195,27 @@ export default function createEmailConfirmation() {
       const sendCodeListener = e => {
          e.preventDefault();
 
-         showBtnLoading();
+         showOrHideLoading('add');
 
-         notifyAll('submit', { activateAccount, updateEmail });
+         handleErrors.hideError();
+         handleSuccess.hideSuccess();
+
+         notifyAll('submit', sendEmailCode);
       }
 
       const resendCodeListener = e => {
-         if (e.type === 'touchstart') e.preventDefault();
+         e.preventDefault();
 
-         showBtnLoading();
+         showOrHideLoading('add');
+
+         handleErrors.hideError();
+         handleSuccess.hideSuccess();
 
          notifyAll('resend', resendEmailCode);
       }
 
       state.emailConfirmationForm.addEventListener('submit', sendCodeListener);
-      state.btnSendEmailCode.addEventListener('touchstart', sendCodeListener);
-
-      state.btnResendEmailCode.addEventListener('click', resendCodeListener);
-      state.btnResendEmailCode.addEventListener('touchstart', resendCodeListener);
+      state.btnResendEmailCode.addEventListener('pointerup', resendCodeListener);
 
       state.emailConfirmationForm.addEventListener('input', dispatch.shouldWriteOnInput);
       state.emailConfirmationForm.addEventListener('keydown', dispatch.shouldDeletionOnInput);
@@ -278,6 +250,28 @@ export default function createEmailConfirmation() {
       form.reset();
    }
 
+   const setMessage = message => {
+      const requestTitle = state.popupWrapper.querySelector('.title h1');
+      const requestType = state.popupWrapper.querySelector('.title .request-type');
+
+      const messages = {
+         'activate account'() {
+            requestTitle.innerText = 'Confirmar sua Conta';
+            requestType.innerText = 'ativar a sua conta';
+         },
+         'reset password'() {
+            requestTitle.innerText = 'Confirmar Nova Senha';
+            requestType.innerText = 'redefinir sua senha';
+         },
+         'confirm email'() {
+            requestTitle.innerText = 'Confirmar Novo E-mail';
+            requestType.innerText = 'confirmar seu novo e-mail';
+         }
+      }
+
+      messages[message] && messages[message]();
+   }
+
    const showPopup = () => {
       resetpopup();
       state.popupWrapper.classList.add('show');
@@ -293,62 +287,62 @@ export default function createEmailConfirmation() {
 
    const render = someHooks => {
       const template = `
-         <div class="popup-overlay overlay-email-confirmation" data-action="shouldHidePopup">
-            <div class="popup popup-email-confirmation">
-               <div class="close">
-                  <button class="close-popup-target close-popup center-flex" tabindex="0" data-action="shouldHidePopup">
-                     <img class="close-popup-target close-popup" src="./images/close_popup_icon.svg" alt="Fechar popup">
-                  </button>
+      <div class="popup-overlay overlay-email-confirmation">
+         <div class="popup popup-email-confirmation">
+            <div class="close">
+               <button class="close-popup-target close-popup center-flex" tabindex="0" data-action="hide">
+                  <img class="close-popup-target close-popup" src="./images/close_popup_icon.svg" alt="Fechar popup">
+               </button>
+            </div>
+            <div class="title">
+               <div>
+                  <h1></h1>
                </div>
-               <div class="title">
-                  <div>
-                     <h1>Confirmar E-mail</h1>
-                  </div>
-                  <div>
-                     <p>
-                        Para confirmar o seu cadastro, digite o código de confirmação enviado para o seu e-mail.
-                     </p>
-                  </div>
-               </div>
-               <div class="form">
-                  <form class="email-confirmation-form">
-                     <div class="container-inputs-code">
-                        <input type="number" maxlength="1" name="inputCode" />
-                        <input type="number" maxlength="1" name="inputCode" />
-                        <input type="number" maxlength="1" name="inputCode" />
-                        <input type="number" maxlength="1" name="inputCode" />
-                        <input type="number" maxlength="1" name="inputCode" />
-                     </div>
-                     <div class="container-email-code-error container-message">
-                        <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
-                           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path>
-                        </svg>
-                        <span></span>
-                     </div>
-                     <div class="container-email-code-success container-message">
-                        <svg stroke="currentColor" fill="currentColor" stroke-width="0" version="1" viewBox="0 0 48 48" enable-background="new 0 0 48 48" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                           <circle fill="#4CAF50" cx="24" cy="24" r="21"></circle><polygon fill="#fff" points="34.6,14.6 21,28.2 15.4,22.6 12.6,25.4 21,33.8 37.4,17.4"></polygon>
-                        </svg>
-                        <span>O novo código foi enviado!</span>
-                     </div>
-                     <div class="container-btn-code">
-                        <button type="submit" class="btn-default btn-default-hover btn-send-email-code">
-                           Confirmar
-                           <div class="container-btn-loading center-flex">
-                              <div class="loading"></div>
-                           </div>
-                        </button>
-                     </div>
-                  </form>
-               </div>
-               <div class="footer">
-                  <p>
-                     Não recebeu o e-mail de confirmação?
-                     <button type="button" class="btn-resending-email-code">Reenviar código de confirmação</button>
+               <div>
+                  <p class="subtitle">
+                     Digite o código de confirmação enviado para o seu e-mail para <strong class="request-type"></strong>.
                   </p>
                </div>
             </div>
+            <div class="form">
+               <form class="email-confirmation-form">
+                  <div class="container-inputs-code">
+                     <input type="number" maxlength="1" name="inputCode" />
+                     <input type="number" maxlength="1" name="inputCode" />
+                     <input type="number" maxlength="1" name="inputCode" />
+                     <input type="number" maxlength="1" name="inputCode" />
+                     <input type="number" maxlength="1" name="inputCode" />
+                  </div>
+                  <div class="container-email-code-error container-message">
+                     <svg fill="currentColor" width="16px" height="16px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path>
+                     </svg>
+                     <span></span>
+                  </div>
+                  <div class="container-email-code-success container-message">
+                     <svg stroke="currentColor" fill="currentColor" stroke-width="0" version="1" viewBox="0 0 48 48" enable-background="new 0 0 48 48" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                        <circle fill="#4CAF50" cx="24" cy="24" r="21"></circle><polygon fill="#fff" points="34.6,14.6 21,28.2 15.4,22.6 12.6,25.4 21,33.8 37.4,17.4"></polygon>
+                     </svg>
+                     <span>O novo código foi enviado!</span>
+                  </div>
+                  <div class="container-btn-code">
+                     <button type="submit" class="btn-default btn-default-hover btn-send-email-code">
+                        Confirmar
+                        <div class="container-btn-loading center-flex">
+                           <div class="loading"></div>
+                        </div>
+                     </button>
+                  </div>
+               </form>
+            </div>
+            <div class="footer">
+               <p>
+                  Não recebeu o e-mail de confirmação?
+                  <button type="button" class="btn-resending-email-code">Reenviar código de confirmação</button>
+               </p>
+            </div>
          </div>
+      </div>
       `;
 
       state.popupWrapper.innerHTML = template;
@@ -356,8 +350,8 @@ export default function createEmailConfirmation() {
       createForm(someHooks);
    }
 
-   const dispath = {
-      shouldHidePopup() {
+   const acceptedPopupActions = {
+      hide() {
          hidePopup();
       }
    }
@@ -365,21 +359,15 @@ export default function createEmailConfirmation() {
    const wrapperListener = e => {
       const action = e.target.dataset.action;
 
-      if (!dispath[action]) {
-         return
-      }
-
-      if (e.type === 'touchstart') e.preventDefault();
-
-      dispath[action]();
+      acceptedPopupActions[action]?.();
    }
 
-   state.popupWrapper.addEventListener('mousedown', wrapperListener);
-   state.popupWrapper.addEventListener('touchstart', wrapperListener);
+   state.popupWrapper.addEventListener('pointerup', wrapperListener);
 
    return {
       render,
       showPopup,
-      subscribe
+      subscribe,
+      setMessage
    }
 }

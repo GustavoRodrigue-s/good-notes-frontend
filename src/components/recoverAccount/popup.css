@@ -1,0 +1,76 @@
+.popup-wrapper-reset-password.show, .popup-wrapper-reset-password.show .popup {
+   transition-delay: 0.3s;
+}
+
+.popup-reset-password {
+   max-width: 320px;
+   text-align: center;
+}
+
+.popup-reset-password .close {
+   top: 10px;
+   right: 10px;
+}
+
+.popup-reset-password h1 {
+   font: 800 2.5rem var(--fontDefault);
+}
+
+.popup-reset-password p {
+   margin-top: 10px;
+   font: 1.6rem var(--fontDefault);
+   color: var(--paragraphColor);
+}
+
+.popup-reset-password .input-and-message {
+   text-align: left;
+}
+
+.popup-reset-password .input-and-message input {
+   background-color: #f6f6f6;
+}
+
+.popup-reset-password .input-and-message > label {
+   color: var(--paragraphColor);
+}
+
+.popup-reset-password .containers-inputs {
+   margin-top: 20px;
+}
+
+.popup-reset-password .container-btn {
+   margin-top: 20px;
+}
+
+.popup-reset-password .containers-inputs > div {
+   margin-top: 15px;
+}
+
+.popup-reset-password .container-btn > button {
+   width: 100%;
+   height: 40px;
+}
+
+/* ---------- Messages ---------- */
+
+.container-recover-account-error, .container-recover-account-success {
+   margin-top: 15px;
+}
+
+.container-recover-account-error {
+   color: var(--primaryErrorColor);
+}
+
+.container-recover-account-success {
+   color: var(--primarySuccessColor);
+}
+
+.container-recover-account-error.show, .container-recover-account-success.show {
+   display: flex;
+}
+
+@media (max-width: 300px) {
+   .container-recover-account-error {
+      font-size: 1.5rem;
+   }
+}

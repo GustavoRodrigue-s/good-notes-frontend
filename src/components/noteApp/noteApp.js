@@ -1,8 +1,8 @@
-import { createCategoryNetwork, createCategoryList, createCategoryItem } from './category.js';
-import { createNoteList, createNoteItem, createCurrentNote, createNoteNetwork } from './notes.js';
-import createNoteRepository from './repository.js';
-import createAnimations from './animations.js';
-import createMobileNav from './mobileNav.js';
+import { createCategoryNetwork, createCategoryList, createCategoryItem } from './layers/category.js';
+import { createNoteList, createNoteItem, createCurrentNote, createNoteNetwork } from './layers/notes.js';
+import createNoteRepository from './layers/repository.js';
+import createAnimations from './layers/animations.js';
+import createMobileNav from './layers/mobileNav.js';
 
 export default function createNoteApp({ api }) {
 
@@ -123,7 +123,7 @@ export default function createNoteApp({ api }) {
          dispatch.shouldHideThePopup(targetClass);
       }
    
-      state.popupWrapper.addEventListener('mousedown', popupActionListener);
+      state.popupWrapper.addEventListener('pointerup', popupActionListener);
    
       return {
          showPopup,
@@ -154,15 +154,12 @@ export default function createNoteApp({ api }) {
       }
 
       const popupListener = e => {
-         if (e.type === 'touchstart') e.preventDefault();
-
          const targetClass = e.target.classList[0];
 
          dispatch.shouldHideThePopup(targetClass);
       }
 
-      state.popupWrapper.addEventListener('click', popupListener);
-      state.popupWrapper.addEventListener('touchstart', popupListener);
+      state.popupWrapper.addEventListener('pointerup', popupListener);
 
       return {
          showPopup

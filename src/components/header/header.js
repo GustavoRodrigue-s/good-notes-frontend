@@ -19,16 +19,13 @@ function createHeader() {
          state.btnHamburguer.setAttribute('aria-expanded', state.show);
       }
 
-      const showAndHide = e => {
-         if (e.type === 'touchstart') e.preventDefault();
-
+      const showAndHide = () => {
          setAccessibilityProps();
 
          state.btnHamburguer.classList.toggle('active');
       } 
 
-      state.btnHamburguer.addEventListener('click', showAndHide);
-      state.btnHamburguer.addEventListener('touchstart', showAndHide);
+      state.btnHamburguer.addEventListener('pointerup', showAndHide);
    }
 
    function createMenuDropdown({ api, cookie }) {
@@ -60,8 +57,6 @@ function createHeader() {
       }
 
       const menuDropDownListener = e => {
-         if (e.type === 'touchstart') e.preventDefault();
-
          const targetAction = e.target.dataset.action;
 
          if (acceptedMenuActions[targetAction]) {
@@ -69,8 +64,7 @@ function createHeader() {
          }
       }
 
-      state.dropDown.addEventListener('mousedown', menuDropDownListener);
-      state.dropDown.addEventListener('touchstart', menuDropDownListener);
+      state.dropDown.addEventListener('pointerup', menuDropDownListener);
    }
 
    const componentLoggedInUser = () => {

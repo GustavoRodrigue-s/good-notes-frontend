@@ -1,441 +1,454 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-<head>
-   <meta charset="UTF-8">
-   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <meta name="author" content="Gustavo Rodrigues Fabiano & Lucas Polli">
-   <meta name="description" content="Crie e guarde seu mundo!">
-   <link rel="stylesheet" type="text/css" href="style/style.css">
-   <link rel="stylesheet" type="text/css" href="src/components/noteApp/style.css">
-   <link rel="stylesheet" type="text/css" href="src/components/noteApp/category.css">
-   <link rel="stylesheet" type="text/css" href="src/components/noteApp/noteList.css">
-   <link rel="stylesheet" type="text/css" href="src/components/noteApp/currentNote.css">
-   <link rel="stylesheet" type="text/css" href="src/components/header/header.css">
-   <link rel="stylesheet" type="text/css" href="src/components/header/responsive.css">
-   <link rel="stylesheet" type="text/css" href="src/components/noteApp/responsive.css">
-   <link rel="shortcut icon" href="../images/logo_gn.png" type="image/x-icon">
-   <title>Good Notes</title>
+   <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+      <meta name="author" content="Gustavo Rodrigues Fabiano & Lucas Polli">
+      <meta name="description" content="Crie e guarde seu mundo!">
+      <meta name="apple-mobile-web-app-capable" content="yes" >
+      <meta name="mobile-web-app-capable" content="yes" />
+      <link rel="stylesheet" type="text/css" href="style/style.css">
+      <link rel="stylesheet" type="text/css" href="src/components/header/header.css">
+      <link rel="stylesheet" type="text/css" href="src/components/header/responsive.css">
+      <link rel="stylesheet" type="text/css" href="src/components/noteApp/style.css">
+      <link rel="stylesheet" type="text/css" href="src/components/noteApp/layers/category.css">
+      <link rel="stylesheet" type="text/css" href="src/components/noteApp/layers/noteList.css">
+      <link rel="stylesheet" type="text/css" href="src/components/noteApp/layers/currentNote.css">
+      <link rel="stylesheet" type="text/css" href="src/components/noteApp/responsive.css">
+      <link rel="shortcut icon" href="../images/logo_gn.png" type="image/x-icon">
+      <title>Good Notes</title>
 
-   <style>
-      .my-notes {
-         color: var(--primaryColor) !important;
-      }
-      .my-notes:hover {
-         color: var(--primaryColor) !important;
-      }
-   </style>
-</head>
-<body>
-   
-   <div class="container-loading show center-flex">
-      <div></div>
-   </div>
+      <style>
+         .my-notes {
+            color: var(--primaryColor) !important;
+         }
+         .my-notes:hover {
+            color: var(--primaryColor) !important;
+         }
+      </style>
 
-   <header></header>
+      <script>
+         window.onbeforeunload = e => {
+            const loading = document.querySelector('.container-auto-save');
 
-   <main>
-      <div class="note-app">
-         <section class="categories show">
-            <div>
-               <div class="header">
-                  <div class="container-search">
-                     <div>
-                        <img src="./images/search_icon.svg" alt="search_icon" />
-                        <input class="input-search-categories" type="search" name="inputSearch" placeholder="Pesquisar categoria..." autocomplete="off" />
-                     </div>
-                  </div>
-                  <div>
-                     <button class="arrow">
-                        <img src="./images/rightPrevious.svg" alt="Mostrar a lista de notas" />
-                     </button>
-                  </div>
-               </div>
-               <div class="container-categories-list">
-                  <div>
-                     <ul class="category-list">
-                        
+            if (!loading.classList.contains('hide')) {
+               return 'Suas alterações estão salvas?';
+            }
+         };
+      </script>
+   </head>
+   <body>
+      
+      <div class="container-loading show center-flex">
+         <div></div>
+      </div>
 
-                     </ul>
-                  </div>
-                  <div class="container-category-loading show">
-                     <ul>
-                        <li class="category-loading-item">
-                           <div>
-                              <div class="loading-icon item"></div>
-                              <div class="loading-name item"></div>
-                           </div>
-                           <div>
-                              <div class="loading-more">
-                                 <span class="item"></span>
-                                 <span class="item"></span>
-                                 <span class="item"></span>
-                              </div>
-                           </div>
-                        </li>
-                        <li class="category-loading-item">
-                           <div>
-                              <div class="loading-icon item"></div>
-                              <div class="loading-name item"></div>
-                           </div>
-                           <div>
-                              <div class="loading-more">
-                                 <span class="item"></span>
-                                 <span class="item"></span>
-                                 <span class="item"></span>
-                              </div>
-                           </div>
-                        </li>
-                        <li class="category-loading-item">
-                           <div>
-                              <div class="loading-icon item"></div>
-                              <div class="loading-name item"></div>
-                           </div>
-                           <div>
-                              <div class="loading-more">
-                                 <span class="item"></span>
-                                 <span class="item"></span>
-                                 <span class="item"></span>
-                              </div>
-                           </div>
-                        </li>
-                        <li class="category-loading-item">
-                           <div>
-                              <div class="loading-icon item"></div>
-                              <div class="loading-name item"></div>
-                           </div>
-                           <div>
-                              <div class="loading-more">
-                                 <span class="item"></span>
-                                 <span class="item"></span>
-                                 <span class="item"></span>
-                              </div>
-                           </div>
-                        </li>
-                     </ul>
-                  </div>
-               </div>
-            </div>
+      <header></header>
 
-            <div class="container-add-categorie">
-               <button class="add-new-category btn-default btn-default-hover">
-                  <svg width="16" height="16" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                     <path d="M6 1L6 12" stroke="#fff" stroke-linecap="round"/>
-                     <line x1="11.5" y1="6.5" x2="0.5" y2="6.5" stroke="#fff" stroke-linecap="round"/>
-                  </svg>
-                  Adicionar Categoria
-               </button>
-            </div>
-         </section>
-            
-         <section class="note-list hide">
-            <div class="container-section-notes">
-               <button class="arrow">
-                  <img src="./images/leftPrevious.svg" alt="Voltar para as categorias" />
-               </button>
-               <h1 class="section-title">Notas</h1>
-            </div>
-            <div class="container-add-note">
-               <button class="btn-default" data-js="shouldCreateNote">
-                  <svg width="16" height="16" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                     <path d="M6 1L6 12" stroke="#0066FF" stroke-linecap="round"/>
-                     <line x1="11.5" y1="6.5" x2="0.5" y2="6.5" stroke="#0066FF" stroke-linecap="round"/>
-                  </svg>
-                  Adicionar Nota
-               </button>
-            </div>
-            <div class="container-notes">
+      <main>
+         <div class="note-app">
+            <section class="categories show">
                <div>
-                  <ul class="note-list">
-
-                  </ul>
-               </div>
-               <div class="container-noteList-loading show">
-                  <ul>
-                     <li class="noteItem-loading">
-                        <div class="small item"></div>
-                        <div class="title item"></div>
-                        <div class="content item"></div>
-                     </li>
-                     <li class="noteItem-loading">
-                        <div class="small item"></div>
-                        <div class="title item"></div>
-                        <div class="content item"></div>
-                     </li>
-                     <li class="noteItem-loading">
-                        <div class="small item"></div>
-                        <div class="title item"></div>
-                        <div class="content item"></div>
-                     </li>
-                  </ul>
-               </div>
-            </div>
-            <div class="container-notes-not-found">
-               <p>
-                  Nenhuma nota encontrada...
-               </p>
-            </div>
-         </section>
-
-         <section class="current-note hide">
-            <div class="header">
-               <div class="note-path"></div>
-               <div class="container-more-currentNote container-dropDown">
-                  <button class="btn-dropDown btn-wrapper-default" type="button" data-js="handleDropDown">
-                     <svg width="25" height="10" viewBox="0 0 21 5" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="2.5" cy="2.5" r="2.5" fill="#000"/>
-                        <circle cx="18.5" cy="2.5" r="2.5" fill="#000"/>
-                        <circle cx="10.5" cy="2.5" r="2.5" fill="#000"/>
-                     </svg>
-                  </button>
-                  <ul class="list-dropDown">
-                     <li>
-                        <button data-js="updateNote" type="submit">
-                           <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 0 24 24" width="30px" fill="#696969">
-                              <path d="M0 0h24v24H0V0z" fill="none"/><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm2 16H5V5h11.17L19 7.83V19zm-7-7c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3zM6 6h9v4H6z"/>
-                           </svg>
-                        </button>
-                        <span class="tooltip">Salvar Alterações</span>
-                     </li>
-                     <li>
-                        <button data-js="showPopupDelete" type="button">
-                           <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 0 24 24" width="30px" fill="#696969"><path d="M0 0h24v24H0V0z" fill="none"/>
-                              <path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/>
-                           </svg>
-                        </button>
-                        <span class="tooltip">Excluir</span>
-                     </li>
-                  </ul>
-               </div>
-            </div>
-            <div class="main">
-               <form class="current-note-form">
-                  <div class="title-note">
-                     <div class="container-currentNote-title">
-                        <input type="text" class="input-note-title" name="inputNoteTitle" value="Nova Nota" maxlength="55" autocomplete="off" />
-                     </div>
-                     <div class="container-summary">
-                        <button class="btn-dropDown btn-wrapper" name="btnExpandSummary" type="button" data-js="handleDropDown">
-                           <img src="./images/expand_icon.svg" alt="ícone para expandir resumo" />
-                           Editar Resumo
-                        </button>
-                        <div class="container-summary-textarea">
-                           <textarea class="summaryArea" placeholder="O resumo da nova nota está aqui..." name="textareaSummary" maxlength="255"></textarea>
+                  <div class="header">
+                     <div class="container-search">
+                        <div>
+                           <img src="./images/search_icon.svg" alt="search_icon" />
+                           <input class="input-search-categories" type="search" name="inputSearch" placeholder="Pesquisar categoria..." autocomplete="off" />
                         </div>
                      </div>
-                     <div class="last-modification">
-                        <small>
-                           Última modificação:
-                           <strong></strong>
-                        </small>
-                     </div>
-                  </div>
-                  <div class="tool-bar" role="ferramentas adicionais">
                      <div>
-                        <button type="button" data-action="bold">
-                           <img src="./images/text_editor/strong_icon.svg" alt="texto forte" />
+                        <button class="arrow">
+                           <img src="./images/rightPrevious.svg" alt="Mostrar a lista de notas" />
                         </button>
-                        <button type="button" data-action="italic">
-                           <img src="./images/text_editor/italic_icon.svg" alt="texto em italico" />
-                        </button>
-                        <button type="button" data-action="underline">
-                           <img src="./images/text_editor/underline_icon.svg" alt="texto com sublinhado" />
-                        </button>
-                        <button type="button" data-action="insertUnorderedList">
-                           <img src="./images/text_editor/ul_icon.svg" alt="lista não ordenada" />
-                        </button>
-                        <button type="button" data-action="insertOrderedList">
-                           <img src="./images/text_editor/ol_icon.svg" alt="lista ordenada" />
-                        </button>
-                     </div>
-                     <span>|</span>
-                     <div class="center-tools">
-                        <button type="button" data-action="justifyLeft">
-                           <img src="./images/text_editor/left_text_icon.svg" alt="texto para esquerda" />
-                        </button>
-                        <button type="button" data-action="justifyCenter">
-                           <img src="./images/text_editor/center_text_icon.svg" alt="texto centralizado" />
-                        </button>
-                        <button type="button" data-action="justifyRight">
-                           <img src="./images/text_editor/right_text_icon.svg" alt="texto para direita" />
-                        </button>
-                        <button type="button" data-action="justifyFull">
-                           <img src="./images/text_editor/justify_text_icon.svg" alt="texto justificado" />
-                        </button>
-                     </div>
-                     <span>|</span>
-                     <div class="select-group">
-                        <select name="selectFontSize" data-action="fontSize">
-                           <option value="1">12px</option>
-                           <option value="2">14px</option>
-                           <option value="3" selected >16px</option>
-                           <option value="4">18px</option>
-                           <option value="5">20px</option>
-                           <option value="6">24px</option>
-                           <option value="7">26px</option>
-                        </select>
-                        <select name="selectFontFamily" data-action="fontName">
-                           <option value="arial" selected >Arial</option>
-                           <option value="calabri">Calabri</option>
-                           <option value="impact">Impact</option>
-                           <option value="inter">Inter</option>
-                           <option value="open sans">Open Sans</option>
-                        </select>
-                        <input type="color" name="inputColor" data-action="foreColor">
                      </div>
                   </div>
-                  <div class="note-content">
-                     <div class="area-note-content" contenteditable="true" name="teste">
-                         
-                     </div>
-                  </div>
-               </form>
-            </div>
-         </section>
-      </div>
-   </main>
+                  <div class="container-categories-list">
+                     <div>
+                        <ul class="category-list">
+                           
 
-   <div class="container-nav-mobile">
-      <nav>
-         <ul class="mobile-btn-list">
-            <li class="available selected" data-js="showCategories">
-               <button class="btn-categories">
-                  <div>
-                     <svg width="28" height="22" viewBox="0 0 28 22" fill="#B5B5B5" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M3.15 0C1.4103 0 0 1.38512 0 3.09375V6.53125C0 8.23988 1.4103 9.625 3.15 9.625H6.65C8.3897 9.625 9.8 8.23988 9.8 6.53125V3.09375C9.8 1.38512 8.3897 0 6.65 0H3.15ZM2.1 3.09375C2.1 2.52421 2.57011 2.0625 3.15 2.0625H6.65C7.22989 2.0625 7.7 2.52421 7.7 3.09375V6.53125C7.7 7.10079 7.22989 7.5625 6.65 7.5625H3.15C2.57011 7.5625 2.1 7.10079 2.1 6.53125V3.09375ZM12.95 1.375C12.3701 1.375 11.9 1.83671 11.9 2.40625C11.9 2.97579 12.3701 3.4375 12.95 3.4375H26.95C27.5299 3.4375 28 2.97579 28 2.40625C28 1.83671 27.5299 1.375 26.95 1.375H12.95ZM12.95 5.5C12.3701 5.5 11.9 5.96171 11.9 6.53125C11.9 7.10079 12.3701 7.5625 12.95 7.5625H22.75C23.3299 7.5625 23.8 7.10079 23.8 6.53125C23.8 5.96171 23.3299 5.5 22.75 5.5H12.95ZM3.15 12.375C1.4103 12.375 0 13.7602 0 15.4688V18.9062C0 20.6148 1.4103 22 3.15 22H6.65C8.3897 22 9.8 20.6148 9.8 18.9062V15.4688C9.8 13.7602 8.3897 12.375 6.65 12.375H3.15ZM2.1 15.4688C2.1 14.8992 2.57011 14.4375 3.15 14.4375H6.65C7.22989 14.4375 7.7 14.8992 7.7 15.4688V18.9062C7.7 19.4758 7.22989 19.9375 6.65 19.9375H3.15C2.57011 19.9375 2.1 19.4758 2.1 18.9062V15.4688ZM12.95 13.75C12.3701 13.75 11.9 14.2117 11.9 14.7812C11.9 15.3508 12.3701 15.8125 12.95 15.8125H26.95C27.5299 15.8125 28 15.3508 28 14.7812C28 14.2117 27.5299 13.75 26.95 13.75H12.95ZM12.95 17.875C12.3701 17.875 11.9 18.3367 11.9 18.9062C11.9 19.4758 12.3701 19.9375 12.95 19.9375H22.75C23.3299 19.9375 23.8 19.4758 23.8 18.9062C23.8 18.3367 23.3299 17.875 22.75 17.875H12.95Z" fill="currentColor"/>
-                     </svg>
+                        </ul>
+                     </div>
+                     <div class="container-category-loading show">
+                        <ul>
+                           <li class="category-loading-item">
+                              <div>
+                                 <div class="loading-icon item"></div>
+                                 <div class="loading-name item"></div>
+                              </div>
+                              <div>
+                                 <div class="loading-more">
+                                    <span class="item"></span>
+                                    <span class="item"></span>
+                                    <span class="item"></span>
+                                 </div>
+                              </div>
+                           </li>
+                           <li class="category-loading-item">
+                              <div>
+                                 <div class="loading-icon item"></div>
+                                 <div class="loading-name item"></div>
+                              </div>
+                              <div>
+                                 <div class="loading-more">
+                                    <span class="item"></span>
+                                    <span class="item"></span>
+                                    <span class="item"></span>
+                                 </div>
+                              </div>
+                           </li>
+                           <li class="category-loading-item">
+                              <div>
+                                 <div class="loading-icon item"></div>
+                                 <div class="loading-name item"></div>
+                              </div>
+                              <div>
+                                 <div class="loading-more">
+                                    <span class="item"></span>
+                                    <span class="item"></span>
+                                    <span class="item"></span>
+                                 </div>
+                              </div>
+                           </li>
+                           <li class="category-loading-item">
+                              <div>
+                                 <div class="loading-icon item"></div>
+                                 <div class="loading-name item"></div>
+                              </div>
+                              <div>
+                                 <div class="loading-more">
+                                    <span class="item"></span>
+                                    <span class="item"></span>
+                                    <span class="item"></span>
+                                 </div>
+                              </div>
+                           </li>
+                        </ul>
+                     </div>
                   </div>
-                  <div>
-                     <span>Categorias</span>
-                  </div>
-               </button>
-            </li>
-            <li data-js="showNoteList">
-               <button class="btn-notes">
-                  <div>
-                     <svg width="24" height="23" viewBox="0 0 24 23" fill="#B5B5B5" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M4.16667 0C3.0616 0 2.00179 0.438987 1.22039 1.22039C0.438987 2.00179 0 3.0616 0 4.16667V15.8333C0 16.9384 0.438987 17.9982 1.22039 18.7796C2.00179 19.561 3.0616 20 4.16667 20H10.2833C11.3833 20 12.45 19.5667 13.2333 18.7833L18.7833 13.2333C19.5667 12.45 20 11.4 20 10.2833V4.16667C20 3.0616 19.561 2.00179 18.7796 1.22039C17.9982 0.438987 16.9384 0 15.8333 0H4.16667ZM1.66667 4.16667C1.66667 2.78333 2.78333 1.66667 4.16667 1.66667H15.8333C17.2167 1.66667 18.3333 2.78333 18.3333 4.16667V10H14.1667C13.0616 10 12.0018 10.439 11.2204 11.2204C10.439 12.0018 10 13.0616 10 14.1667V18.3333H4.16667C3.50363 18.3333 2.86774 18.0699 2.3989 17.6011C1.93006 17.1323 1.66667 16.4964 1.66667 15.8333V4.16667ZM11.6667 17.9167V14.1667C11.6667 12.7833 12.7833 11.6667 14.1667 11.6667H17.9167C17.8241 11.8046 17.718 11.9331 17.6 12.05L12.05 17.6C11.9339 17.7238 11.8054 17.8355 11.6667 17.9333V17.9167Z" fill="currentColor"/>
-                        <path d="M5 9.16705C5 6.53914 7.03431 4.3597 9.65599 4.1789L18.8151 3.54724C19.2682 3.51598 19.7234 3.56382 20.1601 3.68861V3.68861C21.8411 4.16888 23 5.70528 23 7.45349V13.8197C23 15.21 22.4211 16.5376 21.4023 17.4836L17.4388 21.164C16.514 22.0227 15.2986 22.5 14.0365 22.5H10.0489C9.68405 22.5 9.32033 22.4601 8.96421 22.3809L8.91535 22.3701C6.62766 21.8617 5 19.8326 5 17.4891V9.16705Z" fill="white"/>
-                        <path d="M8.16667 3C7.0616 3 6.00179 3.43899 5.22039 4.22039C4.43899 5.00179 4 6.0616 4 7.16667V18.8333C4 19.9384 4.43899 20.9982 5.22039 21.7796C6.00179 22.561 7.0616 23 8.16667 23H14.2833C15.3833 23 16.45 22.5667 17.2333 21.7833L22.7833 16.2333C23.5667 15.45 24 14.4 24 13.2833V7.16667C24 6.0616 23.561 5.00179 22.7796 4.22039C21.9982 3.43899 20.9384 3 19.8333 3H8.16667ZM5.66667 7.16667C5.66667 5.78333 6.78333 4.66667 8.16667 4.66667H19.8333C21.2167 4.66667 22.3333 5.78333 22.3333 7.16667V13H18.1667C17.0616 13 16.0018 13.439 15.2204 14.2204C14.439 15.0018 14 16.0616 14 17.1667V21.3333H8.16667C7.50363 21.3333 6.86774 21.0699 6.3989 20.6011C5.93006 20.1323 5.66667 19.4964 5.66667 18.8333V7.16667ZM15.6667 20.9167V17.1667C15.6667 15.7833 16.7833 14.6667 18.1667 14.6667H21.9167C21.8241 14.8046 21.718 14.9331 21.6 15.05L16.05 20.6C15.9339 20.7238 15.8054 20.8355 15.6667 20.9333V20.9167Z" fill="currentColor"/>
-                     </svg>
-                  </div>
-                  <div>
-                     <span>Notas</span>
-                  </div>
-               </button>
-            </li>
-            <li data-js="showCurrentNote">
-               <button class="btn-current-note">
-                  <div>
-                     <svg width="20" height="20" viewBox="0 0 20 20" fill="#B5B5B5" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M4.16667 0C3.0616 0 2.00179 0.438987 1.22039 1.22039C0.438987 2.00179 0 3.0616 0 4.16667V15.8333C0 16.9384 0.438987 17.9982 1.22039 18.7796C2.00179 19.561 3.0616 20 4.16667 20H10.2833C11.3833 20 12.45 19.5667 13.2333 18.7833L18.7833 13.2333C19.5667 12.45 20 11.4 20 10.2833V4.16667C20 3.0616 19.561 2.00179 18.7796 1.22039C17.9982 0.438987 16.9384 0 15.8333 0H4.16667ZM1.66667 4.16667C1.66667 2.78333 2.78333 1.66667 4.16667 1.66667H15.8333C17.2167 1.66667 18.3333 2.78333 18.3333 4.16667V10H14.1667C13.0616 10 12.0018 10.439 11.2204 11.2204C10.439 12.0018 10 13.0616 10 14.1667V18.3333H4.16667C3.50363 18.3333 2.86774 18.0699 2.3989 17.6011C1.93006 17.1323 1.66667 16.4964 1.66667 15.8333V4.16667ZM11.6667 17.9167V14.1667C11.6667 12.7833 12.7833 11.6667 14.1667 11.6667H17.9167C17.8241 11.8046 17.718 11.9331 17.6 12.05L12.05 17.6C11.9339 17.7238 11.8054 17.8355 11.6667 17.9333V17.9167Z" fill="currentColor"/>
-                     </svg>
-                  </div>
-                  <div>
-                     <span>Nota Atual</span>
-                  </div>
-               </button>
-            </li>
-         </ul>
-      </nav>
-   </div>
+               </div>
 
-   <div class="popup-wrapper-confirm-delete popup-wrapper ">
-      <div class="popup-overlay">
-         <div class="popup-confirm-delete popup">
-            <div class="container-loading center-flex">
-               <div></div>
-            </div>
-            <div class="popup-content">
-               <div class="category-message">
-                  <h1>Excluir esta categoria?</h1>
-                  <p>Esta categoria e todas as notas que a contém serão apagadas.</p>
+               <div class="container-add-categorie">
+                  <button class="add-new-category btn-default btn-default-hover">
+                     <svg width="16" height="16" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6 1L6 12" stroke="#fff" stroke-linecap="round"/>
+                        <line x1="11.5" y1="6.5" x2="0.5" y2="6.5" stroke="#fff" stroke-linecap="round"/>
+                     </svg>
+                     Adicionar Categoria
+                  </button>
                </div>
-               <div class="note-message">
-                  <h1>Excluir esta nota?</h1>
-                  <p>Esta nota e as informações dela serão apagadas.</p>
+            </section>
+               
+            <section class="note-list hide">
+               <div class="container-section-notes">
+                  <button class="arrow">
+                     <img src="./images/leftPrevious.svg" alt="Voltar para as categorias" />
+                  </button>
+                  <h1 class="section-title">Notas</h1>
                </div>
-               <div class="container-btn">
+               <div class="container-add-note">
+                  <button class="btn-default" data-js="shouldCreateNote">
+                     <svg width="16" height="16" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6 1L6 12" stroke="#0066FF" stroke-linecap="round"/>
+                        <line x1="11.5" y1="6.5" x2="0.5" y2="6.5" stroke="#0066FF" stroke-linecap="round"/>
+                     </svg>
+                     Adicionar Nota
+                  </button>
+               </div>
+               <div class="container-notes">
                   <div>
-                     <button class="btn-confirm-delete btn-default">Sim, Excluir</button>
-                  </div>
-                  <div>
-                     <button class="btn-cancel-delete btn-default">Cancelar</button>
-                  </div>
-               </div>
-            </div>
-         </div>
-      </div>
-   </div>
+                     <ul class="note-list">
 
-   <div class="popup-wrapper-cloud-error popup-wrapper">
-      <div class="popup-overlay">
-         <div class="popup-cloud-error popup">
-            <div class="close">
-               <button class="close-popup-target close-popup center-flex" tabindex="0">
-                  <img class="close-popup-target close-popup" src="./images/close_popup_icon.svg" alt="Fechar popup">
-               </button>
-            </div>
-            <div class="container-img">
-               <img src="./images/cloud-error.png" alt="imagem de erro do servidor"/>
-            </div>
-            <div class="container-texts">
-               <div>
-                  <h1>Ops! Perdemos a conexão com o servidor.</h1>
+                     </ul>
+                  </div>
+                  <div class="container-noteList-loading show">
+                     <ul>
+                        <li class="noteItem-loading">
+                           <div class="small item"></div>
+                           <div class="title item"></div>
+                           <div class="content item"></div>
+                        </li>
+                        <li class="noteItem-loading">
+                           <div class="small item"></div>
+                           <div class="title item"></div>
+                           <div class="content item"></div>
+                        </li>
+                        <li class="noteItem-loading">
+                           <div class="small item"></div>
+                           <div class="title item"></div>
+                           <div class="content item"></div>
+                        </li>
+                     </ul>
+                  </div>
                </div>
-               <div>
+               <div class="container-notes-not-found">
                   <p>
-                     As ultimas alterações foram desfeitas. Por favor, tente novamente mais tarde.
+                     Nenhuma nota encontrada...
                   </p>
                </div>
+            </section>
+
+            <section class="current-note hide">
+               <div class="header">
+                  <div class="note-path"></div>
+                  <div class="container-more-currentNote container-dropDown">
+                     <button class="btn-dropDown btn-wrapper-default" type="button" data-js="handleDropDown">
+                        <svg width="25" height="10" viewBox="0 0 21 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                           <circle cx="2.5" cy="2.5" r="2.5" fill="#000"/>
+                           <circle cx="18.5" cy="2.5" r="2.5" fill="#000"/>
+                           <circle cx="10.5" cy="2.5" r="2.5" fill="#000"/>
+                        </svg>
+                     </button>
+                     <ul class="list-dropDown">
+                        <li>
+                           <button data-js="updateNote" type="submit">
+                              <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 0 24 24" width="30px" fill="#696969">
+                                 <path d="M0 0h24v24H0V0z" fill="none"/><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm2 16H5V5h11.17L19 7.83V19zm-7-7c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3zM6 6h9v4H6z"/>
+                              </svg>
+                           </button>
+                           <span class="tooltip">Salvar Alterações</span>
+                        </li>
+                        <li>
+                           <button data-js="showPopupDelete" type="button">
+                              <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 0 24 24" width="30px" fill="#696969"><path d="M0 0h24v24H0V0z" fill="none"/>
+                                 <path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/>
+                              </svg>
+                           </button>
+                           <span class="tooltip">Excluir</span>
+                        </li>
+                     </ul>
+                  </div>
+               </div>
+               <div class="main">
+                  <form class="current-note-form">
+                     <div class="title-note">
+                        <div class="container-currentNote-title">
+                           <input type="text" class="input-note-title" name="inputNoteTitle" value="Nova Nota" maxlength="55" autocomplete="off" />
+                        </div>
+                        <div class="container-summary">
+                           <button class="btn-dropDown btn-wrapper" name="btnExpandSummary" type="button" data-js="handleDropDown">
+                              <img src="./images/expand_icon.svg" alt="ícone para expandir resumo" />
+                              Editar Resumo
+                           </button>
+                           <div class="container-summary-textarea">
+                              <textarea class="summaryArea" placeholder="O resumo da nova nota está aqui..." name="textareaSummary" maxlength="255"></textarea>
+                           </div>
+                        </div>
+                        <div class="last-modification">
+                           <small>
+                              Última modificação:
+                              <strong></strong>
+                           </small>
+                        </div>
+                     </div>
+                     <div class="tool-bar" role="ferramentas adicionais">
+                        <div>
+                           <button type="button" data-action="bold">
+                              <img src="./images/text_editor/strong_icon.svg" alt="texto forte" />
+                           </button>
+                           <button type="button" data-action="italic">
+                              <img src="./images/text_editor/italic_icon.svg" alt="texto em italico" />
+                           </button>
+                           <button type="button" data-action="underline">
+                              <img src="./images/text_editor/underline_icon.svg" alt="texto com sublinhado" />
+                           </button>
+                           <button type="button" data-action="insertUnorderedList">
+                              <img src="./images/text_editor/ul_icon.svg" alt="lista não ordenada" />
+                           </button>
+                           <button type="button" data-action="insertOrderedList">
+                              <img src="./images/text_editor/ol_icon.svg" alt="lista ordenada" />
+                           </button>
+                        </div>
+                        <span>|</span>
+                        <div class="center-tools">
+                           <button type="button" data-action="justifyLeft">
+                              <img src="./images/text_editor/left_text_icon.svg" alt="texto para esquerda" />
+                           </button>
+                           <button type="button" data-action="justifyCenter">
+                              <img src="./images/text_editor/center_text_icon.svg" alt="texto centralizado" />
+                           </button>
+                           <button type="button" data-action="justifyRight">
+                              <img src="./images/text_editor/right_text_icon.svg" alt="texto para direita" />
+                           </button>
+                           <button type="button" data-action="justifyFull">
+                              <img src="./images/text_editor/justify_text_icon.svg" alt="texto justificado" />
+                           </button>
+                        </div>
+                        <span>|</span>
+                        <div class="select-group">
+                           <select name="selectFontSize" data-action="fontSize">
+                              <option value="1">12px</option>
+                              <option value="2">14px</option>
+                              <option value="3" selected >16px</option>
+                              <option value="4">18px</option>
+                              <option value="5">20px</option>
+                              <option value="6">24px</option>
+                              <option value="7">26px</option>
+                           </select>
+                           <select name="selectFontFamily" data-action="fontName">
+                              <option value="arial" selected >Arial</option>
+                              <option value="calabri">Calabri</option>
+                              <option value="impact">Impact</option>
+                              <option value="inter">Inter</option>
+                              <option value="open sans">Open Sans</option>
+                           </select>
+                           <input type="color" name="inputColor" data-action="foreColor">
+                        </div>
+                     </div>
+                     <div class="note-content">
+                        <div class="area-note-content" contenteditable="true" name="teste">
+                           
+                        </div>
+                     </div>
+                  </form>
+               </div>
+            </section>
+         </div>
+      </main>
+
+      <div class="container-nav-mobile">
+         <nav>
+            <ul class="mobile-btn-list">
+               <li class="available selected" data-js="showCategories">
+                  <button class="btn-categories">
+                     <div>
+                        <svg width="28" height="22" viewBox="0 0 28 22" fill="#B5B5B5" xmlns="http://www.w3.org/2000/svg">
+                           <path d="M3.15 0C1.4103 0 0 1.38512 0 3.09375V6.53125C0 8.23988 1.4103 9.625 3.15 9.625H6.65C8.3897 9.625 9.8 8.23988 9.8 6.53125V3.09375C9.8 1.38512 8.3897 0 6.65 0H3.15ZM2.1 3.09375C2.1 2.52421 2.57011 2.0625 3.15 2.0625H6.65C7.22989 2.0625 7.7 2.52421 7.7 3.09375V6.53125C7.7 7.10079 7.22989 7.5625 6.65 7.5625H3.15C2.57011 7.5625 2.1 7.10079 2.1 6.53125V3.09375ZM12.95 1.375C12.3701 1.375 11.9 1.83671 11.9 2.40625C11.9 2.97579 12.3701 3.4375 12.95 3.4375H26.95C27.5299 3.4375 28 2.97579 28 2.40625C28 1.83671 27.5299 1.375 26.95 1.375H12.95ZM12.95 5.5C12.3701 5.5 11.9 5.96171 11.9 6.53125C11.9 7.10079 12.3701 7.5625 12.95 7.5625H22.75C23.3299 7.5625 23.8 7.10079 23.8 6.53125C23.8 5.96171 23.3299 5.5 22.75 5.5H12.95ZM3.15 12.375C1.4103 12.375 0 13.7602 0 15.4688V18.9062C0 20.6148 1.4103 22 3.15 22H6.65C8.3897 22 9.8 20.6148 9.8 18.9062V15.4688C9.8 13.7602 8.3897 12.375 6.65 12.375H3.15ZM2.1 15.4688C2.1 14.8992 2.57011 14.4375 3.15 14.4375H6.65C7.22989 14.4375 7.7 14.8992 7.7 15.4688V18.9062C7.7 19.4758 7.22989 19.9375 6.65 19.9375H3.15C2.57011 19.9375 2.1 19.4758 2.1 18.9062V15.4688ZM12.95 13.75C12.3701 13.75 11.9 14.2117 11.9 14.7812C11.9 15.3508 12.3701 15.8125 12.95 15.8125H26.95C27.5299 15.8125 28 15.3508 28 14.7812C28 14.2117 27.5299 13.75 26.95 13.75H12.95ZM12.95 17.875C12.3701 17.875 11.9 18.3367 11.9 18.9062C11.9 19.4758 12.3701 19.9375 12.95 19.9375H22.75C23.3299 19.9375 23.8 19.4758 23.8 18.9062C23.8 18.3367 23.3299 17.875 22.75 17.875H12.95Z" fill="currentColor"/>
+                        </svg>
+                     </div>
+                     <div>
+                        <span>Categorias</span>
+                     </div>
+                  </button>
+               </li>
+               <li data-js="showNoteList">
+                  <button class="btn-notes">
+                     <div>
+                        <svg width="24" height="23" viewBox="0 0 24 23" fill="#B5B5B5" xmlns="http://www.w3.org/2000/svg">
+                           <path d="M4.16667 0C3.0616 0 2.00179 0.438987 1.22039 1.22039C0.438987 2.00179 0 3.0616 0 4.16667V15.8333C0 16.9384 0.438987 17.9982 1.22039 18.7796C2.00179 19.561 3.0616 20 4.16667 20H10.2833C11.3833 20 12.45 19.5667 13.2333 18.7833L18.7833 13.2333C19.5667 12.45 20 11.4 20 10.2833V4.16667C20 3.0616 19.561 2.00179 18.7796 1.22039C17.9982 0.438987 16.9384 0 15.8333 0H4.16667ZM1.66667 4.16667C1.66667 2.78333 2.78333 1.66667 4.16667 1.66667H15.8333C17.2167 1.66667 18.3333 2.78333 18.3333 4.16667V10H14.1667C13.0616 10 12.0018 10.439 11.2204 11.2204C10.439 12.0018 10 13.0616 10 14.1667V18.3333H4.16667C3.50363 18.3333 2.86774 18.0699 2.3989 17.6011C1.93006 17.1323 1.66667 16.4964 1.66667 15.8333V4.16667ZM11.6667 17.9167V14.1667C11.6667 12.7833 12.7833 11.6667 14.1667 11.6667H17.9167C17.8241 11.8046 17.718 11.9331 17.6 12.05L12.05 17.6C11.9339 17.7238 11.8054 17.8355 11.6667 17.9333V17.9167Z" fill="currentColor"/>
+                           <path d="M5 9.16705C5 6.53914 7.03431 4.3597 9.65599 4.1789L18.8151 3.54724C19.2682 3.51598 19.7234 3.56382 20.1601 3.68861V3.68861C21.8411 4.16888 23 5.70528 23 7.45349V13.8197C23 15.21 22.4211 16.5376 21.4023 17.4836L17.4388 21.164C16.514 22.0227 15.2986 22.5 14.0365 22.5H10.0489C9.68405 22.5 9.32033 22.4601 8.96421 22.3809L8.91535 22.3701C6.62766 21.8617 5 19.8326 5 17.4891V9.16705Z" fill="white"/>
+                           <path d="M8.16667 3C7.0616 3 6.00179 3.43899 5.22039 4.22039C4.43899 5.00179 4 6.0616 4 7.16667V18.8333C4 19.9384 4.43899 20.9982 5.22039 21.7796C6.00179 22.561 7.0616 23 8.16667 23H14.2833C15.3833 23 16.45 22.5667 17.2333 21.7833L22.7833 16.2333C23.5667 15.45 24 14.4 24 13.2833V7.16667C24 6.0616 23.561 5.00179 22.7796 4.22039C21.9982 3.43899 20.9384 3 19.8333 3H8.16667ZM5.66667 7.16667C5.66667 5.78333 6.78333 4.66667 8.16667 4.66667H19.8333C21.2167 4.66667 22.3333 5.78333 22.3333 7.16667V13H18.1667C17.0616 13 16.0018 13.439 15.2204 14.2204C14.439 15.0018 14 16.0616 14 17.1667V21.3333H8.16667C7.50363 21.3333 6.86774 21.0699 6.3989 20.6011C5.93006 20.1323 5.66667 19.4964 5.66667 18.8333V7.16667ZM15.6667 20.9167V17.1667C15.6667 15.7833 16.7833 14.6667 18.1667 14.6667H21.9167C21.8241 14.8046 21.718 14.9331 21.6 15.05L16.05 20.6C15.9339 20.7238 15.8054 20.8355 15.6667 20.9333V20.9167Z" fill="currentColor"/>
+                        </svg>
+                     </div>
+                     <div>
+                        <span>Notas</span>
+                     </div>
+                  </button>
+               </li>
+               <li data-js="showCurrentNote">
+                  <button class="btn-current-note">
+                     <div>
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="#B5B5B5" xmlns="http://www.w3.org/2000/svg">
+                           <path d="M4.16667 0C3.0616 0 2.00179 0.438987 1.22039 1.22039C0.438987 2.00179 0 3.0616 0 4.16667V15.8333C0 16.9384 0.438987 17.9982 1.22039 18.7796C2.00179 19.561 3.0616 20 4.16667 20H10.2833C11.3833 20 12.45 19.5667 13.2333 18.7833L18.7833 13.2333C19.5667 12.45 20 11.4 20 10.2833V4.16667C20 3.0616 19.561 2.00179 18.7796 1.22039C17.9982 0.438987 16.9384 0 15.8333 0H4.16667ZM1.66667 4.16667C1.66667 2.78333 2.78333 1.66667 4.16667 1.66667H15.8333C17.2167 1.66667 18.3333 2.78333 18.3333 4.16667V10H14.1667C13.0616 10 12.0018 10.439 11.2204 11.2204C10.439 12.0018 10 13.0616 10 14.1667V18.3333H4.16667C3.50363 18.3333 2.86774 18.0699 2.3989 17.6011C1.93006 17.1323 1.66667 16.4964 1.66667 15.8333V4.16667ZM11.6667 17.9167V14.1667C11.6667 12.7833 12.7833 11.6667 14.1667 11.6667H17.9167C17.8241 11.8046 17.718 11.9331 17.6 12.05L12.05 17.6C11.9339 17.7238 11.8054 17.8355 11.6667 17.9333V17.9167Z" fill="currentColor"/>
+                        </svg>
+                     </div>
+                     <div>
+                        <span>Nota Atual</span>
+                     </div>
+                  </button>
+               </li>
+            </ul>
+         </nav>
+      </div>
+
+      <div class="popup-wrapper-confirm-delete popup-wrapper ">
+         <div class="popup-overlay">
+            <div class="popup-confirm-delete popup">
+               <div class="container-loading center-flex">
+                  <div></div>
+               </div>
+               <div class="popup-content">
+                  <div class="category-message">
+                     <h1>Excluir esta categoria?</h1>
+                     <p>Esta categoria e todas as notas que a contém serão apagadas.</p>
+                  </div>
+                  <div class="note-message">
+                     <h1>Excluir esta nota?</h1>
+                     <p>Esta nota e as informações dela serão apagadas.</p>
+                  </div>
+                  <div class="container-btn">
+                     <div>
+                        <button class="btn-confirm-delete btn-default">Sim, Excluir</button>
+                     </div>
+                     <div>
+                        <button class="btn-cancel-delete btn-default">Cancelar</button>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+
+      <div class="popup-wrapper-cloud-error popup-wrapper">
+         <div class="popup-overlay">
+            <div class="popup-cloud-error popup">
+               <div class="close">
+                  <button class="close-popup-target close-popup center-flex" tabindex="0">
+                     <img class="close-popup-target close-popup" src="./images/close_popup_icon.svg" alt="Fechar popup">
+                  </button>
+               </div>
+               <div class="container-img">
+                  <img src="./images/cloud-error.png" alt="imagem de erro do servidor"/>
+               </div>
+               <div class="container-texts">
+                  <div>
+                     <h1>Ops! Perdemos a conexão com o servidor.</h1>
+                  </div>
+                  <div>
+                     <p>
+                        As ultimas alterações foram desfeitas. Por favor, tente novamente mais tarde.
+                     </p>
+                  </div>
+               </div>
+               <div>
+                  <button class="btn-confirm-error btn-default btn-default-hover center-flex">
+                     Continuar
+                     <img src="./images/arrow_right.svg" alt="ícone de seta para continuar" />
+                  </button>
+               </div>
+            </div>
+         </div>
+      </div>
+
+      <div class="container-not-selected center-flex hide">
+         <svg width="195" height="120" viewBox="0 0 195 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M47 54H115.551V66H47V54ZM47 42H115.551V30H47V42ZM47 90H90.6233V78H47V90ZM140.541 71.22L144.966 66.96C145.542 66.4038 146.227 65.9625 146.981 65.6614C147.735 65.3603 148.543 65.2053 149.359 65.2053C150.175 65.2053 150.983 65.3603 151.737 65.6614C152.491 65.9625 153.176 66.4038 153.753 66.96L158.177 71.22C160.608 73.56 160.608 77.34 158.177 79.68L153.753 83.94L140.541 71.22ZM136.116 75.48L103.087 107.28V120H116.299L149.328 88.2L136.116 75.48Z" fill="#949494"/>
+            <path d="M170.131 95.3861L186.295 104.972L184.682 107.665L168.518 98.0791L170.131 95.3861ZM171.743 92.693L187.907 102.279L189.519 99.5863L173.355 90L171.743 92.693ZM165.294 103.465L175.58 109.566L177.192 106.873L166.906 100.772L165.294 103.465ZM189.873 112.332L191.489 111.994C191.7 111.95 191.92 111.947 192.139 111.985C192.357 112.023 192.568 112.101 192.761 112.215C192.953 112.329 193.123 112.477 193.26 112.65C193.398 112.823 193.5 113.018 193.561 113.223L194.032 114.798C194.29 115.663 193.783 116.511 192.895 116.696L191.279 117.034L189.873 112.332ZM188.258 112.669L176.197 115.187L174.488 118.041L177.603 119.889L189.664 117.371L188.258 112.669Z" fill="#B5B5B5"/>
+            <path d="M2.34587 24.8142L19.8087 17.8406L20.9817 20.7501L3.5188 27.7237L2.34587 24.8142ZM1.17293 21.9047L18.6358 14.9312L17.4629 12.0217L0 18.9953L1.17293 21.9047ZM5.86466 33.5426L16.9774 29.1049L15.8045 26.1954L4.69173 30.6331L5.86466 33.5426ZM27.8579 19.4735L28.5686 17.9906C28.6611 17.7971 28.7925 17.6204 28.9551 17.4707C29.1177 17.321 29.3084 17.2012 29.5163 17.1182C29.7243 17.0352 29.9453 16.9905 30.1668 16.9869C30.3882 16.9832 30.6058 17.0205 30.8071 17.0967L32.3506 17.6794C33.1985 17.9995 33.5679 18.916 33.1775 19.7306L32.4668 21.2136L27.8579 19.4735ZM27.1471 20.9565L21.8415 32.0266L23.0848 35.1106L26.4504 33.7666L31.756 22.6966L27.1471 20.9565Z" fill="#B5B5B5"/>
+            <rect width="29.7095" height="18.0344" rx="2" transform="matrix(0.775549 -0.631287 0.634887 0.772605 0 101.255)" fill="#DFDFDF"/>
+            <rect width="29.7335" height="18.0198" rx="2" transform="matrix(0.878059 0.478552 -0.482059 0.876139 142.705 0)" fill="#DFDFDF"/>
+         </svg>
+         <p>
+            Nenhum item selecionado. Selecione uma categoria para ler suas notas.
+         </p>
+      </div>
+
+      <div class="container-auto-save hide">
+         <div class="pending">
+            <div class="loading"></div>
+            <div>
+               Salvando as Alterações
+            </div>
+         </div>
+         <div class="success">
+            <div>
+               <svg xmlns="http://www.w3.org/2000/svg" height="25px" viewBox="0 0 24 24" width="25px" fill="#00dd6f">
+                  <path d="M0 0h24v24H0V0z" fill="none"/>
+                  <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+               </svg>
             </div>
             <div>
-               <button class="btn-confirm-error btn-default btn-default-hover center-flex">
-                  Continuar
-                  <img src="./images/arrow_right.svg" alt="ícone de seta para continuar" />
-               </button>
+               As alterações foram salvas
             </div>
          </div>
       </div>
-   </div>
 
-   <div class="container-not-selected center-flex hide">
-      <svg width="195" height="120" viewBox="0 0 195 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-         <path d="M47 54H115.551V66H47V54ZM47 42H115.551V30H47V42ZM47 90H90.6233V78H47V90ZM140.541 71.22L144.966 66.96C145.542 66.4038 146.227 65.9625 146.981 65.6614C147.735 65.3603 148.543 65.2053 149.359 65.2053C150.175 65.2053 150.983 65.3603 151.737 65.6614C152.491 65.9625 153.176 66.4038 153.753 66.96L158.177 71.22C160.608 73.56 160.608 77.34 158.177 79.68L153.753 83.94L140.541 71.22ZM136.116 75.48L103.087 107.28V120H116.299L149.328 88.2L136.116 75.48Z" fill="#949494"/>
-         <path d="M170.131 95.3861L186.295 104.972L184.682 107.665L168.518 98.0791L170.131 95.3861ZM171.743 92.693L187.907 102.279L189.519 99.5863L173.355 90L171.743 92.693ZM165.294 103.465L175.58 109.566L177.192 106.873L166.906 100.772L165.294 103.465ZM189.873 112.332L191.489 111.994C191.7 111.95 191.92 111.947 192.139 111.985C192.357 112.023 192.568 112.101 192.761 112.215C192.953 112.329 193.123 112.477 193.26 112.65C193.398 112.823 193.5 113.018 193.561 113.223L194.032 114.798C194.29 115.663 193.783 116.511 192.895 116.696L191.279 117.034L189.873 112.332ZM188.258 112.669L176.197 115.187L174.488 118.041L177.603 119.889L189.664 117.371L188.258 112.669Z" fill="#B5B5B5"/>
-         <path d="M2.34587 24.8142L19.8087 17.8406L20.9817 20.7501L3.5188 27.7237L2.34587 24.8142ZM1.17293 21.9047L18.6358 14.9312L17.4629 12.0217L0 18.9953L1.17293 21.9047ZM5.86466 33.5426L16.9774 29.1049L15.8045 26.1954L4.69173 30.6331L5.86466 33.5426ZM27.8579 19.4735L28.5686 17.9906C28.6611 17.7971 28.7925 17.6204 28.9551 17.4707C29.1177 17.321 29.3084 17.2012 29.5163 17.1182C29.7243 17.0352 29.9453 16.9905 30.1668 16.9869C30.3882 16.9832 30.6058 17.0205 30.8071 17.0967L32.3506 17.6794C33.1985 17.9995 33.5679 18.916 33.1775 19.7306L32.4668 21.2136L27.8579 19.4735ZM27.1471 20.9565L21.8415 32.0266L23.0848 35.1106L26.4504 33.7666L31.756 22.6966L27.1471 20.9565Z" fill="#B5B5B5"/>
-         <rect width="29.7095" height="18.0344" rx="2" transform="matrix(0.775549 -0.631287 0.634887 0.772605 0 101.255)" fill="#DFDFDF"/>
-         <rect width="29.7335" height="18.0198" rx="2" transform="matrix(0.878059 0.478552 -0.482059 0.876139 142.705 0)" fill="#DFDFDF"/>
-      </svg>
-      <p>
-         Nenhum item selecionado. Selecione uma categoria para ler suas notas.
-      </p>
-   </div>
+      <div class="popup-wrapper-profile popup-wrapper" tabindex="0"></div>
+      <div class="popup-wrapper-cookie popup-wrapper"></div>
+      <div class="popup-wrapper-email-confirmation popup-wrapper"></div>
+      <div class="popup-wrapper-reset-password popup-wrapper"></div>
 
-   <div class="container-auto-save hide">
-      <div class="pending">
-         <div class="loading"></div>
-         <div>
-            Salvando as Alterações
-         </div>
-      </div>
-      <div class="success">
-         <div>
-            <svg xmlns="http://www.w3.org/2000/svg" height="25px" viewBox="0 0 24 24" width="25px" fill="#00dd6f">
-               <path d="M0 0h24v24H0V0z" fill="none"/>
-               <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
-            </svg>
-         </div>
-         <div>
-            As alterações foram salvas
-         </div>
-      </div>
-   </div>
-
-   <div class="popup-wrapper-auth popup-wrapper" tabindex="0"></div>
-   <div class="popup-wrapper-profile popup-wrapper" tabindex="0"></div>
-   <div class="popup-wrapper-cookie popup-wrapper"></div>
-
-   <script type="module" src="./src/components/noteApp/index.js"></script>
-</body>
+      <script type="module" src="./src/components/noteApp/index.js"></script>
+   </body>
 </html>
