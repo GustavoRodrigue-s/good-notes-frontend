@@ -4,6 +4,7 @@ export default function createRecoverAccount(confirmationCode) {
       formForgotPassword: null,
       previousPopup: null
    }
+   
 
    function createForm({ api, cookie }) {
       const state = {
@@ -105,7 +106,7 @@ export default function createRecoverAccount(confirmationCode) {
             setTimeout(showPopup, 300);
          });
 
-         confirmationCode.subscribe('hidden popup', () => setTimeout(showPopup, 300));
+         confirmationCode.subscribe('hidden popup', showPopup);
       }
 
       const forgotPassword = async credentials => {

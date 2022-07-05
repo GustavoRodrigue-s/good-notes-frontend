@@ -540,11 +540,6 @@ function createPopupProfile(header, confirmationCode, recoverAccount) {
          popupDeletion.resetPopup();
       }
 
-      const showPopup = () => {
-         const overlayProfile = state.popupWrapper.querySelector('.overlay-profile');
-         overlayProfile.classList.add('show');
-      }
-
       const togglePasswordEye = btn => {
          const inputPassword = btn.parentElement.firstElementChild;
          
@@ -636,8 +631,13 @@ function createPopupProfile(header, confirmationCode, recoverAccount) {
          togglePasswordEye(target) {
             togglePasswordEye(target.parentElement);
          },
-         showResetPassword() {
-            console.log('Showing...');
+         showRecoverAccount() {
+            const overlayProfile = state.popupWrapper.querySelector('.overlay-profile');
+            
+            state.popupWrapper.classList.remove('show');
+            overlayProfile.classList.remove('show');
+
+            recoverAccount.showPopup({ showPopup }, true);
          }
       }
 
@@ -1001,7 +1001,7 @@ function createPopupProfile(header, confirmationCode, recoverAccount) {
                            </button>
                         </div>
                         <div>
-                           <button type="button" class="forgot-password">Esqueceu a senha?</button>
+                           <button type="button" class="forgot-password" data-action="showRecoverAccount">Esqueceu a senha?</button>
                            <button type="submit" class="btn-update-password btn-default btn-default-hover">
                               Alterar senha
                               <div class="container-btn-loading center-flex">

@@ -8,7 +8,7 @@
 @import url('../src/components/popupForms/popup.css');
 @import url('../src/components/popupProfile/popup.css');
 @import url('../src/components/emailConfirmation/popup.css');
-@import url('../src/components/resetPassword/popup.css');
+@import url('../src/components/recoverAccount/popup.css');
 
 * {
    margin: 0;
