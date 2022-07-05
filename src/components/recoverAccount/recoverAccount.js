@@ -176,6 +176,15 @@ export default function createRecoverAccount(confirmationCode) {
 
       shouldReset && resetPopup();
 
+      const profileData = sessionStorage.getItem('profileData');
+
+      if (profileData && shouldReset) {
+         const { inputEmail } = state.wrapper.querySelector('form');
+         const { email } = JSON.parse(profileData);
+         
+         inputEmail.value = email;
+      }
+
       state.wrapper.classList.add('show');
    }
 
