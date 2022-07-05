@@ -287,7 +287,7 @@ export default function createEmailConfirmation() {
 
    const render = someHooks => {
       const template = `
-      <div class="popup-overlay overlay-email-confirmation" data-action="hide">
+      <div class="popup-overlay overlay-email-confirmation">
          <div class="popup popup-email-confirmation">
             <div class="close">
                <button class="close-popup-target close-popup center-flex" tabindex="0" data-action="hide">

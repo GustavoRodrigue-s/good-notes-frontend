@@ -437,7 +437,7 @@ function createPopupAuthForms(confirmationCode, recoverAccount) {
 
    const render = someHooks => {
       const template = `
-      <div class="popup-overlay overlay-signIn" data-action="shouldShowOrHidePopup">
+      <div class="popup-overlay overlay-signIn">
          <div class="popup-signIn popup popup-forms" data-form="formSignIn">
             <div class="popup-content">
                <div class="close">
@@ -523,7 +523,7 @@ function createPopupAuthForms(confirmationCode, recoverAccount) {
          </div>
       </div>
    
-      <div class="popup-overlay overlay-signUp" data-action="shouldShowOrHidePopup">
+      <div class="popup-overlay overlay-signUp">
          <div class="popup-signUp popup popup-forms" data-form="formSignUp">
             <div class="popup-content">
                <div class="close">

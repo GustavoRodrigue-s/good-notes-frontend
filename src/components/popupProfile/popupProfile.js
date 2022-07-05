@@ -778,7 +778,7 @@ function createPopupProfile(header, confirmationCode, recoverAccount) {
 
    const render = someHooks => {
       const template = `
-      <div class="popup-overlay overlay-confirm-delete" data-action="shouldShowOrHidePopup">
+      <div class="popup-overlay overlay-confirm-delete">
          <div class="popup-confirm-to-delete-account popup">
             <div class="close">
                <button class="close-sub-popup-target close-popup center-flex" tabindex="0" data-action="shouldHidePopup">
@@ -826,7 +826,7 @@ function createPopupProfile(header, confirmationCode, recoverAccount) {
          </div>
       </div>
 
-      <div class="popup-overlay overlay-profile" data-action="shouldShowOrHidePopup">
+      <div class="popup-overlay overlay-profile">
          <div class="popup-profile popup">
             <div class="close">
                <button class="close-popup-target close-popup center-flex" tabindex="0" data-action="shouldShowOrHidePopup">

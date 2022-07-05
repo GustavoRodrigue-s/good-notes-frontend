@@ -194,7 +194,7 @@ export default function createRecoverAccount(confirmationCode) {
 
    const render = hooks => {
       const template = `
-      <div class="popup-overlay overlay-reset-password" data-action="hide">
+      <div class="popup-overlay overlay-reset-password">
          <div class="popup popup-reset-password">
             <div class="close">
                <button class="close-popup-target close-popup center-flex" tabindex="0" data-action="hide">
