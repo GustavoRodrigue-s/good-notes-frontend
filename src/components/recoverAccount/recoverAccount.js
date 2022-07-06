@@ -4,7 +4,6 @@ export default function createRecoverAccount(confirmationCode) {
       formForgotPassword: null,
       previousPopup: null
    }
-   
 
    function createForm({ api, cookie }) {
       const state = {
@@ -56,6 +55,15 @@ export default function createRecoverAccount(confirmationCode) {
                      'E-mail não encontrado!',
                      currentInput.parentElement.parentElement
                   )
+               },
+               "invalid email"() {
+                  const { inputEmail } = state.form;
+
+                  handleErrors.showInputError(
+                     inputEmail,
+                     'Digite um e-mail válido!',
+                     inputEmail.parentElement.parentElement
+                  );
                },
                "request error"() {
                   const errorMessage = state.form.querySelector('.container-recover-account-error');
@@ -149,6 +157,16 @@ export default function createRecoverAccount(confirmationCode) {
       }
       
       state.form.addEventListener('submit', handleSubmitForm);
+
+      state.form.inputEmail.addEventListener('invalid', e => {
+         e.preventDefault();
+
+         const isNotValidEmail = e.target.validity.typeMismatch;
+
+         if (isNotValidEmail) {
+            handleErrors.showError([{ state: 'error', reason: 'invalid email' }]);
+         }
+      });
 
       return {
          hideErrors: handleErrors.hideErrors,

@@ -118,6 +118,15 @@ function createPopupProfile(header, confirmationCode, recoverAccount) {
                      currentInput.parentElement.parentElement
                   );
                },
+               "invalid email"() {
+                  const { inputEmail } = state.credentialsForm;
+
+                  handleErrors.showInputError(
+                     inputEmail,
+                     'Digite um e-mail válido!',
+                     inputEmail.parentElement.parentElement
+                  );
+               },
                "username already exists"({ input }) {
                   const currentInput = state.credentialsForm[input];
 
@@ -513,6 +522,16 @@ function createPopupProfile(header, confirmationCode, recoverAccount) {
       state.resetPasswordForm.addEventListener('submit', dispatch.shouldUpdatePassword);
       state.formPhoto.inputPhoto.addEventListener('change', handlePreviewChange);
 
+      state.credentialsForm.inputEmail.addEventListener('invalid', e => {
+         e.preventDefault();
+
+         const isNotValidEmail = e.target.validity.typeMismatch;
+
+         if (isNotValidEmail) {
+            handleErrors.showCredentialsError([{ state: 'error', reason: 'invalid email' }]);
+         }
+      });
+
       return { 
          shouldRequestCredentials: dispatch.shouldRequestCredentials,
          hideStoreErrors: handleErrors.hideStoreErrors,
@@ -895,7 +914,7 @@ function createPopupProfile(header, confirmationCode, recoverAccount) {
                      </div>
                      <div class="input-and-message">
                         <div class="container-input">
-                           <label for="input-email">Endereço de email</label>
+                           <label for="input-email">Endereço de e-mail</label>
                            <input type="email" class="input-email input-default" id="input-email" value="" name="inputEmail" autocomplete="off">  
                         </div>
                         <div class="container-error">
