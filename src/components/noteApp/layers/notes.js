@@ -279,6 +279,7 @@ export function createCurrentNote(repository) {
       autoSave: setTimeout,
       currentNote: document.querySelector('section.current-note'),
       currentNoteForm: document.querySelector('.current-note .current-note-form'), 
+      textEditor: document.querySelector('.current-note .area-note-content'),
       toolBar: document.querySelector('section.current-note .tool-bar'),
    }
 
@@ -362,6 +363,24 @@ export function createCurrentNote(repository) {
       const command = targetElement.dataset.action;
       
       document.execCommand(command);
+   }
+
+   const textEditorTab = e => {
+      if (e.key !== 'Tab') {
+         return
+      }
+
+      e.preventDefault();
+  
+      const range = window.getSelection().getRangeAt(0);  
+
+      const tabNode = document.createTextNode("\u00a0\u00a0\u00a0\u00a0"); 
+      range.insertNode(tabNode); 
+
+      range.setStartAfter(tabNode); 
+      range.setEndAfter(tabNode); 
+
+      automaticallySaveChanges(e);
    }
 
    const selectionsTextEditor = e => {
@@ -451,7 +470,9 @@ export function createCurrentNote(repository) {
    state.currentNoteForm.addEventListener('submit', e => e.preventDefault());
 
    state.currentNote.addEventListener('pointerup', currentNoteListener);
-   state.currentNote.addEventListener('input', automaticallySaveChanges);
+
+   state.textEditor.addEventListener('input', automaticallySaveChanges);
+   state.textEditor.addEventListener('keydown', textEditorTab);
 
    state.toolBar.addEventListener('pointerup', btnTextEditor);
    state.toolBar.addEventListener('change', selectionsTextEditor);
