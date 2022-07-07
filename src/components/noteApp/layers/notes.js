@@ -468,10 +468,10 @@ export function createCurrentNote(repository) {
    }
 
    state.currentNoteForm.addEventListener('submit', e => e.preventDefault());
+   state.currentNoteForm.addEventListener('input', automaticallySaveChanges);
 
    state.currentNote.addEventListener('pointerup', currentNoteListener);
 
-   state.textEditor.addEventListener('input', automaticallySaveChanges);
    state.textEditor.addEventListener('keydown', textEditorTab);
 
    state.toolBar.addEventListener('pointerup', btnTextEditor);
