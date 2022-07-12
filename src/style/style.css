@@ -4,11 +4,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap');
 
-@import url('../src/components/cookie/cookie.css');
-@import url('../src/components/popupForms/popup.css');
-@import url('../src/components/popupProfile/popup.css');
-@import url('../src/components/emailConfirmation/popup.css');
-@import url('../src/components/recoverAccount/popup.css');
+@import url('../components/cookie/cookie.css');
+@import url('../components/popupForms/popup.css');
+@import url('../components/popupProfile/popup.css');
+@import url('../components/emailConfirmation/popup.css');
+@import url('../components/recoverAccount/popup.css');
 
 * {
    margin: 0;
