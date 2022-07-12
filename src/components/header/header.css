@@ -37,11 +37,12 @@ a.link-logo {
 
 .good-notes-logo {
    color: #000;
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   gap: 10px;
-   font: 400 3rem 'Fredoka', sans-serif;
+   font: 3rem var(--fontLogo);
+   letter-spacing: -2px;
+}
+
+.good-notes-logo > .color-good {
+   color: var(--primaryColor);
 }
 
 .container-header-flex, .container-authentication {

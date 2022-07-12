@@ -114,14 +114,8 @@ function createHeader() {
       <div class="container-header-flex">
          <a href="/" tabindex="0" class="link-logo">
             <div class="good-notes-logo">
-               <svg width="42" height="35" viewBox="0 0 43 37" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="6.25" y="0.25" width="36.5" height="30.5" rx="4.75" fill="#0058DB" stroke="white" stroke-width="0.5"/>
-                  <path d="M6 6.25H31C34.1756 6.25 36.75 8.82436 36.75 12V31C36.75 34.1756 34.1756 36.75 31 36.75H10C4.61522 36.75 0.25 32.3848 0.25 27V12C0.25 8.82436 2.82436 6.25 6 6.25Z" fill="#0066FF" stroke="white" stroke-width="0.5"/>
-                  <line x1="5.5" y1="11.5" x2="32.5" y2="11.5" stroke="white" stroke-linecap="round"/>
-                  <line x1="5.5" y1="19.5" x2="32.5" y2="19.5" stroke="white" stroke-linecap="round"/>
-                  <line x1="5.5" y1="15.5" x2="32.5" y2="15.5" stroke="white" stroke-linecap="round"/>
-               </svg>
-               Good Notes
+               <span class="color-good">good</span>
+               <span>notes</span>
             </div>
          </a>
          <div class="container-content-header container-dropDown">
