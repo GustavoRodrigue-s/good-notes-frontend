@@ -1,0 +1,115 @@
+main {
+   width: 100%;
+   max-width: 1250px;
+   margin: auto;
+}
+
+.apresentation {
+   width: 100%;
+   margin: 70px 0 200px 0;
+   text-align: center;
+}
+
+/* ---------- Apresentation First Div ---------- */
+
+.apresentation h1 {
+   margin: auto;
+   font: 800 6rem var(--fontDefault);
+   width: 1000px;
+}
+
+.apresentation p {
+   margin: 30px auto;
+   font: 2rem var(--fontDefault);
+   color: var(--paragraphColor);
+   width: 400px;
+}
+
+.apresentation button {
+   width: 240px;
+   height: 45px;
+   font-weight: 500;
+}
+
+/* ---------- Apresentation Second Div ---------- */
+
+.apresentation > div:last-child {
+   position: relative;
+}
+
+.apresentation .container-main {
+   position: relative;
+   z-index: 999;
+   margin-top: 70px;
+   padding: 5px;
+   border-radius: 20px;
+   background: linear-gradient(180deg, #E4E4E4 0%, rgba(188, 215, 237, 0.568) 163.8%, rgba(188, 215, 237, 0.425) 163.8%);
+   box-shadow: 0px 0px 60px rgba(0, 0, 0, 0.1);
+}
+
+.apresentation .container-main > img { 
+   width: 100%;
+   vertical-align: middle;
+   border-radius: 16px;
+   pointer-events: none;
+}
+
+/* ---------- Apresentation Drawings ---------- */
+
+.drawing1, .drawing2, .drawing3, .drawing4 {
+   z-index: 99;
+   position: absolute;
+}
+
+.drawing1 {
+   top: -60px;
+   left: 12%;
+}
+
+.drawing2 {
+   top: -40px;
+   right: -30px;
+}
+
+.drawing3 {
+   right: 13%;
+   bottom: -60px;
+}
+
+.drawing4 {
+   left: -30px;
+   bottom: -40px;
+}
+
+/* Pensar em como diminuir o processamento (talvez com gif) */
+
+/* @keyframes dash {
+   from { stroke-dashoffset: 0; }
+   to { stroke-dashoffset: -40; }
+}
+
+.drawing1 .trace {
+   stroke-dashoffset: -40;
+   animation: dash 2s infinite linear;
+} */
+
+/* ---------- Backlights ---------- */
+
+.backlight1, .backlight2 {
+   position: absolute;
+   width: 600px;
+   height: 600px;
+   border-radius: 50%;
+}
+
+.backlight1 {
+   left: -15%;
+   top: -35%;
+   background: radial-gradient(39.07% 39.07% at 50% 50%, rgba(163, 234, 255, 0.432) 0%, rgba(0, 102, 255, 0) 100%);
+}
+
+.backlight2 {
+   right: -15%;
+   bottom: -45%;
+   background:radial-gradient(39.07% 39.07% at 50% 50%, rgba(128, 187, 255, 0.384) 0%, rgba(0, 46, 115, 0) 100%);
+}
