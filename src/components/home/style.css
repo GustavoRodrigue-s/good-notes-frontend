@@ -1,12 +1,12 @@
 main {
    width: 100%;
-   max-width: 1250px;
+   max-width: 1150px;
    margin: auto;
 }
 
 .apresentation {
    width: 100%;
-   margin: 70px 0 200px 0;
+   margin: 70px 0;
    text-align: center;
 }
 
@@ -14,8 +14,8 @@ main {
 
 .apresentation h1 {
    margin: auto;
-   font: 800 6rem var(--fontDefault);
-   width: 1000px;
+   font: 800 5.5rem var(--fontDefault);
+   width: 900px;
 }
 
 .apresentation p {
@@ -111,5 +111,115 @@ main {
 .backlight2 {
    right: -15%;
    bottom: -45%;
-   background:radial-gradient(39.07% 39.07% at 50% 50%, rgba(128, 187, 255, 0.384) 0%, rgba(0, 46, 115, 0) 100%);
+   background: radial-gradient(39.07% 39.07% at 50% 50%, rgba(128, 187, 255, 0.384) 0%, rgba(0, 46, 115, 0) 100%);
+}
+
+/* ---------- About Notes ---------- */
+
+.about-notes {
+   margin-top: 200px;
+}
+
+.about-notes > div:first-child h1 {
+   text-align: center;
+   font: 800 3.6rem var(--fontDefault);
+}
+
+.about-notes h1 > span {
+   color: var(--primaryColor);
+}
+
+/* ---------- Containers ---------- */
+
+.about-notes .container-containers {
+   margin-top: 100px;
+   width: 100%;
+   display: grid;
+   grid-template-columns: 1fr 1fr;
+   grid-template-rows: 450px 450px;
+   grid-gap: 50px 30px;
+   grid-template-areas: 
+      'container-organize container-customize' 
+      'container-all-devices container-all-devices'
+   ;
+}
+
+.about-notes .container-containers > div {
+   text-align: center;
+   background: linear-gradient(180deg, #F2F2F4 0%, rgba(166, 207, 240, 0.473) 176.67%);
+   border-radius: 20px;
+   overflow: hidden;
+   position: relative;
+}
+
+.about-notes .container-containers > div h1 {
+   margin-top: 35px;
+   font: 700 2.8rem var(--fontDefault);
+}
+
+.about-notes .container-containers > div p {
+   margin: 10px auto;
+   color: var(--paragraphColor);
+   font-size: 1.6rem;
+}
+
+.about-notes .container-organize {
+   grid-area: container-organize;
+}
+
+.about-notes .container-customize {
+   grid-area: container-customize;
+}
+
+.about-notes .container-all-devices {
+   grid-area: container-all-devices;
+}
+
+/* ---------- Container Organize ---------- */
+
+.container-organize p {
+   width: 400px;
+}
+
+.container-organize .container-img-section {
+   padding: 20px;
+}
+
+.container-organize img {
+   width: 100%;
+   margin-left: 5px;
+   pointer-events: none;
+}
+
+/* ---------- Container Customize ---------- */
+
+.container-customize p {
+   width: 450px;
+}
+
+.container-customize .container-img-section {
+   padding: 0 20px;
+   margin-top: 20px;
+}
+
+.container-customize .container-img-section > img {
+   width: 100%;
+   pointer-events: none;
+}
+
+/* ---------- Container All Devices ---------- */
+
+.container-all-devices p {
+   width: 600px;
+}
+
+.container-all-devices .container-img-section {
+   width: 100%;
+   padding: 0 60px;
+   position: absolute;
+   bottom: 0;
+}
+
+.container-all-devices .container-img-section > img {
+   width: 100%;
 }
