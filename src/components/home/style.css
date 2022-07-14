@@ -1,12 +1,12 @@
-main {
-   width: 100%;
+main > section:not(section.creativity), footer {
+   width: 90%;
    max-width: 1150px;
-   margin: auto;
 }
 
+/* ---------- Apresentation ---------- */
+
 .apresentation {
-   width: 100%;
-   margin: 70px 0;
+   margin: 70px auto;
    text-align: center;
 }
 
@@ -25,7 +25,7 @@ main {
    width: 400px;
 }
 
-.apresentation button {
+.apresentation button, .creativity button {
    width: 240px;
    height: 45px;
    font-weight: 500;
@@ -117,7 +117,7 @@ main {
 /* ---------- About Notes ---------- */
 
 .about-notes {
-   margin-top: 200px;
+   margin: 200px auto 0 auto;
 }
 
 .about-notes > div:first-child h1 {
@@ -145,6 +145,8 @@ main {
 }
 
 .about-notes .container-containers > div {
+   display: flex;
+   flex-direction: column;
    text-align: center;
    background: linear-gradient(180deg, #F2F2F4 0%, rgba(166, 207, 240, 0.473) 176.67%);
    border-radius: 20px;
@@ -161,6 +163,10 @@ main {
    margin: 10px auto;
    color: var(--paragraphColor);
    font-size: 1.6rem;
+}
+
+.about-notes .container-containers > div > .container-img-section {
+   flex: 1 1;
 }
 
 .about-notes .container-organize {
@@ -182,13 +188,8 @@ main {
 }
 
 .container-organize .container-img-section {
-   padding: 20px;
-}
-
-.container-organize img {
-   width: 100%;
-   margin-left: 5px;
-   pointer-events: none;
+   background: url('../../../images/Home Imgs/section_organize.svg') no-repeat 20px center;
+   background-size: 95%;
 }
 
 /* ---------- Container Customize ---------- */
@@ -198,13 +199,8 @@ main {
 }
 
 .container-customize .container-img-section {
-   padding: 0 20px;
-   margin-top: 20px;
-}
-
-.container-customize .container-img-section > img {
-   width: 100%;
-   pointer-events: none;
+   background: url('../../../images/Home Imgs/section_tool_bar.svg') no-repeat center;
+   background-size: 90%;
 }
 
 /* ---------- Container All Devices ---------- */
@@ -214,12 +210,137 @@ main {
 }
 
 .container-all-devices .container-img-section {
-   width: 100%;
-   padding: 0 60px;
-   position: absolute;
-   bottom: 0;
+   background: url('../../../images/Home Imgs/section_all_devices.svg') no-repeat bottom center;
+   background-size: 85%;
 }
 
-.container-all-devices .container-img-section > img {
+/* ---------- About good notes ----------- */
+
+.about-good-notes {
+   margin: 200px auto 0 auto;
+}
+
+.about-good-notes h1 {
+   text-align: center;
+   font: 800 3.6rem var(--fontDefault);
+}
+
+.about-good-notes h3 {
+   font-weight: 600;
+}
+
+.about-good-notes p {
+   color: var(--paragraphColor);
+}
+
+.about-good-notes > div:last-child {
+   margin-top: 100px;
+}
+
+/* ---------- Container Items ---------- */
+
+.about-good-notes .container-items {
+   display: flex;
+   flex-wrap: wrap;
+   justify-content: center;
+   gap: 20px 10px;
+}
+
+.about-good-notes .item {
+   flex: 1 1 270px;
+}
+
+.about-good-notes .container-items .icon-and-name {
+   display: flex;
+   align-items: center;
+   gap: 10px;
+   margin-bottom: 10px;
+}
+
+/* ---------- Creativity ---------- */
+
+.creativity {
    width: 100%;
+   height: 350px;
+   margin-top: 200px;
+   text-align: center;
+   background-color: #f6f6f6;
+   position: relative;
+}
+
+.creativity h1 {
+   font: 800 3.6rem var(--fontDefault);
+}
+
+.creativity h1 > span {
+   color: var(--primaryColor);
+}
+
+/* ---------- Creativity Content ---------- */
+
+.creativity > .content {
+   height: 100%;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   gap: 50px;
+}
+
+
+/* ---------- Ornaments ---------- */
+
+.ornaments {
+   width: 100%;
+   height: 100%;
+   position: absolute;
+   inset: 0;
+}
+
+.ornaments > div {
+   position: absolute;
+}
+
+.ornament-eclipse-1 {
+   left: 20%;
+}
+
+.ornament-eclipse-2 {
+   bottom: 0;
+   left: 52%;   
+}
+
+.ornament-drawing-1 {
+   bottom: 30%;
+   right: 27%;
+}
+
+.ornament-drawing-2 {
+   top: 47%;
+   left: 28%;
+}
+
+/* ---------- Footer ---------- */
+
+footer {
+   padding: 50px 0;
+   margin: 120px auto 0 auto;
+   border-top: 1px solid var(--colorLine);
+   color: var(--paragraphColor);
+   font-size: 1.4rem;
+}
+
+footer > .links {
+   margin-top: 15px;
+   font-size: 1.3rem;
+}
+
+footer > .links > a, footer strong {
+   color: #000;
+   font-weight: 500;
+}
+
+footer > .links > a:hover {
+   color: var(--primaryColor);
+   text-decoration: underline;
 }
