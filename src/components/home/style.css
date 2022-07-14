@@ -1,3 +1,7 @@
+main p {
+   font-size: 1.5rem;
+}
+
 main > section:not(section.creativity), footer {
    width: 90%;
    max-width: 1150px;
@@ -20,7 +24,7 @@ main > section:not(section.creativity), footer {
 
 .apresentation p {
    margin: 30px auto;
-   font: 2rem var(--fontDefault);
+   font: 1.8rem var(--fontDefault);
    color: var(--paragraphColor);
    width: 400px;
 }
@@ -148,7 +152,7 @@ main > section:not(section.creativity), footer {
    display: flex;
    flex-direction: column;
    text-align: center;
-   background: linear-gradient(180deg, #F2F2F4 0%, rgba(166, 207, 240, 0.473) 176.67%);
+   background: linear-gradient(180deg, #F2F2F4 0%, rgba(166, 207, 240, 0.247) 176.67%);
    border-radius: 20px;
    overflow: hidden;
    position: relative;
@@ -162,7 +166,6 @@ main > section:not(section.creativity), footer {
 .about-notes .container-containers > div p {
    margin: 10px auto;
    color: var(--paragraphColor);
-   font-size: 1.6rem;
 }
 
 .about-notes .container-containers > div > .container-img-section {
@@ -243,7 +246,8 @@ main > section:not(section.creativity), footer {
    display: flex;
    flex-wrap: wrap;
    justify-content: center;
-   gap: 20px 10px;
+   align-items: flex-start;
+   gap: 20px;
 }
 
 .about-good-notes .item {
@@ -279,6 +283,8 @@ main > section:not(section.creativity), footer {
 /* ---------- Creativity Content ---------- */
 
 .creativity > .content {
+   position: relative;
+   z-index: 10;
    height: 100%;
    display: flex;
    flex-direction: column;
@@ -287,13 +293,13 @@ main > section:not(section.creativity), footer {
    gap: 50px;
 }
 
-
 /* ---------- Ornaments ---------- */
 
 .ornaments {
    width: 100%;
    height: 100%;
    position: absolute;
+   z-index: 1;
    inset: 0;
 }
 
@@ -323,7 +329,7 @@ main > section:not(section.creativity), footer {
 /* ---------- Footer ---------- */
 
 footer {
-   padding: 50px 0;
+   padding: 40px 0;
    margin: 120px auto 0 auto;
    border-top: 1px solid var(--colorLine);
    color: var(--paragraphColor);
