@@ -1,3 +1,7 @@
+main {
+   overflow-x: hidden;
+}
+
 main p {
    font-size: 1.5rem;
 }
@@ -12,21 +16,24 @@ main > section:not(section.creativity), footer {
 .apresentation {
    margin: 70px auto;
    text-align: center;
+   position: relative;
 }
 
 /* ---------- Apresentation First Div ---------- */
 
 .apresentation h1 {
    margin: auto;
-   font: 800 5.5rem var(--fontDefault);
-   width: 900px;
+   font: 800 min(5.5rem, 9vw) var(--fontDefault);
+   width: 100%;
+   max-width: 900px;
 }
 
 .apresentation p {
    margin: 30px auto;
-   font: 1.8rem var(--fontDefault);
+   font: min(1.8rem, 4vw) var(--fontDefault);
    color: var(--paragraphColor);
-   width: 400px;
+   width: 100%;
+   max-width: 400px;
 }
 
 .apresentation button, .creativity button {
@@ -56,6 +63,7 @@ main > section:not(section.creativity), footer {
    vertical-align: middle;
    border-radius: 16px;
    pointer-events: none;
+   user-select: none;
 }
 
 /* ---------- Apresentation Drawings ---------- */
@@ -112,25 +120,28 @@ main > section:not(section.creativity), footer {
 .drawing4 path:nth-child(1) { animation-delay: 0; }
 .drawing4 path:nth-child(2) { animation-delay: 0.5s; }
 
-/* ---------- Backlights ---------- */
+/* ---------- Apresentation Backlights ---------- */
 
 .backlight1, .backlight2 {
    position: absolute;
    width: 600px;
    height: 600px;
-   border-radius: 50%;
+}
+
+.backlight1 > img, .backlight2 > img {
+   width: 100%;
+   pointer-events: none;
+   user-select: none;
 }
 
 .backlight1 {
-   left: -15%;
-   top: -35%;
-   background: radial-gradient(39.07% 39.07% at 50% 50%, rgba(163, 234, 255, 0.432) 0%, rgba(0, 102, 255, 0) 100%);
+   left: -20%;
+   top: 10%;
 }
 
 .backlight2 {
-   right: -15%;
-   bottom: -45%;
-   background: radial-gradient(39.07% 39.07% at 50% 50%, rgba(128, 172, 255, 0.384) 0%, rgba(0, 12, 115, 0) 100%);
+   right: -20%;
+   bottom: -25%;
 }
 
 /* ---------- About Notes ---------- */
@@ -155,7 +166,7 @@ main > section:not(section.creativity), footer {
    width: 100%;
    display: grid;
    grid-template-columns: 1fr 1fr;
-   grid-template-rows: 450px 450px;
+   grid-template-rows: 1fr 1fr;
    grid-gap: 50px 30px;
    grid-template-areas: 
       'container-organize container-customize' 
@@ -174,17 +185,25 @@ main > section:not(section.creativity), footer {
 }
 
 .about-notes .container-containers > div h1 {
+   padding: 0 20px;
    margin-top: 35px;
-   font: 700 2.8rem var(--fontDefault);
+   font: 700 min(2.5rem, 2vw) var(--fontDefault);
 }
 
 .about-notes .container-containers > div p {
+   padding: 0 20px;
    margin: 10px auto;
    color: var(--paragraphColor);
+   font-size: min(1.6rem, 1.3vw);
 }
 
 .about-notes .container-containers > div > .container-img-section {
    flex: 1 1;
+   display: flex;
+   justify-content: center;
+   align-items: flex-end;
+   padding: 10px;
+   overflow: hidden;
 }
 
 .about-notes .container-organize {
@@ -202,34 +221,39 @@ main > section:not(section.creativity), footer {
 /* ---------- Container Organize ---------- */
 
 .container-organize p {
-   width: 400px;
+   width: 100%;
+   max-width: 400px;
 }
 
-.container-organize .container-img-section {
-   background: url('../../../images/Home Imgs/section_organize.svg') no-repeat 20px center;
-   background-size: 95%;
+.container-organize .container-img-section > img {
+   width: 100%;
+   margin-left: 2%;
 }
 
 /* ---------- Container Customize ---------- */
 
 .container-customize p {
-   width: 450px;
+   width: 100%;
+   max-width: 450px;
 }
 
-.container-customize .container-img-section {
-   background: url('../../../images/Home Imgs/section_tool_bar.svg') no-repeat center;
-   background-size: 90%;
+.container-customize .container-img-section > img {
+   width: 100%;
 }
 
 /* ---------- Container All Devices ---------- */
 
 .container-all-devices p {
-   width: 600px;
+   width: 100%;
+   max-width: 600px;
 }
 
 .container-all-devices .container-img-section {
-   background: url('../../../images/Home Imgs/section_all_devices.svg') no-repeat bottom center;
-   background-size: 85%;
+   padding-bottom: 0 !important;
+}
+
+.container-all-devices .container-img-section > img{
+   width: 90%;
 }
 
 /* ---------- About good notes ----------- */
@@ -258,15 +282,10 @@ main > section:not(section.creativity), footer {
 /* ---------- Container Items ---------- */
 
 .about-good-notes .container-items {
-   display: flex;
-   flex-wrap: wrap;
-   justify-content: center;
-   align-items: flex-start;
-   gap: 20px;
-}
-
-.about-good-notes .item {
-   flex: 1 1 270px;
+   display: grid;
+   grid-gap: 30px 20px;
+   grid-template-columns: repeat(4, 1fr);
+   
 }
 
 .about-good-notes .container-items .icon-and-name {
@@ -285,6 +304,7 @@ main > section:not(section.creativity), footer {
    text-align: center;
    background-color: #f6f6f6;
    position: relative;
+   overflow: hidden;
 }
 
 .creativity h1 {
@@ -298,6 +318,7 @@ main > section:not(section.creativity), footer {
 /* ---------- Creativity Content ---------- */
 
 .creativity > .content {
+   padding: 0 20px;
    position: relative;
    z-index: 10;
    height: 100%;
@@ -362,6 +383,7 @@ main > section:not(section.creativity), footer {
 .animation-ornaments-to-down, .animation-ornaments-to-up {
    position: absolute;
    width: 100%;
+   min-width: 1200px;
    height: 100%;
 }
 
@@ -472,6 +494,10 @@ footer > .links {
    font-size: 1.3rem;
 }
 
+footer strong {
+   white-space: nowrap;
+}
+
 footer > .links > a, footer strong {
    color: #000;
    font-weight: 500;
@@ -480,4 +506,174 @@ footer > .links > a, footer strong {
 footer > .links > a:hover {
    color: var(--primaryColor);
    text-decoration: underline;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 1200px) {
+   .backlight1, .backlight2 {
+      width: 400px;
+      height: 400px;
+   }
+
+   .backlight1 {
+      left: -15%;
+      top: 25%;
+   }
+
+   .backlight2 {
+      right: -15%;
+      bottom: -25%;
+   }
+}
+
+@media (max-width: 900px) {
+   /* ---------- Apresentation ---------- */
+
+   .drawing1 {
+      top: -40px
+   }
+
+   .drawing1 > svg {
+      width: 45px;
+      height: 38px;
+   }
+
+   .drawing2 {
+      top: -25px;
+      right: -25px;
+   }
+
+   .drawing2 > svg {
+      width: 25px;
+      height: 20px;
+   }
+
+   .drawing3 {
+      bottom: -40px
+   }
+
+   .drawing3 > img {
+      width: 32px;
+   }
+
+   .drawing4 {
+      bottom: -25px;
+      left: -15px;
+   }
+
+   .drawing4 > svg {
+      width: 18px;
+      height: 16px;
+   }
+
+   /* ---------- About Notes ---------- */
+
+   .about-notes .container-containers {
+      grid-template-columns: 1fr;
+      grid-template-rows: repeat(3, 1fr);
+
+      grid-gap: 30px;
+
+      grid-template-areas: 
+         'container-organize'
+         'container-customize'
+         'container-all-devices'
+      ;
+   }
+
+   .about-notes .container-containers > div h1 {
+      font-size: min(2.5rem, 4vw);
+   }
+   
+   .about-notes .container-containers > div p {
+      font-size: min(1.6rem, 2.5vw);
+   }
+
+   .container-all-devices .container-img-section {
+      padding: 0;
+   }
+
+   .container-all-devices .container-img-section > img {
+      position: absolute;
+      width: 250%;
+      left: 5%;
+   }
+
+   .backlight1 {
+      top: 30%;
+   }
+
+   .backlight2 {
+      bottom: -20%;
+   }
+
+   .about-good-notes .container-items {
+      grid-template-columns: repeat(2, 1fr);
+      grid-gap: 30px;
+   }
+}
+
+@media (max-width: 750px) {
+   .about-notes, .about-good-notes, .creativity {
+      margin-top: 150px;
+   }
+
+   .backlight1, .backlight2 {
+      width: 300px;
+      height: 300px;
+   }
+
+   .backlight1 {
+      left: -15%;
+      top: 40%;
+   }
+
+   .backlight2 {
+      bottom: -15%;
+   }
+
+   .about-good-notes .container-items {
+      grid-template-columns: 350px;
+      justify-content: center;
+   }
+}
+
+@media (max-width: 460px) {
+   .about-notes, .about-good-notes, .creativity {
+      margin-top: 100px;
+   }
+
+   .creativity h1 {
+      font-size: min(3.6rem, 7vw);
+   }
+
+   .about-good-notes h1, .about-notes > div:first-child h1 {
+      font-size: 3rem;
+   }
+
+   .drawing1, .drawing2, .drawing3, .drawing4 {
+      display: none;
+   }
+
+   .apresentation .container-main {
+      border-radius: 15px;
+   }
+
+   .apresentation .container-main > img {
+      border-radius: 11px;
+   }
+
+   .backlight1, .backlight2 {
+      width: 200px;
+      height: 200px;
+   }
+
+   .backlight1 {
+      top: 50%;
+   }
+
+   .about-good-notes .container-items {
+      grid-template-columns: 1fr;
+   }
 }
