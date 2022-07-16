@@ -66,13 +66,13 @@ main > section:not(section.creativity), footer {
 }
 
 .drawing1 {
-   top: -60px;
+   top: -70px;
    left: 12%;
 }
 
 .drawing2 {
-   top: -40px;
-   right: -30px;
+   top: -50px;
+   right: -40px;
 }
 
 .drawing3 {
@@ -85,17 +85,32 @@ main > section:not(section.creativity), footer {
    bottom: -40px;
 }
 
-/* Pensar em como diminuir o processamento (talvez com gif) */
+/* ---------- Drawings Animation --------- */
 
-/* @keyframes dash {
+@keyframes animationDrawing1 {
    from { stroke-dashoffset: 0; }
    to { stroke-dashoffset: -40; }
 }
 
 .drawing1 .trace {
    stroke-dashoffset: -40;
-   animation: dash 2s infinite linear;
-} */
+   animation: animationDrawing1 2s infinite linear;
+}
+
+@keyframes fadeDrawingAnimation {
+   0% { opacity: 1; }
+   50% { opacity: 0; }
+   100% { opacity: 1; }
+}
+
+.drawing2 path, .drawing4 path { animation: fadeDrawingAnimation 3s infinite linear; }
+
+.drawing2 path:nth-child(1) { animation-delay: 0; }
+.drawing2 path:nth-child(2) { animation-delay: 0.5s; }
+.drawing2 path:nth-child(3) { animation-delay: 1s; }
+
+.drawing4 path:nth-child(1) { animation-delay: 0; }
+.drawing4 path:nth-child(2) { animation-delay: 0.5s; }
 
 /* ---------- Backlights ---------- */
 
@@ -115,7 +130,7 @@ main > section:not(section.creativity), footer {
 .backlight2 {
    right: -15%;
    bottom: -45%;
-   background: radial-gradient(39.07% 39.07% at 50% 50%, rgba(128, 187, 255, 0.384) 0%, rgba(0, 46, 115, 0) 100%);
+   background: radial-gradient(39.07% 39.07% at 50% 50%, rgba(128, 172, 255, 0.384) 0%, rgba(0, 12, 115, 0) 100%);
 }
 
 /* ---------- About Notes ---------- */
@@ -308,17 +323,27 @@ main > section:not(section.creativity), footer {
    position: absolute;
 }
 
+@keyframes eclipseAnimation {
+   from { transform: rotate(0); }
+   to { transform: rotate(360deg); }
+}
+
 .ornament-eclipse-1, .ornament-eclipse-2 {
-   width: 85px;
-   height: 50px;
+   width: 80px;
+   height: 80px;
+}
+
+.ornament-eclipse-1 > img, .ornament-eclipse-2 > img {
+   animation: eclipseAnimation 7s infinite linear;
 }
 
 .ornament-eclipse-1 {
    left: 20%;
+   top: -40px;
 }
 
 .ornament-eclipse-2 {
-   bottom: 0;
+   bottom: -40px;
    left: 52%;   
 }
 
