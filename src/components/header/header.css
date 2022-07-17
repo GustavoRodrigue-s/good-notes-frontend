@@ -100,8 +100,8 @@ a.link-logo {
    height: 50px;
 }
 
-.btn-dropDown-header-menu.btn-dropDown:hover {
-   background-color: #fff !important;
+.btn-dropDown-header-menu:hover > img {
+   opacity: 0.7;
 }
 
 .btn-dropDown-header-menu {
@@ -117,6 +117,7 @@ a.link-logo {
    border-radius: 50%;
    width: 40px;
    height: 100%;
+   transition: opacity 0.3s;
 }
 
 .btn-dropDown-header-menu > svg {
