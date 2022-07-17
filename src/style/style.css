@@ -2,13 +2,13 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap');
 
-@import url('../src/components/cookie/cookie.css');
-@import url('../src/components/popupForms/popup.css');
-@import url('../src/components/popupProfile/popup.css');
-@import url('../src/components/emailConfirmation/popup.css');
-@import url('../src/components/recoverAccount/popup.css');
+@import url('../components/cookie/cookie.css');
+@import url('../components/popupForms/popup.css');
+@import url('../components/popupProfile/popup.css');
+@import url('../components/emailConfirmation/popup.css');
+@import url('../components/recoverAccount/popup.css');
 
 * {
    margin: 0;
@@ -32,6 +32,7 @@
    --primaryCloseColor: #ebebeb; 
    --colorLine: #DBDBDB;
    --fontDefault: 'Inter', sans-serif;
+   --fontLogo: 'Ubuntu', sans-serif;
 }
 
 html {
@@ -489,7 +490,7 @@ span.tooltip::before {
    opacity: 1;
    visibility: visible;
    transform: translate(-50%, 40px);
-   box-shadow: 0 0 10px var(--primaryBoxShadow);
+   box-shadow: 0 0 5px var(--primaryBoxShadow);
 }
 
 .list-dropDown > li {
@@ -498,7 +499,7 @@ span.tooltip::before {
    cursor: pointer;
    padding: 7px 10px;
    border-radius: 5px;
-   font-size: 1.6rem;
+   font-size: 1.5rem;
    transition: 0.2s;
    white-space: nowrap;
 }
@@ -508,7 +509,7 @@ span.tooltip::before {
    height: 1px;
    background-color: var(--colorLine);
    border: none;
-   margin: 0 2px;
+   margin: 5px 2px;
 }
 
 /* ---------- Resposive ---------- */

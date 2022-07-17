@@ -1,271 +1,722 @@
-main.container-sticky {
-   width: 100%;
-   margin-top: 100px;
+main {
+   overflow-x: hidden;
+}
+
+main p {
+   font-size: 1.5rem;
+}
+
+main > section:not(section.creativity), footer {
+   width: 90%;
+   max-width: 1150px;
+}
+
+/* ---------- Loaded animation ---------- */
+
+@keyframes fadeLoading {
+   from { transform: translateY(20px); opacity: 0; }
+   to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes apresentationMain {
+   from { transform: rotateX(-20deg) scale(1.2); opacity: 0; }
+   to { transform: rotateX(0) scale(1); opacity: 1 }
+}
+
+body.loaded :is(.apresentation h1, .apresentation p, .apresentation button) {
+   animation: fadeLoading 0.7s forwards ease;
+}
+
+body.loaded .apresentation p {
+   animation-delay: 0.2s;
+}
+
+body.loaded .apresentation button {
+   animation-delay: 0.4s;
+}
+
+body.loaded .apresentation .container-main {
+   animation: apresentationMain 1s ease;
+}
+
+body.loaded :is(.drawing1, .drawing2, .drawing3, .drawing4) {
+   opacity: 1;
+}
+
+/* ---------- Apresentation ---------- */
+
+.apresentation {
+   margin: 70px auto;
+   text-align: center;
    position: relative;
 }
 
-.apresentation-flex {
-   width: 95%;
-   display: flex;
-   align-items: center;
-   justify-content: space-between;
+.apresentation .container-main-and-drawings {
+   perspective: 1000px;
+}
+
+/* ---------- Apresentation First Div ---------- */
+
+.apresentation h1 {
    margin: auto;
-   color: var(--paragraphColor);
-   text-align: center;
-}
-
-.apresentation-flex.center-flex {
-   gap: 80px;
-}
-
-/* TEXTS */
-
-.container-texts {
-   align-self: flex-start;
-   flex-shrink: 0;
-   width: 550px;
-}
-
-.apresentation-flex h1 {
    font: 800 min(5.5rem, 9vw) var(--fontDefault);
    width: 100%;
-   max-width: 530px;
-   color: #000;
-   margin: auto;
-   flex-shrink: 0;
+   max-width: 900px;
 }
 
-.apresentation-flex h2 {
-   margin: 20px auto 25px auto;
+.apresentation p {
+   margin: 30px auto;
+   font: min(1.8rem, 4vw) var(--fontDefault);
+   color: var(--paragraphColor);
    width: 100%;
-   max-width: 430px;
-   font: 400 min(1.8rem, 4vw) var(--fontDefault);
-   flex-shrink: 0;
+   max-width: 400px;
 }
 
-/* CONTAINER BUTTONS AND BUTTONS */
-
-.container-buttons-apresentation {
-   display: flex;
-   flex-direction: column;
-   align-items: center;
-   gap: 15px;  
+.apresentation h1, .apresentation p, .apresentation button {
+   opacity: 0;
 }
 
-.btn-startNow, .btn-showAllNotes, .container-buttons-apresentation a  {
-   width: 100%;
-   max-width: 260px;
-   height: 46px;
-   font-size: 1.7rem;
+.apresentation button, .creativity button {
+   width: 240px;
+   height: 45px;
+   font-weight: 500;
 }
 
-.container-buttons-apresentation a {
-   width: 90%;
-}
+/* ---------- Apresentation Second Div ---------- */
 
-.btn-showAllNotes {
-   background: #fff;
-   color: #000;
-   border: 1px solid #64636978;
-   box-shadow: none;
-}
-
-.btn-showAllNotes:hover {
-   border-color: #646369d3;
-}
-
-/* IMAGE APRESENTATION */
-
-.container-devices {
-   margin-top: 100px;
+.apresentation > div:last-child {
    position: relative;
 }
 
-.container-devices > div:first-child {
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   flex-direction: column;
-}
-
-.screen-notebook {
-   width: 630px;
-   height: 450px;
-   border: 10px solid #000;
-   border-radius: 20px 20px 0 0;
-   background: #Fff url('../../../images/test_note.png') no-repeat center;
-   background-size: cover;
-}
-
-.base-notebook {
-   width: 750px;
-   height: 11px;
-   background: rgb(182, 182, 182);
-   border-radius: 0 0 10px 10px;
-}
-
-.container-phone-home {
-   position: absolute;
-   top: 30%;
-   left: -10%;
-}
-
-.phone {
-   width: 200px;
-   height: 340px;
-   border: 7px solid #000;
-   border-radius: 20px;
-   position: relative;
-   background: #fff url('../../../images/test_phone.png') no-repeat center;
-   background-size: cover;
-}
-
-.header-phone {
-   position: absolute;
-   left: 50%;
-   top: -1px;
-   transform: translateX(-50%);
-   width: 60%;
-   height: 8px;
-   background-color: #000;
-   border-radius: 0 0 100px 100px;
-}
-
-/* ---------- SECTION ABOUT ---------- */
-
-.container-about-product {
-   background: var(--tertiaryColor);
-   margin-top: 120px;
-   padding: 30px 0;
-   border-top: 1px solid var(--colorLine);
-   border-bottom: 1px solid var(--colorLine);
+.apresentation .container-main {
    position: relative;
    z-index: 999;
+   margin-top: 70px;
+   padding: 5px;
+   border-radius: 20px;
+   background: linear-gradient(180deg, #E4E4E4 0%, rgba(188, 215, 237, 0.568) 163.8%, rgba(188, 215, 237, 0.425) 163.8%);
+   box-shadow: 0px 0px 60px rgba(0, 0, 0, 0.1);
+}
+
+.apresentation .container-main > img { 
+   width: 100%;
+   vertical-align: middle;
+   border-radius: 16px;
+   pointer-events: none;
+   user-select: none;
+}
+
+/* ---------- Apresentation Drawings ---------- */
+
+.drawing1, .drawing2, .drawing3, .drawing4 {
+   opacity: 0;
+   transition: 0.6s;
+   transition-delay: 0.7s;
+   z-index: 99;
+   position: absolute;
+}
+
+.drawing1 {
+   top: -70px;
+   left: 12%;
+}
+
+.drawing2 {
+   top: -50px;
+   right: -40px;
+}
+
+.drawing3 {
+   right: 13%;
+   bottom: -60px;
+}
+
+.drawing4 {
+   left: -30px;
+   bottom: -40px;
+}
+
+/* ---------- Drawings Animation --------- */
+
+@keyframes animationDrawing1 {
+   from { stroke-dashoffset: 0; }
+   to { stroke-dashoffset: -40; }
+}
+
+.drawing1 .trace {
+   stroke-dashoffset: -40;
+   animation: animationDrawing1 2s infinite linear;
+}
+
+@keyframes fadeDrawingAnimation {
+   0% { opacity: 1; }
+   50% { opacity: 0; }
+   100% { opacity: 1; }
+}
+
+.drawing2 path, .drawing4 path { animation: fadeDrawingAnimation 3s infinite linear; }
+
+.drawing2 path:nth-child(1) { animation-delay: 0; }
+.drawing2 path:nth-child(2) { animation-delay: 0.5s; }
+.drawing2 path:nth-child(3) { animation-delay: 1s; }
+
+.drawing4 path:nth-child(1) { animation-delay: 0; }
+.drawing4 path:nth-child(2) { animation-delay: 0.5s; }
+
+/* ---------- Apresentation Backlights ---------- */
+
+.backlight1, .backlight2 {
+   position: absolute;
+   width: 600px;
+   height: 600px;
+}
+
+.backlight1 > img, .backlight2 > img {
+   width: 100%;
+   pointer-events: none;
+   user-select: none;
+}
+
+.backlight1 {
+   left: -20%;
+   top: 10%;
+}
+
+.backlight2 {
+   right: -20%;
+   bottom: -25%;
+}
+
+/* ---------- About Notes ---------- */
+
+.about-notes {
+   margin: 200px auto 0 auto;
+}
+
+.about-notes > div:first-child h1 {
+   text-align: center;
+   font: 800 3.6rem var(--fontDefault);
+}
+
+.about-notes h1 > span {
+   color: var(--primaryColor);
+}
+
+/* ---------- Containers ---------- */
+
+.about-notes .container-containers {
+   margin-top: 100px;
+   width: 100%;
+   display: grid;
+   grid-template-columns: 1fr 1fr;
+   grid-template-rows: 1fr 1fr;
+   grid-gap: 50px 30px;
+   grid-template-areas: 
+      'container-organize container-customize' 
+      'container-all-devices container-all-devices'
+   ;
+}
+
+.about-notes .container-containers > div {
+   display: flex;
+   flex-direction: column;
+   text-align: center;
+   background: linear-gradient(180deg, #F2F2F4 0%, rgba(166, 207, 240, 0.247) 176.67%);
+   border-radius: 20px;
+   overflow: hidden;
+   position: relative;
+}
+
+.about-notes .container-containers > div h1 {
+   padding: 0 20px;
+   margin-top: 35px;
+   font: 700 min(2.5rem, 2vw) var(--fontDefault);
+}
+
+.about-notes .container-containers > div p {
+   padding: 0 20px;
+   margin: 10px auto;
+   color: var(--paragraphColor);
+   font-size: min(1.6rem, 1.3vw);
+}
+
+.about-notes .container-containers > div > .container-img-section {
+   flex: 1 1;
+   display: flex;
+   justify-content: center;
+   align-items: flex-end;
+   padding: 10px;
    overflow: hidden;
 }
 
-.container-about-product > .background {
-   position: absolute;
-   top: -300px;
+.about-notes .container-organize {
+   grid-area: container-organize;
+}
+
+.about-notes .container-customize {
+   grid-area: container-customize;
+}
+
+.about-notes .container-all-devices {
+   grid-area: container-all-devices;
+}
+
+/* ---------- Container Organize ---------- */
+
+.container-organize p {
    width: 100%;
-   max-width: 1000px;
-   height: 900px;
-   transform: rotateZ(-40deg);
-   z-index: -1;
+   max-width: 400px;
 }
 
-.about-product {
-   max-width: 1400px;
-   display: flex;
-   justify-content: space-around;
-   flex-wrap: wrap;
-   gap: 0 5px;
+.container-organize .container-img-section > img {
+   width: 100%;
+   margin-left: 2%;
 }
 
-.about-product > div {
-   flex-shrink: 0;
-   width: 240px;
-   height: 250px;
-   flex-direction: column;
-   gap: 10px;
-   background-color: transparent;
-   padding: 15px;
+/* ---------- Container Customize ---------- */
+
+.container-customize p {
+   width: 100%;
+   max-width: 450px;
+}
+
+.container-customize .container-img-section > img {
+   width: 100%;
+}
+
+/* ---------- Container All Devices ---------- */
+
+.container-all-devices p {
+   width: 100%;
+   max-width: 600px;
+}
+
+.container-all-devices .container-img-section {
+   padding-bottom: 0 !important;
+}
+
+.container-all-devices .container-img-section > img{
+   width: 90%;
+}
+
+/* ---------- About good notes ----------- */
+
+.about-good-notes {
+   margin: 200px auto 0 auto;
+}
+
+.about-good-notes h1 {
    text-align: center;
-   transition: 0.3s;
+   font: 800 3.6rem var(--fontDefault);
 }
 
-.about-product > div:hover {
-   transform: scale(1.05);
+.about-good-notes h3 {
+   font-weight: 600;
 }
 
-.item-text {
-   margin-top: 5px;
-   font: 400 1.6rem var(--fontDefault);
+.about-good-notes p {
    color: var(--paragraphColor);
-   line-height: 25px;
 }
 
-/* ABOUT NOTES */
+.about-good-notes > div:last-child {
+   margin-top: 100px;
+}
 
-.container-about-notes {
-   height: 900px;
+/* ---------- Container Items ---------- */
+
+.about-good-notes .container-items {
+   display: grid;
+   grid-gap: 30px 20px;
+   grid-template-columns: repeat(4, 1fr);
+   
+}
+
+.about-good-notes .container-items .icon-and-name {
+   display: flex;
+   align-items: center;
+   gap: 10px;
+   margin-bottom: 10px;
+}
+
+/* ---------- Creativity ---------- */
+
+.creativity {
    width: 100%;
-   background: #fff;
+   height: 350px;
+   margin-top: 200px;
+   text-align: center;
+   background-color: #f6f6f6;
    position: relative;
-   z-index: 3;
+   overflow: hidden;
 }
 
-@media (max-width: 1365px) {
-   .about-product {
+.creativity h1 {
+   font: 800 3.6rem var(--fontDefault);
+}
+
+.creativity h1 > span {
+   color: var(--primaryColor);
+}
+
+/* ---------- Creativity Content ---------- */
+
+.creativity > .content {
+   padding: 0 20px;
+   position: relative;
+   z-index: 10;
+   height: 100%;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   gap: 50px;
+}
+
+/* ---------- Ornaments ---------- */
+
+.ornaments {
+   width: 100%;
+   height: 100%;
+   position: absolute;
+   z-index: 1;
+   inset: 0;
+   overflow: hidden;
+}
+
+.ornaments > div {
+   position: absolute;
+}
+
+@keyframes eclipseAnimation {
+   from { transform: rotate(0); }
+   to { transform: rotate(360deg); }
+}
+
+.ornament-eclipse-1, .ornament-eclipse-2 {
+   width: 80px;
+   height: 80px;
+}
+
+.ornament-eclipse-1 > img, .ornament-eclipse-2 > img {
+   animation: eclipseAnimation 7s infinite linear;
+}
+
+.ornament-eclipse-1 {
+   left: 20%;
+   top: -40px;
+}
+
+.ornament-eclipse-2 {
+   bottom: -40px;
+   left: 52%;   
+}
+
+.ornament-drawing-1 {
+   bottom: 30%;
+   right: 27%;
+}
+
+.ornament-drawing-2 {
+   top: 47%;
+   left: 28%;
+}
+
+/* ---------- Animation Ornaments  ---------- */
+
+.animation-ornaments-to-down, .animation-ornaments-to-up {
+   position: absolute;
+   width: 100%;
+   min-width: 1200px;
+   height: 100%;
+}
+
+.animation-ornaments-to-down > div, .animation-ornaments-to-up > div {
+   position: absolute;
+   will-change: transform;
+}
+
+.animation-ornaments-to-up {
+   transform: rotateX(180deg);
+}
+
+@keyframes animationOrnament {
+   0% { opacity: 0; top: -10%; transform: translateX(20px) rotate(0deg); }
+   10% { opacity: 1 }
+   20% { transform: translateX(-20px) rotate(45deg); }
+   40% { transform: translateX(-20px) rotate(90deg); }
+   60% { transform: translateX(20px) rotate(120deg); }
+   80% { transform: translateX(-20px) rotate(170deg); }
+   100% { transform: translateX(-20px) rotate(225deg); top: 110%; }
+}
+
+.ornament-category-1, .ornament-note-2, .ornament-note-5  {
+   color: #7B7B7B;
+}
+
+.ornament-note-1, .ornament-note-3, .ornament-category-4 {
+   color: var(--primaryColor);
+}
+
+.ornament-category-1 {
+   left: 20%;
+   animation: animationOrnament 15s linear infinite;
+   animation-delay: -7s;
+   filter: blur(1.5px);
+}
+
+.ornament-category-2 {
+   left: 70%;
+   animation: animationOrnament 20s linear infinite;
+   filter: blur(1.5px);
+}
+
+.ornament-category-3 {
+   left: 40%;
+   animation: animationOrnament 17s linear infinite;
+   animation-delay: -3s;
+   filter: blur(1px);
+}
+
+.ornament-category-4 {
+   left: 5%;
+   animation: animationOrnament 14s linear infinite;
+   animation-delay: -5s;
+}
+
+.ornament-category-5 {
+   right: 5%;
+   animation: animationOrnament 14s linear infinite;
+   animation-delay: -3s;
+   filter: blur(1px);
+}
+
+.ornament-note-1 {
+   left: 85%;
+   animation: animationOrnament 18s linear infinite;
+   animation-delay: -10s;
+}
+
+.ornament-note-2 {
+   left: 50%;
+   animation: animationOrnament 20s linear infinite;
+   animation-delay: -5s;
+   filter: blur(1.5px)
+}
+
+.ornament-note-3 {
+   left: 30%;
+   animation: animationOrnament 18s linear infinite;
+   animation-delay: -10s;
+   filter: blur(1px);
+}
+
+.ornament-note-4 {
+   left: 10%;
+   animation: animationOrnament 14s linear infinite;
+}
+
+.ornament-note-5 {
+   left: 80%;
+   animation: animationOrnament 23s linear infinite;
+   animation-delay: -5s;
+   filter: blur(1px);
+}
+
+/* ---------- Footer ---------- */
+
+footer {
+   padding: 40px 0;
+   margin: 120px auto 0 auto;
+   border-top: 1px solid var(--colorLine);
+   color: var(--paragraphColor);
+   font-size: 1.4rem;
+}
+
+footer > .links {
+   margin-top: 15px;
+   font-size: 1.3rem;
+}
+
+footer strong {
+   white-space: nowrap;
+}
+
+footer > .links > a, footer strong {
+   color: #000;
+   font-weight: 500;
+}
+
+footer > .links > a:hover {
+   color: var(--primaryColor);
+   text-decoration: underline;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 1200px) {
+   .backlight1, .backlight2 {
+      width: 400px;
+      height: 400px;
+   }
+
+   .backlight1 {
+      left: -15%;
+      top: 25%;
+   }
+
+   .backlight2 {
+      right: -15%;
+      bottom: -25%;
+   }
+}
+
+@media (max-width: 900px) {
+   /* ---------- Apresentation ---------- */
+
+   .drawing1 {
+      top: -40px
+   }
+
+   .drawing1 > svg {
+      width: 45px;
+      height: 38px;
+   }
+
+   .drawing2 {
+      top: -25px;
+      right: -25px;
+   }
+
+   .drawing2 > svg {
+      width: 25px;
+      height: 20px;
+   }
+
+   .drawing3 {
+      bottom: -40px
+   }
+
+   .drawing3 > img {
+      width: 32px;
+   }
+
+   .drawing4 {
+      bottom: -25px;
+      left: -15px;
+   }
+
+   .drawing4 > svg {
+      width: 18px;
+      height: 16px;
+   }
+
+   /* ---------- About Notes ---------- */
+
+   .about-notes .container-containers {
+      grid-template-columns: 1fr;
+      grid-template-rows: repeat(3, 1fr);
+
+      grid-gap: 30px;
+
+      grid-template-areas: 
+         'container-organize'
+         'container-customize'
+         'container-all-devices'
+      ;
+   }
+
+   .about-notes .container-containers > div h1 {
+      font-size: min(2.5rem, 4vw);
+   }
+   
+   .about-notes .container-containers > div p {
+      font-size: min(1.6rem, 2.5vw);
+   }
+
+   .container-all-devices .container-img-section {
+      padding: 0;
+   }
+
+   .container-all-devices .container-img-section > img {
+      position: absolute;
+      width: 250%;
+      left: 5%;
+   }
+
+   .backlight1 {
+      top: 30%;
+   }
+
+   .backlight2 {
+      bottom: -20%;
+   }
+
+   .about-good-notes .container-items {
+      grid-template-columns: repeat(2, 1fr);
+      grid-gap: 30px;
+   }
+}
+
+@media (max-width: 750px) {
+   .about-notes, .about-good-notes, .creativity {
+      margin-top: 150px;
+   }
+
+   .backlight1, .backlight2 {
+      width: 300px;
+      height: 300px;
+   }
+
+   .backlight1 {
+      left: -15%;
+      top: 40%;
+   }
+
+   .backlight2 {
+      bottom: -15%;
+   }
+
+   .about-good-notes .container-items {
+      grid-template-columns: 350px;
       justify-content: center;
    }
 }
 
-@media (max-width: 1355px) {
-   .container-about-product > .background {
-      top: -250px;
-      left: -300px;
-   }
-}
-
-@media (max-width: 1326px) {
-   .apresentation-flex.center-flex {
-      gap: 40px;
+@media (max-width: 460px) {
+   .about-notes, .about-good-notes, .creativity {
+      margin-top: 100px;
    }
 
-   .screen-notebook {
-      width: 500px;
-      height: 350px;
+   .creativity h1 {
+      font-size: min(3.6rem, 7vw);
    }
 
-   .base-notebook {
-      width: 600px;
+   .about-good-notes h1, .about-notes > div:first-child h1 {
+      font-size: 3rem;
    }
 
-   .phone {
-      width: 180px;
-      height: 320px;
-   }
-}
-
-/* RESPONSIVE */
-
-@media (max-width: 1221px) {
-   .apresentation-flex.center-flex {
-      justify-content: flex-start;
-   }
-}  
-
-@media (max-width: 1093px) {
-   .container-about-product {
-      position: relative;
-      top: 0;
-   }
-}
-
-@media (max-width: 980px) {
-   .apresentation-flex h1 {
-      font-size: min(4.5rem, 9vw);
-   }
-}
-
-@media (max-width: 768px) {
-   .container-devices {
+   .drawing1, .drawing2, .drawing3, .drawing4 {
       display: none;
    }
 
-   .container-texts {
-      flex-shrink: 1;
-      margin: auto;
-   }
-}
-
-@media (max-width: 320px) {
-   main.container-sticky, .container-about-product {
-      margin-top: 50px !important;
+   .apresentation .container-main {
+      border-radius: 15px;
    }
 
-   .apresentation-flex {
-      top: 110px;
+   .apresentation .container-main > img {
+      border-radius: 11px;
+   }
+
+   .backlight1, .backlight2 {
+      width: 200px;
+      height: 200px;
+   }
+
+   .backlight1 {
+      top: 50%;
+   }
+
+   .about-good-notes .container-items {
+      grid-template-columns: 1fr;
    }
 }

@@ -21,7 +21,10 @@ function createAuthProvider() {
    }
 
    const removeLoading = () => {
-      setTimeout(() => state.loading.classList.remove('show'), 300);
+      setTimeout(() => {
+         state.loading.classList.remove('show');
+         document.body.classList.add('loaded')
+      }, 300);
    }
 
    const unauthenticated = () => {

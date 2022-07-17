@@ -8,12 +8,10 @@
       <meta name="description" content="Crie e guarde seu mundo!">
       <meta name="apple-mobile-web-app-capable" content="yes" >
       <meta name="mobile-web-app-capable" content="yes" />
-      <link rel="stylesheet" type="text/css" href="style/style.css">
+      <link rel="stylesheet" type="text/css" href="src/style/style.css">
       <link rel="stylesheet" type="text/css" href="src/components/home/style.css">
       <link rel="stylesheet" type="text/css" href="src/components/header/header.css">
-      <link rel="stylesheet" type="text/css" href="src/components/header/responsive.css">
-      <link rel="shortcut icon" href="../images/logo_gn.png" type="image/x-icon">
-      <script src="https://cdn.lordicon.com/libs/mssddfmo/lord-icon-2.1.0.js"></script>
+      <link rel="shortcut icon" href="./images/good_notes_icon.svg" type="image/x-icon">
       <title>Good Notes</title>
 
       <style>
@@ -33,122 +31,291 @@
 
       <header></header>
 
-      <main class="container-sticky">
-         <section class="apresentation-flex container-limiter">
-            <div class="container-texts">
-               <h1>Crie suas primeiras anotações grátis e super rápido!</h1>
-               <h2>Todas anotações são confidencializadas e salvadas para uma melhor experiência.</h2>
-               <div class="container-buttons-apresentation">
-                  <a href="./notes.html" tabindex="-1">
-                     <button class="btn-startNow btn-default btn-default-hover">
-                        Começar agora
-                     </button>
-                  </a>
-                  <a href="#container-about-product" tabindex="-1">
-                     <button class="btn-showAllNotes btn-default">
-                        Ver mais
-                     </button>
-                  </a>
-               </div>
+      <main>
+
+         <section class="apresentation">
+            <div class="backlight1">
+               <img src="./images/Home Imgs/backlight1.svg" />
             </div>
-            <div class="container-devices">
+            <div class="backlight2">
+               <img src="./images/Home Imgs/backlight2.svg" />
+            </div>
+
+            <div>
+               <div class="container-texts">
+                  <div>
+                     <h1>Crie suas primeiras anotações grátis e super rápido!</h1>
+                  </div>
+                  <div>
+                     <p>
+                        Todas anotações são confidencializadas e salvas para uma melhor experiência.
+                     </p>
+                  </div>
+               </div>
                <div>
-                  <div class="screen-notebook">
-
-                  </div>
-                  <div class="base-notebook"></div>
+                  <a href="./notes.html">
+                     <button type="button" class="btn-default btn-default-hover">Começar agora</button>
+                  </a>
                </div>
-               <div class="container-phone-home">
-                  <div class="phone">
-                     <div class="header-phone">
+            </div>
+            <div class="container-main-and-drawings">
+               <div class="container-main">
+                  <img src="./images/Home Imgs/apresentation.png" alt="imagem de apresentação do good notes" />
+               </div>
+               <div class="drawing1">
+                  <svg width="85" height="78" viewBox="0 0 65 58" fill="none" xmlns="http://www.w3.org/2000/svg">
+                     <path d="M51 4.5V8L64.5 4.5M64.5 4.5L48 0.5V4.5H64.5Z" stroke="#323232" stroke-linecap="round" stroke-linejoin="round"/>
+                     <path class="trace" d="M0.5 57.5V48.5L4 40L10.5 30L20.5 19L28.5 13.5L35.5 9L43 5.5" stroke="#323232" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4 4"/>
+                  </svg>
+               </div>
+               <div class="drawing2">
+                  <svg width="35" height="30" viewBox="0 0 25 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                     <path d="M0.583984 13.3842C1.12403 11.9647 1.95451 10.7938 2.72929 9.49882C3.15349 8.78979 3.34716 7.99071 3.74234 7.27009C4.14917 6.52823 4.58529 5.79708 5.02953 5.07711C5.60374 4.14648 5.97107 3.11059 6.57891 2.19883C6.74954 1.94289 6.98692 1.387 7.23442 1.26324" stroke="#323232" stroke-linecap="round"/>
+                     <path d="M5.19727 15.1004C5.70592 15.1004 6.26191 14.2503 6.59171 13.9205C7.59071 12.9215 8.83568 12.157 9.86925 11.1793C10.3967 10.6804 11.0708 10.0895 11.7345 9.79082C12.0844 9.63336 12.1347 9.31971 12.4913 9.20086" stroke="#323232" stroke-linecap="round"/>
+                     <path d="M9.81055 18.7474C10.6185 18.7474 11.3641 18.0579 12.0512 17.7106C13.9011 16.7754 15.824 15.7415 17.8078 15.1243C19.1082 14.7197 20.4244 14.3351 21.717 13.9205C22.1227 13.7904 23.6953 13.6109 23.8623 13.2769" stroke="#323232" stroke-linecap="round"/>
+                  </svg> 
+               </div>
+               <div class="drawing3">
+                  <img src="./images/Home Imgs/drawing 3.svg" alt="ícone de desenho">
+               </div>
+               <div class="drawing4">
+                  <svg width="23" height="21" viewBox="0 0 23 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                     <path d="M1.0625 0.968323C3.60671 4.84522 6.99015 8.25962 10.6872 11.0514C14.3126 13.7889 18.3117 15.9608 22.3095 18.0905" stroke="#323232" stroke-linecap="round" stroke-dasharray="15 2"/>
+                     <path d="M1.99609 9.06244C3.21263 10.8872 5.07117 12.433 6.6528 13.9094C8.9428 16.0471 11.307 17.9574 13.8259 19.8027" stroke="#323232" stroke-linecap="round" stroke-dasharray="15 2"/>
+                  </svg>
+               </div>
+            </div>
+         </section>
 
+         <section class="about-notes">
+            <div>
+               <h1>
+                  Com o <span>good</span> notes você pode
+               </h1>
+            </div>
+            <div class="container-containers">
+               <div class="container-organize">
+                  <div>
+                     <div>
+                        <h1>Organizar suas notas em categorias</h1>
+                     </div>
+                     <div>
+                        <p>
+                           As notas são agrupadas em categorias, assim você pode organiza-las do seu jeitinho.
+                        </p>
+                     </div>
+                  </div>
+                  <div class="container-img-section">
+                     <img src="images/Home Imgs/section_organize.svg" alt="imagem sobre a organização das notas" />
+                  </div>
+               </div>
+               <div class="container-customize">
+                  <div>
+                     <h1>Personalizar como quiser</h1>
+                  </div>
+                  <div>
+                     <p>
+                        Com algumas opções, você pode editar suas notas como quiser, de um jeito simples e funcional.
+                     </p>
+                  </div>
+                  <div class="container-img-section">
+                     <img src="./images/Home Imgs/section_tool_bar.svg" alt="imagem sobre a personalização das notas" />
+                  </div>
+               </div>
+               <div class="container-all-devices">
+                  <div>
+                     <div>
+                        <h1>Acessar quando e onde quiser</h1>
+                     </div>
+                     <div>
+                        <p>
+                           A nossa plataforma possuí suporte à todos os tamanhos de dispositivos, assim você pode acessar quando e onde quiser.
+                        </p>
+                     </div>
+                  </div>
+                  <div class="container-img-section">
+                     <img src="./images/Home Imgs/section_all_devices.svg" alt="imagem sobre suporte à tamanhos de dispositivos" />
+                  </div>
+               </div>
+            </div>
+         </section>
+
+         <section class="about-good-notes">
+            <div>
+               <h1>Com o nosso serviço você pode esperar</h1>
+            </div>
+            <div>
+               <div class="container-items">
+                  <div class="item">
+                     <div class="icon-and-name">
+                        <div>
+                           <img src="./images/Home Imgs/unlimited_icon.svg" alt="ícone de notas ilimitadas" />
+                        </div>
+                        <div>
+                           <h3>Notas Ilimitadas</h3>
+                        </div>
+                     </div>
+                     <div>
+                        <p>
+                           você pode criar notas sem se preocupar com a quantidade.
+                        </p>
+                     </div>
+                  </div>
+                  <div class="item">
+                     <div class="icon-and-name">
+                        <div>
+                           <img src="./images/Home Imgs/free_service_icon.svg" alt="ícone de serviço gratuito" />
+                        </div>
+                        <div>
+                           <h3>Grátis</h3>
+                        </div>
+                     </div>
+                     <div>
+                        <p>
+                           Nosso serviço é 100% gratuito.
+                        </p>
+                     </div>
+                  </div>
+                  <div class="item">
+                     <div class="icon-and-name">
+                        <div>
+                           <img src="./images/Home Imgs/security_app_icon.svg" alt="ícone de aplicativo seguro" />
+                        </div>
+                        <div>
+                           <h3>Segurança</h3>
+                        </div>
+                     </div>
+                     <div>
+                        <p>
+                           Suas informações ficam seguras com a nossa tecnologia.
+                        </p>
+                     </div>
+                  </div>
+                  <div class="item">
+                     <div class="icon-and-name">
+                        <div>
+                           <img src="./images/Home Imgs/cloud_storage_icon.svg" alt="ícone de armazenamento de nuvem" />
+                        </div>
+                        <div>
+                           <h3>Nuvem</h3>
+                        </div>
+                     </div>
+                     <div>
+                        <p>
+                           Suas notas ficam salvas na nuvem, isso permite que você possa acessá-las à qualquer lugar.
+                        </p>
                      </div>
                   </div>
                </div>
             </div>
          </section>
 
-         <section class="container-about-product" id="container-about-product">
-            <div class="about-product container-limiter">
-               <div class="about-creative center-flex">
-                  <div class="about-icon">
-                     <lord-icon src="https://cdn.lordicon.com/tfosrbcn.json" trigger="loop" speed="0.8" delay="3000"
-                        colors="primary:#000,secondary:#000" style="width:100px;height:100px"></lord-icon>
-                  </div>
-                  <div class="about-text">
-                     <div class="item-title">
-                        <h1>Criatividade</h1>
-                     </div>
-                     <div class="item-text">
-                        <p>Organize seu mundo com a sua criatividade.</p>
-                     </div>
-                  </div>
+         <section class="creativity">
+            <div class="content">
+               <div>
+                  <h1>
+                     Organize seu mundo com a sua 
+                     <span>criatividade</span>!
+                  </h1>
                </div>
-               <div class="about-unlimited center-flex">
-                  <div class="about-icon">
-                     <lord-icon src="https://cdn.lordicon.com/puvaffet.json" trigger="loop" speed="0.8" delay="3000"
-                        colors="primary:#000,secondary:#000" style="width:100px;height:100px"></lord-icon>
-                  </div>
-                  <div class="about-text">
-                     <div class="item-title">
-                        <h1>Notas ilimitadas</h1>
-                     </div>
-                     <div class="item-text">
-                        <p>Você pode criar notas sem se preocupar com a quantidade.</p>
-                     </div>
-                  </div>
+               <div>
+                  <a href="./notes.html">
+                     <button class="btn-default btn-default-hover">Começar agora</button>
+                  </a>
                </div>
-               <div class="about-free center-flex">
-                  <div class="about-icon">
-                     <lord-icon src="https://cdn.lordicon.com/cmrzxpzz.json" trigger="loop" speed="0.8" delay="3000"
-                        colors="primary:#000,secondary:#000" style="width:100px;height:100px"></lord-icon>
-                  </div>
-                  <div class="about-text">
-                     <div class="item-title">
-                        <h1>Grátis</h1>
-                     </div>
-                     <div class="item-text">
-                        <p>Nosso serviço é <em>100%</em> gratuito.</p>
-                     </div>
-                  </div>
+            </div>
+            <div class="ornaments">
+               <div class="ornament-eclipse-1">
+                  <img src="./images/Home Imgs/eclipse_dashed 1.svg" alt="imagem de enfeite" />
                </div>
-               <div class="about-security center-flex">
-                  <div class="about-icon">
-                     <lord-icon src="https://cdn.lordicon.com/yyecauzv.json" trigger="loop" speed="0.8" delay="3000"
-                        colors="primary:#000,secondary:#000" style="width:100px;height:100px"></lord-icon>
-                  </div>
-                  <div class="about-text">
-                     <div class="item-title">
-                        <h1>Segurança</h1>
-                     </div>
-                     <div class="item-text">
-                        <p>Suas informações ficam seguras com a nossa tecnologia.</p>
-                     </div>
-                  </div>
+               <div class="ornament-eclipse-2">
+                  <img src="./images/Home Imgs/eclipse_dashed 2.svg" alt="imagem de enfeite" />
                </div>
-               <div class="about-clouds center-flex">
-                  <div class="about-icon">
-                     <lord-icon src="https://cdn.lordicon.com/wcjauznf.json" trigger="loop" speed="0.8" delay="3000"
-                        colors="primary:#000,secondary:#000" style="width:100px;height:100px"></lord-icon>
+               <div class="ornament-drawing-1">
+                  <img src="./images/Home Imgs/drawing 5.svg" alt="imagem de enfeite" />
+               </div>
+               <div class="ornament-drawing-2">
+                  <img src="./images/Home Imgs/drawing 6.svg" alt="imagem de enfeite" />
+               </div>
+               <div class="animation-ornaments-to-down">
+                  <div class="ornament-category-1">
+                     <svg width="55" height="50" viewBox="0 0 25 20" fill="#7B7B7B" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0 5.33333H15.1661V8H0V5.33333ZM0 2.66667H15.1661V0H0V2.66667ZM0 13.3333H9.65118V10.6667H0V13.3333ZM20.6949 9.16L21.6738 8.21333C21.8013 8.08973 21.9529 7.99167 22.1196 7.92476C22.2864 7.85785 22.4652 7.82341 22.6458 7.82341C22.8264 7.82341 23.0052 7.85785 23.172 7.92476C23.3388 7.99167 23.4903 8.08973 23.6178 8.21333L24.5967 9.16C25.1344 9.68 25.1344 10.52 24.5967 11.04L23.6178 11.9867L20.6949 9.16ZM19.716 10.1067L12.4087 17.1733V20H15.3316L22.6389 12.9333L19.716 10.1067Z" fill="currentColor"/>
+                     </svg>
                   </div>
-                  <div class="about-text">
-                     <div class="item-title">
-                        <h1>Nuvem</h1>
-                     </div>
-                     <div class="item-text">
-                        <p>Você pode acessar suas notas à qualquer hora e lugar.</p>
-                     </div>
+                  <div class="ornament-category-2">
+                     <svg width="25" height="20" viewBox="0 0 25 20" fill="#696969" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0 5.33333H15.1661V8H0V5.33333ZM0 2.66667H15.1661V0H0V2.66667ZM0 13.3333H9.65118V10.6667H0V13.3333ZM20.6949 9.16L21.6738 8.21333C21.8013 8.08973 21.9529 7.99167 22.1196 7.92476C22.2864 7.85785 22.4652 7.82341 22.6458 7.82341C22.8264 7.82341 23.0052 7.85785 23.172 7.92476C23.3388 7.99167 23.4903 8.08973 23.6178 8.21333L24.5967 9.16C25.1344 9.68 25.1344 10.52 24.5967 11.04L23.6178 11.9867L20.6949 9.16ZM19.716 10.1067L12.4087 17.1733V20H15.3316L22.6389 12.9333L19.716 10.1067Z" fill="currentColor"/>
+                     </svg>
+                  </div>
+                  <div class="ornament-category-3">
+                     <svg width="25" height="20" viewBox="0 0 25 20" fill="#696969" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0 5.33333H15.1661V8H0V5.33333ZM0 2.66667H15.1661V0H0V2.66667ZM0 13.3333H9.65118V10.6667H0V13.3333ZM20.6949 9.16L21.6738 8.21333C21.8013 8.08973 21.9529 7.99167 22.1196 7.92476C22.2864 7.85785 22.4652 7.82341 22.6458 7.82341C22.8264 7.82341 23.0052 7.85785 23.172 7.92476C23.3388 7.99167 23.4903 8.08973 23.6178 8.21333L24.5967 9.16C25.1344 9.68 25.1344 10.52 24.5967 11.04L23.6178 11.9867L20.6949 9.16ZM19.716 10.1067L12.4087 17.1733V20H15.3316L22.6389 12.9333L19.716 10.1067Z" fill="currentColor"/>
+                     </svg>
+                  </div>
+                  <div class="ornament-note-1">
+                     <svg width="30" height="30" viewBox="0 0 20 20" fill="#0066FF" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4.16667 0C3.0616 0 2.00179 0.438987 1.22039 1.22039C0.438987 2.00179 0 3.0616 0 4.16667V15.8333C0 16.9384 0.438987 17.9982 1.22039 18.7796C2.00179 19.561 3.0616 20 4.16667 20H10.2833C11.3833 20 12.45 19.5667 13.2333 18.7833L18.7833 13.2333C19.5667 12.45 20 11.4 20 10.2833V4.16667C20 3.0616 19.561 2.00179 18.7796 1.22039C17.9982 0.438987 16.9384 0 15.8333 0H4.16667ZM1.66667 4.16667C1.66667 2.78333 2.78333 1.66667 4.16667 1.66667H15.8333C17.2167 1.66667 18.3333 2.78333 18.3333 4.16667V10H14.1667C13.0616 10 12.0018 10.439 11.2204 11.2204C10.439 12.0018 10 13.0616 10 14.1667V18.3333H4.16667C3.50363 18.3333 2.86774 18.0699 2.3989 17.6011C1.93006 17.1323 1.66667 16.4964 1.66667 15.8333V4.16667ZM11.6667 17.9167V14.1667C11.6667 12.7833 12.7833 11.6667 14.1667 11.6667H17.9167C17.8241 11.8046 17.718 11.9331 17.6 12.05L12.05 17.6C11.9339 17.7238 11.8054 17.8355 11.6667 17.9333V17.9167Z" fill="currentColor"/>
+                     </svg>
+                  </div>
+                  <div class="ornament-note-4">
+                     <svg width="20" height="20" viewBox="0 0 20 20" fill="#B5B5B5" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4.16667 0C3.0616 0 2.00179 0.438987 1.22039 1.22039C0.438987 2.00179 0 3.0616 0 4.16667V15.8333C0 16.9384 0.438987 17.9982 1.22039 18.7796C2.00179 19.561 3.0616 20 4.16667 20H10.2833C11.3833 20 12.45 19.5667 13.2333 18.7833L18.7833 13.2333C19.5667 12.45 20 11.4 20 10.2833V4.16667C20 3.0616 19.561 2.00179 18.7796 1.22039C17.9982 0.438987 16.9384 0 15.8333 0H4.16667ZM1.66667 4.16667C1.66667 2.78333 2.78333 1.66667 4.16667 1.66667H15.8333C17.2167 1.66667 18.3333 2.78333 18.3333 4.16667V10H14.1667C13.0616 10 12.0018 10.439 11.2204 11.2204C10.439 12.0018 10 13.0616 10 14.1667V18.3333H4.16667C3.50363 18.3333 2.86774 18.0699 2.3989 17.6011C1.93006 17.1323 1.66667 16.4964 1.66667 15.8333V4.16667ZM11.6667 17.9167V14.1667C11.6667 12.7833 12.7833 11.6667 14.1667 11.6667H17.9167C17.8241 11.8046 17.718 11.9331 17.6 12.05L12.05 17.6C11.9339 17.7238 11.8054 17.8355 11.6667 17.9333V17.9167Z" fill="currentColor"/>
+                     </svg>
+                  </div>
+                  
+               </div>
+               <div class="animation-ornaments-to-up">
+                  <div class="ornament-category-4">
+                     <svg width="35" height="30" viewBox="0 0 25 20" fill="#696969" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0 5.33333H15.1661V8H0V5.33333ZM0 2.66667H15.1661V0H0V2.66667ZM0 13.3333H9.65118V10.6667H0V13.3333ZM20.6949 9.16L21.6738 8.21333C21.8013 8.08973 21.9529 7.99167 22.1196 7.92476C22.2864 7.85785 22.4652 7.82341 22.6458 7.82341C22.8264 7.82341 23.0052 7.85785 23.172 7.92476C23.3388 7.99167 23.4903 8.08973 23.6178 8.21333L24.5967 9.16C25.1344 9.68 25.1344 10.52 24.5967 11.04L23.6178 11.9867L20.6949 9.16ZM19.716 10.1067L12.4087 17.1733V20H15.3316L22.6389 12.9333L19.716 10.1067Z" fill="currentColor"/>
+                     </svg>
+                  </div>
+                  <div class="ornament-category-5">
+                     <svg width="45" height="40" viewBox="0 0 25 20" fill="#696969" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0 5.33333H15.1661V8H0V5.33333ZM0 2.66667H15.1661V0H0V2.66667ZM0 13.3333H9.65118V10.6667H0V13.3333ZM20.6949 9.16L21.6738 8.21333C21.8013 8.08973 21.9529 7.99167 22.1196 7.92476C22.2864 7.85785 22.4652 7.82341 22.6458 7.82341C22.8264 7.82341 23.0052 7.85785 23.172 7.92476C23.3388 7.99167 23.4903 8.08973 23.6178 8.21333L24.5967 9.16C25.1344 9.68 25.1344 10.52 24.5967 11.04L23.6178 11.9867L20.6949 9.16ZM19.716 10.1067L12.4087 17.1733V20H15.3316L22.6389 12.9333L19.716 10.1067Z" fill="currentColor"/>
+                     </svg>
+                  </div>
+                  <div class="ornament-note-2">
+                     <svg width="50" height="50" viewBox="0 0 20 20" fill="#B5B5B5" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4.16667 0C3.0616 0 2.00179 0.438987 1.22039 1.22039C0.438987 2.00179 0 3.0616 0 4.16667V15.8333C0 16.9384 0.438987 17.9982 1.22039 18.7796C2.00179 19.561 3.0616 20 4.16667 20H10.2833C11.3833 20 12.45 19.5667 13.2333 18.7833L18.7833 13.2333C19.5667 12.45 20 11.4 20 10.2833V4.16667C20 3.0616 19.561 2.00179 18.7796 1.22039C17.9982 0.438987 16.9384 0 15.8333 0H4.16667ZM1.66667 4.16667C1.66667 2.78333 2.78333 1.66667 4.16667 1.66667H15.8333C17.2167 1.66667 18.3333 2.78333 18.3333 4.16667V10H14.1667C13.0616 10 12.0018 10.439 11.2204 11.2204C10.439 12.0018 10 13.0616 10 14.1667V18.3333H4.16667C3.50363 18.3333 2.86774 18.0699 2.3989 17.6011C1.93006 17.1323 1.66667 16.4964 1.66667 15.8333V4.16667ZM11.6667 17.9167V14.1667C11.6667 12.7833 12.7833 11.6667 14.1667 11.6667H17.9167C17.8241 11.8046 17.718 11.9331 17.6 12.05L12.05 17.6C11.9339 17.7238 11.8054 17.8355 11.6667 17.9333V17.9167Z" fill="currentColor"/>
+                     </svg>
+                  </div>
+                  <div class="ornament-note-3">
+                     <svg width="20" height="20" viewBox="0 0 20 20" fill="#B5B5B5" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4.16667 0C3.0616 0 2.00179 0.438987 1.22039 1.22039C0.438987 2.00179 0 3.0616 0 4.16667V15.8333C0 16.9384 0.438987 17.9982 1.22039 18.7796C2.00179 19.561 3.0616 20 4.16667 20H10.2833C11.3833 20 12.45 19.5667 13.2333 18.7833L18.7833 13.2333C19.5667 12.45 20 11.4 20 10.2833V4.16667C20 3.0616 19.561 2.00179 18.7796 1.22039C17.9982 0.438987 16.9384 0 15.8333 0H4.16667ZM1.66667 4.16667C1.66667 2.78333 2.78333 1.66667 4.16667 1.66667H15.8333C17.2167 1.66667 18.3333 2.78333 18.3333 4.16667V10H14.1667C13.0616 10 12.0018 10.439 11.2204 11.2204C10.439 12.0018 10 13.0616 10 14.1667V18.3333H4.16667C3.50363 18.3333 2.86774 18.0699 2.3989 17.6011C1.93006 17.1323 1.66667 16.4964 1.66667 15.8333V4.16667ZM11.6667 17.9167V14.1667C11.6667 12.7833 12.7833 11.6667 14.1667 11.6667H17.9167C17.8241 11.8046 17.718 11.9331 17.6 12.05L12.05 17.6C11.9339 17.7238 11.8054 17.8355 11.6667 17.9333V17.9167Z" fill="currentColor"/>
+                     </svg>
+                  </div>
+                  <div class="ornament-note-5">
+                     <svg width="20" height="20" viewBox="0 0 20 20" fill="#B5B5B5" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4.16667 0C3.0616 0 2.00179 0.438987 1.22039 1.22039C0.438987 2.00179 0 3.0616 0 4.16667V15.8333C0 16.9384 0.438987 17.9982 1.22039 18.7796C2.00179 19.561 3.0616 20 4.16667 20H10.2833C11.3833 20 12.45 19.5667 13.2333 18.7833L18.7833 13.2333C19.5667 12.45 20 11.4 20 10.2833V4.16667C20 3.0616 19.561 2.00179 18.7796 1.22039C17.9982 0.438987 16.9384 0 15.8333 0H4.16667ZM1.66667 4.16667C1.66667 2.78333 2.78333 1.66667 4.16667 1.66667H15.8333C17.2167 1.66667 18.3333 2.78333 18.3333 4.16667V10H14.1667C13.0616 10 12.0018 10.439 11.2204 11.2204C10.439 12.0018 10 13.0616 10 14.1667V18.3333H4.16667C3.50363 18.3333 2.86774 18.0699 2.3989 17.6011C1.93006 17.1323 1.66667 16.4964 1.66667 15.8333V4.16667ZM11.6667 17.9167V14.1667C11.6667 12.7833 12.7833 11.6667 14.1667 11.6667H17.9167C17.8241 11.8046 17.718 11.9331 17.6 12.05L12.05 17.6C11.9339 17.7238 11.8054 17.8355 11.6667 17.9333V17.9167Z" fill="currentColor"/>
+                     </svg>
                   </div>
                </div>
             </div>
          </section>
-         
-         <section class="container-about-notes"></section>
 
       </main>
-      
+
       <footer>
-         <span>Desenvolvido por Gustavo Rodrigues & Lucas Polli</span>
+         <div>
+            <span>
+               @ 2022 good notes. Made by <strong>Gustavo Rodrigues</strong> & <strong>Lucas Polli</strong>
+            </span>
+         </div>
+         <div class="links">
+            <a href="https://github.com/GustavoRodrigue-s/good-notes-frontend" target="_blank">
+               Github
+            </a>
+            -
+            <a href="https://www.linkedin.com/in/gustavo-rodrigues-fabiano-768589208" target="_blank">
+               Linkedin
+            </a>
+            -
+            <a href="https://www.instagram.com/gustavo.rodrigue_s" target="_blank">
+               Instagram
+            </a>
+         </div>
       </footer>
 
       <div class="popup-wrapper-auth popup-wrapper" tabindex="0"></div>
