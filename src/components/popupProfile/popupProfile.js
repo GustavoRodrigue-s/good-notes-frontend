@@ -862,7 +862,7 @@ function createPopupProfile(header, confirmationCode, recoverAccount) {
                <form class="profile-photo-form">
                   <div class="container-photo">
                      <input type="file" name="inputFile" class="inputPhoto" id="inputPhoto" />
-                     <label for="inputPhoto" title="Selecionar foto">
+                     <label for="inputPhoto">
                         <img class="photoPreview" src="./images/avatar_icon.svg" alt="avatar icon" />
                         <div class="container-btn-loading center-flex">
                            <div class="loading"></div>

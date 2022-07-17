@@ -110,6 +110,8 @@ export default function createRecoverAccount(confirmationCode) {
          );
 
          confirmationCode.subscribe('success', () => {
+            state.form.reset();
+
             handleSuccess.showOrHideSuccess('add');
             setTimeout(showPopup, 300);
          });
