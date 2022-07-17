@@ -137,6 +137,20 @@ a.link-logo {
    background-color: var(--tertiaryColor);
 }
 
+header ul.list-dropDown > .item-username {
+   white-space: nowrap;
+   text-overflow: ellipsis;
+   overflow: hidden;
+}
+
+header ul.list-dropDown > .user-exit {
+   color: var(--primaryErrorColor);
+}
+
+header ul.list-dropDown > .user-exit:hover {
+   background-color: rgb(255, 240, 240);
+}
+
 /* ---------- Responsive ---------- */
 
 @media (max-width: 765px) {

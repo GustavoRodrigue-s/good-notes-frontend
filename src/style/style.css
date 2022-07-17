@@ -490,7 +490,7 @@ span.tooltip::before {
    opacity: 1;
    visibility: visible;
    transform: translate(-50%, 40px);
-   box-shadow: 0 0 10px var(--primaryBoxShadow);
+   box-shadow: 0 0 5px var(--primaryBoxShadow);
 }
 
 .list-dropDown > li {
@@ -499,7 +499,7 @@ span.tooltip::before {
    cursor: pointer;
    padding: 7px 10px;
    border-radius: 5px;
-   font-size: 1.6rem;
+   font-size: 1.5rem;
    transition: 0.2s;
    white-space: nowrap;
 }
@@ -509,7 +509,7 @@ span.tooltip::before {
    height: 1px;
    background-color: var(--colorLine);
    border: none;
-   margin: 0 2px;
+   margin: 5px 2px;
 }
 
 /* ---------- Resposive ---------- */

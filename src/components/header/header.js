@@ -77,6 +77,8 @@ function createHeader() {
             </svg>
          </button>
          <ul class="list-dropDown">
+            <li class="item-username">Usuário</li>
+            <hr>
             <li class="user-edit" tabindex="0" aria-haspopup="true" aria-expanded="false" aria-label="Abrir caixa para editar perfil." data-action="shouldShowOrHidePopup">Editar perfil</li>
             <li class="user-exit" data-action="logoutAccount" tabindex="0" aria-label="Sair da conta.">Sair</li>
          </ul>
@@ -101,10 +103,15 @@ function createHeader() {
       return template
    }
 
-   const updateUserAvatar = photoUrl => {
+   const updateProfileData = ({ photoUrl, username }) => {
       const image = state.header.querySelector('.btn-dropDown > img');
+      const liUsername = state.header.querySelector('.item-username');
 
-      image.setAttribute('src', photoUrl);
+      photoUrl && image.setAttribute('src', photoUrl);
+
+      if (username) {
+         liUsername.innerText = username;
+      }
    }
 
    const render = ({ authenticated, api, cookie }) => {
@@ -172,15 +179,15 @@ function createHeader() {
             return
          }
 
-         const { photo } = JSON.parse(profileData);
+         const { photo: photoUrl, username } = JSON.parse(profileData);
 
-         photo && updateUserAvatar(photo);
+         photoUrl && updateProfileData({ photoUrl, username });
       }
    }
 
    return { 
       render,
-      updateUserAvatar
+      updateProfileData
    }
 }
 

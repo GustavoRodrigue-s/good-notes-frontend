@@ -368,6 +368,7 @@ function createPopupProfile(header, confirmationCode, recoverAccount) {
             }
 
             if (newCredentials.changedFields.includes('username')) {
+               header.updateProfileData({ username: newCredentials.username });
                handleSuccessUpdate({ username: newCredentials.username });
             }
    
@@ -398,7 +399,7 @@ function createPopupProfile(header, confirmationCode, recoverAccount) {
             }
 
             saveProfileData({ photo: data.photoData });
-            header.updateUserAvatar(data.photoData);
+            header.updateProfileData({ photoUrl: data.photoData });
 
             handleSuccess.showOrHidePhotoSuccess('add');
 
