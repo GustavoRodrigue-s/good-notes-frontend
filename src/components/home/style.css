@@ -11,12 +11,44 @@ main > section:not(section.creativity), footer {
    max-width: 1150px;
 }
 
+/* ---------- Loaded animation ---------- */
+
+@keyframes fadeLoading {
+   from { transform: translateY(20px); opacity: 0; }
+   to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes apresentationMain {
+   from { transform: rotateX(-20deg) scale(1.2); opacity: 0; }
+   to { transform: rotateX(0) scale(1); opacity: 1 }
+}
+
+body.loaded :is(.apresentation h1, .apresentation p, .apresentation button) {
+   animation: fadeLoading 0.7s forwards ease;
+}
+
+body.loaded .apresentation p {
+   animation-delay: 0.2s;
+}
+
+body.loaded .apresentation button {
+   animation-delay: 0.4s;
+}
+
+body.loaded .apresentation .container-main {
+   animation: apresentationMain 1s ease;
+}
+
 /* ---------- Apresentation ---------- */
 
 .apresentation {
    margin: 70px auto;
    text-align: center;
    position: relative;
+}
+
+.apresentation .container-main-and-drawings {
+   perspective: 1000px;
 }
 
 /* ---------- Apresentation First Div ---------- */
@@ -34,6 +66,10 @@ main > section:not(section.creativity), footer {
    color: var(--paragraphColor);
    width: 100%;
    max-width: 400px;
+}
+
+.apresentation h1, .apresentation p, .apresentation button {
+   opacity: 0;
 }
 
 .apresentation button, .creativity button {

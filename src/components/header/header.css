@@ -3,6 +3,19 @@ header {
    background: #fff;
    border-bottom: 1px solid var(--colorLine); 
    padding: 5px 34px; 
+   opacity: 0;
+}
+
+/* ---------- Loading Animation ---------- */
+
+@keyframes headerLoadedAnimation {
+   from { transform: translateY(-100%); opacity: 0; }
+   to { transform: translateY(0); opacity: 1; }
+}
+
+body.loaded header {
+   animation: headerLoadedAnimation 0.7s forwards ease;
+   animation-delay: 0.2s;
 }
 
 header a, .button-signIn  {
