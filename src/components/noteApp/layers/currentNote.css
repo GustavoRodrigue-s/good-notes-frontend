@@ -62,7 +62,7 @@ section.current-note, .current-note-form {
 }
 
 .container-more-currentNote > .list-dropDown {
-   transform: translate(-50%, -20px);
+   transform: translate(-50%, -10px);
 }
 
 .container-more-currentNote .btn-dropDown.active ~ .list-dropDown {

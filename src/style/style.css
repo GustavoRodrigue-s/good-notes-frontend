@@ -478,11 +478,11 @@ span.tooltip::before {
    z-index: 9999;
    left: 50%;
    color: var(--paragraphColor);
-   transition: 0.25s;
+   transition: 0.2s;
    
    opacity: 0;
    visibility: hidden;
-   transform: translate(-50%, 20px);
+   transform: translate(-50%, 30px);
    will-change: transform;
 }
 
