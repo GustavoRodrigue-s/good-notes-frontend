@@ -127,7 +127,7 @@ a.link-logo {
 .container-isLoggedIn > ul.list-dropDown {
    width: 130px;
    left: -10%;
-   transform: translate(-50%, -10px);
+   transform: translate(-50%, -15px);
 }
 .container-isLoggedIn > button.active ~ ul.list-dropDown {
    transform: translate(-50%, -5px);
