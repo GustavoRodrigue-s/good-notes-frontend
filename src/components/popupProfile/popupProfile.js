@@ -208,6 +208,8 @@ function createPopupProfile(header, confirmationCode, recoverAccount) {
             shouldShow && successMessage.classList.add('show');
          },
          showPasswordsSuccess() {
+            state.resetPasswordForm.reset();
+
             const successMessage = state.resetPasswordForm.querySelector('.container-reset-password-success');
             
             const shouldShow = state.resetPasswordForm.parentElement.classList.contains('show');
