@@ -310,7 +310,8 @@ body.loaded :is(.drawing1, .drawing2, .drawing3, .drawing4) {
    font: 800 3.6rem var(--fontDefault);
 }
 
-.about-good-notes h3 {
+.about-good-notes h2 {
+   font-size: 1.8rem;
    font-weight: 600;
 }
 

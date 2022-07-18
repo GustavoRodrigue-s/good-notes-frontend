@@ -36,6 +36,13 @@ function createHeader() {
 
       const acceptedMenuActions = {
          showAndHideDropDown(e) {
+            const closeOrOpen = e.target.classList.contains('active');
+
+            e.target.setAttribute(
+               'aria-label',
+               closeOrOpen ? 'Abrir menu' : 'Fechar menu'
+            );
+         
             e.target.classList.toggle('active');
          },
          logoutAccount() {
@@ -75,13 +82,14 @@ function createHeader() {
 
       const template = `
       <div class="container-isLoggedIn container-dropDown">
-         <button class="btn-dropDown btn-wrapper-default btn-dropDown-header-menu" data-action="showAndHideDropDown">
+         <button class="btn-dropDown btn-wrapper-default btn-dropDown-header-menu" data-action="showAndHideDropDown" aria-label="Abrir menu" 
+         aria-controls="menuAccount" aria-expanded="false" aria-haspopup="true">
             <img src="../../../images/avatar_icon.svg" alt="ícone do avatar do usuário">
             <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 0 24 24" width="20px" fill="#000000">
                <path d="M24 24H0V0h24v24z" fill="none" opacity=".87"/><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6-1.41-1.41z"/>
             </svg>
          </button>
-         <ul class="list-dropDown">
+         <ul class="list-dropDown" id="menuAccount">
             <li class="item-username">Usuário</li>
             <hr>
             <li class="user-edit" tabindex="0" aria-haspopup="true" aria-expanded="false" aria-label="Abrir caixa para editar perfil." data-action="shouldShowOrHidePopup">Editar perfil</li>
@@ -150,11 +158,11 @@ function createHeader() {
                </nav>
                <span class="pipe-header">|</span>
             </div>
-            <div class="hamburguer-wrapper" aria-label="Fechar Menu"></div>
+            <div class="hamburguer-wrapper"></div>
             <button class="button-hamburguer btn-default btn-wrapper-default" aria-expanded="false" aria-haspopup="true" aria-label="Abrir Menu" aria-controls="menu-hamburguer" tabindex="0">
                <span class="span-hamburguer"></span>
             </button>
-            <div class="container-authentication popup-hamburguer" id="menu-hamburguer" role="menu">
+            <div class="container-authentication popup-hamburguer" id="menu-hamburguer">
                ${usernameTemplate ? usernameTemplate : ''}
                <nav class="nav-hamburguer">
                   <a href="/" class="link-home">
