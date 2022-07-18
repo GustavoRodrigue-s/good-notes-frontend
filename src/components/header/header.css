@@ -141,6 +141,7 @@ header ul.list-dropDown > .item-username {
    white-space: nowrap;
    text-overflow: ellipsis;
    overflow: hidden;
+   cursor: initial;
 }
 
 header ul.list-dropDown > .user-exit {
