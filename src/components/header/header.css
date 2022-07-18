@@ -127,7 +127,7 @@ a.link-logo {
 .container-isLoggedIn > ul.list-dropDown {
    width: 130px;
    left: -10%;
-   transform: translate(-50%, -25px);
+   transform: translate(-50%, -10px);
 }
 .container-isLoggedIn > button.active ~ ul.list-dropDown {
    transform: translate(-50%, -5px);
@@ -219,11 +219,11 @@ header ul.list-dropDown > .user-exit:hover {
       padding: 5px;
       border-radius: 8px;
       display: block;
-      transition: 0.25s;
+      transition: 0.2s;
 
       opacity: 0;
       visibility: hidden;
-      transform: translateY(-5px);
+      transform: translateY(5px);
    }
 
    .button-hamburguer.active ~ .popup-hamburguer {
