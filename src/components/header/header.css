@@ -133,7 +133,7 @@ a.link-logo {
    transform: translate(-50%, -5px);
 }
 
-.container-isLoggedIn > ul > li:hover {
+.container-isLoggedIn > ul > li:hover:not(header ul.list-dropDown > .item-username) {
    background-color: var(--tertiaryColor);
 }
 
