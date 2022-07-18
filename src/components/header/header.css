@@ -137,11 +137,11 @@ a.link-logo {
    background-color: var(--tertiaryColor);
 }
 
-header ul.list-dropDown > .item-username {
+header ul.list-dropDown > .item-username, .item-username-hamburguer {
    white-space: nowrap;
    text-overflow: ellipsis;
    overflow: hidden;
-   cursor: initial;
+   cursor: initial !important;
 }
 
 header ul.list-dropDown > .user-exit {
@@ -149,7 +149,18 @@ header ul.list-dropDown > .user-exit {
 }
 
 header ul.list-dropDown > .user-exit:hover {
-   background-color: rgb(255, 240, 240);
+   background-color: rgb(255, 240, 240) !important;
+}
+
+.container-authentication > hr {
+   height: 1px;
+   background-color: var(--colorLine);
+   border: none;
+   margin: 5px 2px;
+}
+
+.container-authentication > :is(.item-username-hamburguer, hr) {
+   display: none;
 }
 
 /* ---------- Responsive ---------- */
@@ -286,7 +297,7 @@ header ul.list-dropDown > .user-exit:hover {
       background-color: rgb(245, 245, 245);
    }
 
-   /* USER LOGGED IN */
+   /* ---------- USER LOGGED IN ---------- */
 
    .container-isLoggedIn {
       width: 100%;
@@ -309,6 +320,14 @@ header ul.list-dropDown > .user-exit:hover {
 
    .container-isLoggedIn > button.active ~ ul.list-dropDown {
       transform: none;
+   }
+
+   header ul.list-dropDown > :is(.item-username, hr) {
+      display: none;
+   }
+
+   .container-authentication > :is(.item-username-hamburguer, hr) {
+      display: block;
    }
 } 
 

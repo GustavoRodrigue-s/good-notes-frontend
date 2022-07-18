@@ -68,6 +68,11 @@ function createHeader() {
    }
 
    const componentLoggedInUser = () => {
+      const usernameTemplate = `
+         <span class="item-username-hamburguer">Usuário</span>
+         <hr>
+      `
+
       const template = `
       <div class="container-isLoggedIn container-dropDown">
          <button class="btn-dropDown btn-wrapper-default btn-dropDown-header-menu" data-action="showAndHideDropDown">
@@ -85,7 +90,7 @@ function createHeader() {
       </div>
       `;
 
-      return template
+      return { template, usernameTemplate }
    }
 
    const componentNotLoggedInUser = () => {
@@ -100,22 +105,24 @@ function createHeader() {
       </div>
       `;
 
-      return template
+      return { template }
    }
 
    const updateProfileData = ({ photoUrl, username }) => {
       const image = state.header.querySelector('.btn-dropDown > img');
-      const liUsername = state.header.querySelector('.item-username');
+      const itemUsername = state.header.querySelector('.item-username');
+      const itemUsernameHamburguer = state.header.querySelector('.item-username-hamburguer');
 
       photoUrl && image.setAttribute('src', photoUrl);
 
       if (username) {
-         liUsername.innerText = username;
+         itemUsername.innerText = username;
+         itemUsernameHamburguer.innerText = username;
       }
    }
 
    const render = ({ authenticated, api, cookie }) => {
-      const currentComponent = authenticated ? componentLoggedInUser() : componentNotLoggedInUser();
+      const { template, usernameTemplate } = authenticated ? componentLoggedInUser() : componentNotLoggedInUser();
 
       const headerTemplate = `
       <div class="container-header-flex">
@@ -148,6 +155,7 @@ function createHeader() {
                <span class="span-hamburguer"></span>
             </button>
             <div class="container-authentication popup-hamburguer" id="menu-hamburguer" role="menu">
+               ${usernameTemplate ? usernameTemplate : ''}
                <nav class="nav-hamburguer">
                   <a href="/" class="link-home">
                      Home
@@ -157,7 +165,7 @@ function createHeader() {
                   </a>
                </nav>
                <hr class="line-hamburguer">
-               ${currentComponent}
+               ${template}
             </div>
          </div>
       </div>

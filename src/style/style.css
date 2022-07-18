@@ -493,7 +493,7 @@ span.tooltip::before {
    box-shadow: 0 0 5px var(--primaryBoxShadow);
 }
 
-.list-dropDown > li {
+.list-dropDown > li, header .item-username-hamburguer {
    width: 100%;
    color: #000;
    cursor: pointer;
