@@ -168,11 +168,11 @@ function createHeader() {
       createMenuHamburguer();
       authenticated && createMenuDropdown({ api, cookie });
 
-      dispatch.shouldSetAvatar();
+      dispatch.shouldSetProfileData();
    }
 
    const dispatch = {
-      shouldSetAvatar() {
+      shouldSetProfileData() {
          const profileData = sessionStorage.getItem('profileData');
 
          if (!profileData) {
@@ -181,7 +181,7 @@ function createHeader() {
 
          const { photo: photoUrl, username } = JSON.parse(profileData);
 
-         photoUrl && updateProfileData({ photoUrl, username });
+         updateProfileData({ photoUrl, username });
       }
    }
 
